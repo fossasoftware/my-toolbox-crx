@@ -183,6 +183,8 @@ async function setLanguage(lang) {
 
 document.addEventListener("DOMContentLoaded", async () => {
   const languageButtonsContainer = document.querySelector(".language-buttons");
+  const menuToggle = document.getElementById("menuToggle");
+  const sideMenu = document.getElementById("sideMenu");
   const confirmResetTableModal = document.getElementById("confirmModal");
   const cancelResetTableBtn = document.getElementById("cancelDelete");
   const confirmDefaultModal = document.getElementById("resetConfirmModal");
@@ -215,6 +217,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   const versionEl = document.getElementById("appVersion");
   if (versionEl && manifest && manifest.version) {
     versionEl.textContent = getText("versionText", manifest.version);
+  }
+
+  if (menuToggle && sideMenu) {
+    menuToggle.addEventListener("click", () => {
+      sideMenu.classList.toggle("open");
+      document.body.classList.toggle("menu-open");
+    });
   }
 
   if (languageButtonsContainer) {
@@ -266,6 +275,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       } else {
         console.error(`Tab pane with ID ${targetTabId} not found!`);
       }
+      if (sideMenu) sideMenu.classList.remove("open");
+      document.body.classList.remove("menu-open");
     });
   });
 
