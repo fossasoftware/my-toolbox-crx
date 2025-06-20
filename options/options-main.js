@@ -222,7 +222,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (menuToggle && sideMenu) {
     menuToggle.addEventListener("click", () => {
       sideMenu.classList.toggle("open");
-      document.body.classList.toggle("menu-open");
     });
   }
 
