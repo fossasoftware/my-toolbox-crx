@@ -45,6 +45,7 @@
   "languageLabel": { "message": "Мова" },
   "optionsTabColorizer": { "message": "Колоризатор Статусів" },
   "optionsTabNotepad": { "message": "Нотатник" },
+  "colorizerTitle": { "message": "Колоризатор Статусів" },
   "notepadTitle": { "message": "Мої Нотатки" },
   "notepadPlaceholder": { "message": "Друкуйте нотатки тут... Вміст зберігається автоматично." },
   "notepadStatusSaving": { "message": "Збереження..." },

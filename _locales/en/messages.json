@@ -45,6 +45,7 @@
   "languageLabel": { "message": "Language" },
   "optionsTabColorizer": { "message": "Status Colorizer" },
   "optionsTabNotepad": { "message": "Notepad" },
+  "colorizerTitle": { "message": "Status Colorizer" },
   "notepadTitle": { "message": "My Notes" },
   "notepadPlaceholder": { "message": "Type your notes here... Content is saved automatically." },
   "notepadStatusSaving": { "message": "Saving..." },
