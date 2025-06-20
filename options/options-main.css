@@ -320,6 +320,10 @@ a:hover {
   margin: 0;
 }
 
+#appVersion {
+  margin-top: var(--spacing-xs);
+}
+
 .toast {
   visibility: hidden;
   min-width: 250px;

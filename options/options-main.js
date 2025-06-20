@@ -211,6 +211,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
   await setLanguage(langPref);
 
+  const manifest = chrome.runtime.getManifest();
+  const versionEl = document.getElementById("appVersion");
+  if (versionEl && manifest && manifest.version) {
+    versionEl.textContent = getText("versionText", manifest.version);
+  }
+
   if (languageButtonsContainer) {
     languageButtonsContainer.addEventListener("click", (event) => {
       const button = event.target.closest(".lang-option");
