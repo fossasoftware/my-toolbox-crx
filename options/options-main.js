@@ -275,8 +275,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       } else {
         console.error(`Tab pane with ID ${targetTabId} not found!`);
       }
-      if (sideMenu) sideMenu.classList.remove("open");
-      document.body.classList.remove("menu-open");
     });
   });
 

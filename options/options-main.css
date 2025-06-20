@@ -422,7 +422,7 @@ a:hover {
   border-right: 1px solid var(--border-color);
   padding: var(--spacing-xl) var(--spacing-sm);
   box-shadow: var(--box-shadow-table);
-  transform: translateX(-100%);
+  transform: translateX(calc(-100% + 40px));
   transition: transform var(--transition-medium);
   display: flex;
   flex-direction: column;
@@ -434,28 +434,29 @@ a:hover {
 }
 
 .menu-toggle {
-  position: fixed;
-  top: var(--spacing-lg);
-  left: var(--spacing-lg);
   background-color: var(--primary-color);
   color: var(--light-text);
   border: none;
   border-radius: var(--border-radius-button);
   padding: var(--spacing-sm) var(--spacing-md);
   cursor: pointer;
-  z-index: 10000;
+  width: 100%;
+}
+
+.page-container {
+  margin-left: 40px;
+  transition: margin-left var(--transition-medium);
 }
 
 body.menu-open .page-container {
   margin-left: 200px;
-  transition: margin-left var(--transition-medium);
 }
 
 .side-menu .tab-nav {
   display: flex;
   flex-direction: column;
   border-bottom: none;
-  width: 100%;
+  width: calc(100% - 40px);
   margin-bottom: var(--spacing-xl);
 }
 
@@ -477,4 +478,6 @@ body.menu-open .page-container {
   color: var(--dark-text);
   writing-mode: vertical-rl;
   transform: rotate(180deg);
+  width: 40px;
+  text-align: center;
 }
