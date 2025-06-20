@@ -496,3 +496,8 @@ a:hover {
   width: 100%;
   padding-bottom: var(--spacing-xl);
 }
+
+/* smaller title size when header is inside the side menu */
+.side-menu .options-header h1 {
+  font-size: var(--font-size-h2);
+}
