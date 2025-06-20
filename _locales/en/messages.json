@@ -57,4 +57,5 @@
   "toastImportErrorJsonParse": { "message": "Error parsing file. Make sure it's a valid JSON." },
   "toastImportErrorValidation": { "message": "Import failed. Invalid settings format in file." },
   "toastImportErrorSave": { "message": "Error saving imported settings." }
+  ,"versionText": { "message": "Version $VERSION$", "placeholders": { "version": { "content": "$1" } } }
 }

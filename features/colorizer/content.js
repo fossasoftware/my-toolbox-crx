@@ -1,15 +1,40 @@
-const defaultStatusColorSettings = [];
-
 let statusColorSettings = [];
 
 function loadSettings(callback) {
-  chrome.storage.sync.get(
-    { statusColorSettings: defaultStatusColorSettings },
-    function (data) {
-      statusColorSettings = data.statusColorSettings;
+  chrome.storage.sync.get("statusColorSettings", (data) => {
+    if (chrome.runtime.lastError) {
+      console.error("Colorizer: Error loading settings", chrome.runtime.lastError);
+      statusColorSettings = [];
       if (callback) callback();
+      return;
     }
-  );
+
+    statusColorSettings = data.statusColorSettings;
+
+    if (!Array.isArray(statusColorSettings) || statusColorSettings.length === 0) {
+      const defaultsUrl = chrome.runtime.getURL("data/defaultSettings.json");
+      fetch(defaultsUrl)
+        .then((response) => (response.ok ? response.json() : []))
+        .then((defaults) => {
+          if (Array.isArray(defaults)) {
+            statusColorSettings = defaults;
+            chrome.storage.sync.set({ statusColorSettings: defaults });
+          } else {
+            statusColorSettings = [];
+          }
+        })
+        .catch((error) => {
+          console.error("Colorizer: Failed to load default settings", error);
+          statusColorSettings = [];
+        })
+        .finally(() => {
+          if (callback) callback();
+        });
+      return;
+    }
+
+    if (callback) callback();
+  });
 }
 
 function addGlobalStyle(css) {
@@ -42,26 +67,43 @@ function generateRibbonCSS(statusSetting) {
 }
 
 function paintStatuses() {
-  let elements = document.querySelectorAll("span > div._1e0c1txw._1bsb1osq");
+  let elements = document.querySelectorAll(
+    "span > div._1e0c1txw._1bsb1osq, span._2rko1l7b"
+  );
   elements.forEach((element) => {
     let statusText = element.textContent.trim().toLowerCase();
     let statusSetting = statusColorSettings.find(
       (x) => x.statusName.toLowerCase() === statusText
     );
     if (statusSetting) {
-      let grandParentSpan = element.closest("span").parentNode.closest("span");
-      if (grandParentSpan) {
-        if (element.firstChild) {
+      // handle old structure where the colored element is inside a div
+      if (element.matches("div._1e0c1txw._1bsb1osq")) {
+        let grandParentSpan = element.closest("span").parentNode.closest("span");
+        if (grandParentSpan && element.firstChild) {
           element.firstChild.style.backgroundColor =
             statusSetting.backgroundColor;
           if (element.firstChild.firstChild && statusSetting.textColor) {
             element.firstChild.firstChild.style.color = statusSetting.textColor;
           }
+          if (statusSetting.animationClass) {
+            const ribbonCSS = generateRibbonCSS(statusSetting);
+            addGlobalStyle(ribbonCSS);
+            element.firstChild.classList.add(
+              `ribbon-${statusSetting.statusName.replace(/\s+/g, "-")}`
+            );
+          }
+        }
+      } else {
+        // new structure where the colored element is the span itself
+        element.style.backgroundColor = statusSetting.backgroundColor;
+        let inner = element.querySelector("span, div");
+        if (inner && statusSetting.textColor) {
+          inner.style.color = statusSetting.textColor;
         }
         if (statusSetting.animationClass) {
           const ribbonCSS = generateRibbonCSS(statusSetting);
           addGlobalStyle(ribbonCSS);
-          element.firstChild.classList.add(
+          element.classList.add(
             `ribbon-${statusSetting.statusName.replace(/\s+/g, "-")}`
           );
         }

@@ -2,8 +2,25 @@
 
 All notable changes to the "My ToolBox" Chrome extension will be documented in this file.
 
+
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (starting from this documented version).
+
+## [4.2.4] - 2025-06-21
+
+### Fixed
+
+- Default color settings now apply automatically on extension update.
+
+## [4.2.3] - 2025-06-20
+
+### Added
+
+- Extension version now shown on the options page.
+
+### Fixed
+
+- Updated status colorization logic to support new Jira styles.
 
 ## [4.2.2] - 2025-04-25
 
