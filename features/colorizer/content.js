@@ -1,15 +1,40 @@
-const defaultStatusColorSettings = [];
-
 let statusColorSettings = [];
 
 function loadSettings(callback) {
-  chrome.storage.sync.get(
-    { statusColorSettings: defaultStatusColorSettings },
-    function (data) {
-      statusColorSettings = data.statusColorSettings;
+  chrome.storage.sync.get("statusColorSettings", (data) => {
+    if (chrome.runtime.lastError) {
+      console.error("Colorizer: Error loading settings", chrome.runtime.lastError);
+      statusColorSettings = [];
       if (callback) callback();
+      return;
     }
-  );
+
+    statusColorSettings = data.statusColorSettings;
+
+    if (!Array.isArray(statusColorSettings) || statusColorSettings.length === 0) {
+      const defaultsUrl = chrome.runtime.getURL("data/defaultSettings.json");
+      fetch(defaultsUrl)
+        .then((response) => (response.ok ? response.json() : []))
+        .then((defaults) => {
+          if (Array.isArray(defaults)) {
+            statusColorSettings = defaults;
+            chrome.storage.sync.set({ statusColorSettings: defaults });
+          } else {
+            statusColorSettings = [];
+          }
+        })
+        .catch((error) => {
+          console.error("Colorizer: Failed to load default settings", error);
+          statusColorSettings = [];
+        })
+        .finally(() => {
+          if (callback) callback();
+        });
+      return;
+    }
+
+    if (callback) callback();
+  });
 }
 
 function addGlobalStyle(css) {

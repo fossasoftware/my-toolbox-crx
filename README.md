@@ -10,7 +10,7 @@
 
 **My ToolBox** is a browser extension for Chrome designed to enhance the workflow for Service Center specialists, primarily focusing on Jira Cloud modifications and providing handy tools like a built-in notepad.
 
-**Version:** 4.2.3
+**Version:** 4.2.4
 **Author:** Vitalii Kopach
 
 ### Features
