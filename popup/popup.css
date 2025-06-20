@@ -1,0 +1,128 @@
+@font-face {
+  font-family: "Sigma Sans";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../fonts/SigmaSans-Regular.woff2") format("woff2"), url("../fonts/SigmaSans-Regular.woff") format("woff");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Sigma Sans";
+  font-style: oblique;
+  font-weight: 400;
+  src: url("../fonts/SigmaSans-Oblique.woff2") format("woff2"), url("../fonts/SigmaSans-Oblique.woff") format("woff");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Sigma Sans Condensed";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../fonts/SigmaSansCondensed-Regular.woff2") format("woff2"), url("../fonts/SigmaSansCondensed-Regular.woff") format("woff");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Sigma Sans ExtraCondensed";
+  font-style: normal;
+  font-weight: 700;
+  src: url("../fonts/SigmaSansExtraCondensed-Bold.woff2") format("woff2"), url("../fonts/SigmaSansExtraCondensed-Bold.woff") format("woff");
+  font-display: swap;
+}
+
+:root {
+  --primary-color: #e30613;
+  --primary-hover: #be0510;
+  --dark-text: #0d181c;
+  --light-text: #ffffff;
+  --border-color: #d4d6dd;
+  --background-light: #ffffff;
+  --background-medium: #f9fafb;
+  --font-body: "Sigma Sans", "Roboto Condensed", sans-serif;
+  --font-heading: "Sigma Sans Condensed", "Oswald", sans-serif;
+  --font-size-base: 14px;
+  --font-size-sm: 12px;
+  --font-size-button: 11px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --border-radius-button: 30px;
+  --box-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --transition-fast: all 0.15s ease-in-out;
+  --input-height: 32px;
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+:active,
+:hover,
+:focus {
+  outline: 0;
+  outline-offset: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--dark-text);
+  background-color: var(--background-light);
+  padding: var(--spacing-lg);
+  width: 280px;
+  line-height: 1.4;
+}
+
+h3 {
+  font-family: var(--font-heading);
+  font-weight: normal;
+  font-style: normal;
+  text-transform: uppercase;
+  font-size: 16px;
+  line-height: 1.2;
+  margin-bottom: var(--spacing-md);
+  color: var(--dark-text);
+}
+p {
+  margin: 0 0 var(--spacing-lg) 0;
+  font-size: var(--font-size-sm);
+  color: var(--secondary-text, #6b7280);
+  line-height: 1.33;
+}
+.button {
+  padding: 5px 15px;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-button);
+  font-weight: bold;
+  border-radius: var(--border-radius-button);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  line-height: normal;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  min-height: var(--input-height);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.button:focus {
+  outline: none;
+}
+
+.button.button-primary {
+  background-color: var(--primary-color);
+  color: var(--light-text);
+  border-color: var(--primary-color);
+}
+
+.button.button-primary:hover {
+  background-color: #e83742;
+  border-color: #e83742;
+}
+.button.button-primary:active {
+  background-color: #cc0511;
+  border-color: #cc0511;
+}

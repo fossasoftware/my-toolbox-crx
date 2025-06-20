@@ -1,0 +1,12 @@
+[
+    { "statusName": "waiting for customer", "textColor": "#ffffff", "backgroundColor": "#228B22" },
+    { "statusName": "pending", "textColor": "#ffffff", "backgroundColor": "#000000" },
+    { "statusName": "waiting for support", "textColor": "#ffffff", "backgroundColor": "#FF4500" },
+    { "statusName": "open", "textColor": "#ffffff", "backgroundColor": "#FF6347", "primaryColor": "#FF6347", "secondaryColor": "#FFC0CB", "animationClass": "ribbon" },
+    { "statusName": "waiting for feedback", "textColor": "#ffffff", "backgroundColor": "#0000CD" },
+    { "statusName": "waiting for approval", "textColor": "#A52A2A", "backgroundColor": "#FFD700" },
+    { "statusName": "escalated", "textColor": "#ffffff", "backgroundColor": "#DC143C", "primaryColor": "#DC143C", "secondaryColor": "#F08080", "animationClass": "ribbon" },
+    { "statusName": "in progress", "textColor": "#ffffff", "backgroundColor": "#0747A6", "primaryColor": "#0747A6", "secondaryColor": "#B0C4DE", "animationClass": "ribbon" },
+    { "statusName": "done", "backgroundColor": "#90EE90" },
+    { "statusName": "closed", "textColor": "#ffffff", "backgroundColor": "#000000" }
+  ]

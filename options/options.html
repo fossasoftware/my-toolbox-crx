@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title data-i18n="appName"></title>
+  <link rel="stylesheet" href="./options-main.css">
+  <link rel="stylesheet" href="../features/colorizer/colorizer.css">
+  <link rel="stylesheet" href="../features/notepad/notepad.css">
+</head>
+<body>
+
+  <div class="options-header">
+    <h1 data-i18n="optionsTitle"></h1>
+    <div class="language-buttons">
+      <div class="lang-highlight"></div>
+      <button class="lang-option" data-lang="en">🇬🇧 EN</button>
+      <button class="lang-option" data-lang="uk">🇺🇦 УК</button>
+    </div>
+  </div>
+
+  <div class="tab-nav">
+    <button class="tab-link active" data-tab="colorizerTab" data-i18n="optionsTabColorizer"></button>
+    <button class="tab-link" data-tab="notepadTab" data-i18n="optionsTabNotepad"></button>
+  </div>
+
+  <div class="tab-content">
+    <div id="colorizerTab" class="tab-pane active">
+      <table class="settings-table" id="statusTable">
+        <thead>
+          <tr>
+            <th scope="col" data-i18n="settingsTableStatus"></th>
+            <th scope="col" data-i18n="settingsTableBackground"></th>
+            <th scope="col" data-i18n="settingsTableText"></th>
+            <th scope="col" data-i18n="settingsTableAnimation"></th>
+            <th scope="col" data-i18n="settingsTablePrimaryColor"></th>
+            <th scope="col" data-i18n="settingsTableSecondaryColor"></th>
+            <th scope="col" data-i18n="settingsTableRemoveRow"></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="button-container">
+        <div class="button-group-left">
+            <input type="file" id="importFile" accept=".json" style="display: none;">
+            <button id="importSettingsBtn" class="button button-secondary" data-i18n="importButton"></button>
+            <button id="exportSettingsBtn" class="button button-secondary" data-i18n="exportButton"></button>
+        </div>
+        <div class="button-group-right">
+            <button id="addRow" class="button button-primary" data-i18n="addRowButton"></button>
+            <button id="saveSettings" class="button button-primary" data-i18n="saveButton"></button>
+            <button id="resetStatusSettings" class="button button-secondary" data-i18n="defaultButton"></button>
+            <button id="clearAll" class="button button-danger" data-i18n="resetButton"></button>
+        </div>
+      </div>
+
+      <div id="toast" class="toast"></div>
+
+      <div id="confirmModal" class="modal-overlay">
+        <div class="modal-box">
+          <h5 data-i18n="confirmResetTableTitle"></h5>
+          <p data-i18n="confirmResetTableText"></p>
+          <div class="modal-actions">
+            <button id="confirmDelete" class="button button-danger" data-i18n="confirmResetTableYes"></button>
+            <button id="cancelDelete" class="button button-secondary" data-i18n="confirmResetTableCancel"></button>
+          </div>
+        </div>
+      </div>
+      <div id="resetConfirmModal" class="modal-overlay">
+         <div class="modal-box">
+           <h5 data-i18n="confirmDefaultTitle"></h5>
+           <p data-i18n="confirmDefaultText"></p>
+           <div class="modal-actions">
+             <button id="confirmReset" class="button button-primary" data-i18n="confirmDefaultYes"></button>
+             <button id="cancelReset" class="button button-secondary" data-i18n="confirmDefaultCancel"></button>
+           </div>
+         </div>
+       </div>
+      <div id="validationErrorModal" class="modal-overlay">
+        <div class="modal-box">
+          <h5 data-i18n="validationErrorTitle"></h5>
+          <p id="validationErrorMessage"></p>
+          <div class="modal-actions">
+            <button id="validationErrorOkBtn" class="button button-primary" data-i18n="validationErrorOk"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="notepadTab" class="tab-pane">
+
+      <h2 data-i18n="notepadTitle"></h2>
+      <div class="notepad-wrapper">
+        <textarea id="notepadArea" class="notepad-textarea" data-i18n-placeholder="notepadPlaceholder"></textarea>
+        <div id="notepadPreview" class="notepad-preview"></div>
+      </div>
+      <div id="notepadStatus" class="notepad-status"></div>
+      
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <p data-i18n="footerText"></p>
+  </div>
+
+  <script src="../libs/marked.min.js"></script>
+  <script src="../libs/purify.min.js"></script>
+  <script type="module" src="./options-main.js"></script>
+</body>
+</html>
