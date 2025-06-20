@@ -185,6 +185,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const languageButtonsContainer = document.querySelector(".language-buttons");
   const menuToggle = document.getElementById("menuToggle");
   const sideMenu = document.getElementById("sideMenu");
+  const pageContainer = document.querySelector(".page-container");
   const confirmResetTableModal = document.getElementById("confirmModal");
   const cancelResetTableBtn = document.getElementById("cancelDelete");
   const confirmDefaultModal = document.getElementById("resetConfirmModal");
@@ -222,6 +223,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (menuToggle && sideMenu) {
     menuToggle.addEventListener("click", () => {
       sideMenu.classList.toggle("open");
+      if (pageContainer) {
+        pageContainer.classList.toggle("shifted");
+      }
     });
   }
 
