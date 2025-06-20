@@ -443,6 +443,14 @@ a:hover {
   z-index: 9999;
 }
 
+.side-menu.animating-open {
+  animation: menu-slide-in 0.3s forwards;
+}
+
+.side-menu.animating-close {
+  animation: menu-slide-out 0.3s forwards;
+}
+
 .side-menu.open {
   transform: translateX(0);
 }
@@ -460,6 +468,8 @@ a:hover {
   justify-content: center;
   cursor: pointer;
   margin-top: var(--spacing-xl);
+  font-size: 26px; /* larger burger icon */
+  padding-bottom: 2px; /* small offset for nicer alignment */
 }
 
 .page-container {
@@ -500,4 +510,22 @@ a:hover {
 /* smaller title size when header is inside the side menu */
 .side-menu .options-header h1 {
   font-size: var(--font-size-h2);
+}
+
+@keyframes menu-slide-in {
+  from {
+    transform: translateX(calc(-100% + 64px));
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes menu-slide-out {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-100% + 64px));
+  }
 }

@@ -222,9 +222,29 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (menuToggle && sideMenu) {
     menuToggle.addEventListener("click", () => {
-      sideMenu.classList.toggle("open");
-      if (pageContainer) {
-        pageContainer.classList.toggle("shifted");
+      if (sideMenu.classList.contains("open")) {
+        sideMenu.classList.add("animating-close");
+        if (pageContainer) {
+          pageContainer.classList.remove("shifted");
+        }
+        sideMenu.addEventListener(
+          "animationend",
+          () => {
+            sideMenu.classList.remove("animating-close");
+            sideMenu.classList.remove("open");
+          },
+          { once: true }
+        );
+      } else {
+        sideMenu.classList.add("open", "animating-open");
+        if (pageContainer) {
+          pageContainer.classList.add("shifted");
+        }
+        sideMenu.addEventListener(
+          "animationend",
+          () => sideMenu.classList.remove("animating-open"),
+          { once: true }
+        );
       }
     });
   }
