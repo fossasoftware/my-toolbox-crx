@@ -426,6 +426,18 @@ a:hover {
   z-index: 10000;
 }
 
+.side-ribbon .app-vertical {
+  margin-top: auto;
+  padding-bottom: 40px;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-align: center;
+  text-transform: uppercase;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  line-height: 1;
+}
+
 .side-menu {
   position: fixed;
   top: 0;

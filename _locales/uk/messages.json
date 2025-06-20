@@ -57,6 +57,7 @@
   "toastImportErrorFileRead": { "message": "Помилка читання файлу." },
   "toastImportErrorJsonParse": { "message": "Помилка розбору файлу. Переконайтеся, що це валідний JSON." },
   "toastImportErrorValidation": { "message": "Помилка імпорту. Невірний формат налаштувань у файлі." },
-  "toastImportErrorSave": { "message": "Помилка збереження імпортованих налаштувань." }
+  "toastImportErrorSave": { "message": "Помилка збереження імпортованих налаштувань." },
+  "menuLabel": { "message": "Меню" }
   ,"versionText": { "message": "Версія $VERSION$", "placeholders": { "version": { "content": "$1" } } }
 }
