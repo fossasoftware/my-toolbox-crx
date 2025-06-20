@@ -490,15 +490,9 @@ a:hover {
   border-left-color: var(--primary-color);
 }
 
-.side-ribbon .vertical-app-name {
+
+.side-menu .footer {
   margin-top: auto;
-  font-family: var(--font-heading);
-  font-size: var(--font-size-h2);
-  color: var(--dark-text);
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
   width: 100%;
-  text-align: center;
-  text-transform: uppercase;
-  padding-bottom: 40px;
+  padding-bottom: var(--spacing-xl);
 }
