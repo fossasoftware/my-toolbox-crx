@@ -1,6 +1,6 @@
 {
   "appName": { "message": "My ToolBox" },
-  "appDescription": { "message": "Bring visual clarity to your Jira Cloud boards and issues. Easily color-code statuses, add optional animations, manage presets, and keep essential notes in the built-in Markdown editor." },
+  "appDescription": { "message": "Add clarity to Jira Cloud boards. Color-code statuses, animations, save presets, and note ideas in the built-in editor." },
   "optionsTitle": { "message": "My ToolBox" },
   "settingsTableStatus": { "message": "Status" },
   "settingsTableBackground": { "message": "Background" },
@@ -58,6 +58,6 @@
   "toastImportErrorJsonParse": { "message": "Error parsing file. Make sure it's a valid JSON." },
   "toastImportErrorValidation": { "message": "Import failed. Invalid settings format in file." },
   "toastImportErrorSave": { "message": "Error saving imported settings." },
-  "menuLabel": { "message": "Menu" }
-  ,"versionText": { "message": "Version $VERSION$", "placeholders": { "version": { "content": "$1" } } }
+  "menuLabel": { "message": "Menu" },
+  "versionText": { "message": "Version $VERSION$", "placeholders": { "version": { "content": "$1" } } }
 }

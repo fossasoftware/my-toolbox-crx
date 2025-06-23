@@ -1,6 +1,6 @@
 {
   "appName": { "message": "Мій Тулбокс" },
-  "appDescription": { "message": "Додайте візуальної ясності вашим дошкам та задачам у Jira Cloud. Легко розфарбовуйте статуси, додавайте опціональні анімації, керуйте пресетами та зберігайте важливі нотатки у вбудованому Markdown-редакторі." },
+  "appDescription": { "message": "Додайте ясності дошкам Jira Cloud. Розфарбовуйте статуси, додавайте анімації, зберігайте пресети і робіть нотатки у вбудованому редакторі." },
   "optionsTitle": { "message": "Мій Тулбокс" },
   "settingsTableStatus": { "message": "Статус" },
   "settingsTableBackground": { "message": "Фон" },
@@ -58,6 +58,6 @@
   "toastImportErrorJsonParse": { "message": "Помилка розбору файлу. Переконайтеся, що це валідний JSON." },
   "toastImportErrorValidation": { "message": "Помилка імпорту. Невірний формат налаштувань у файлі." },
   "toastImportErrorSave": { "message": "Помилка збереження імпортованих налаштувань." },
-  "menuLabel": { "message": "Меню" }
-  ,"versionText": { "message": "Версія $VERSION$", "placeholders": { "version": { "content": "$1" } } }
+  "menuLabel": { "message": "Меню" },
+  "versionText": { "message": "Версія $VERSION$", "placeholders": { "version": { "content": "$1" } } }
 }
