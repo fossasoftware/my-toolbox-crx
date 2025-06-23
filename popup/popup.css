@@ -131,6 +131,7 @@ p {
   margin-bottom: var(--spacing-lg);
   display: flex;
   align-items: center;
+  justify-content: space-between;
   font-size: var(--font-size-base);
 }
 .feature-toggle input {
@@ -142,7 +143,7 @@ p {
   height: 20px;
   background-color: var(--border-color);
   border-radius: 10px;
-  margin-right: var(--spacing-sm);
+  margin-left: var(--spacing-sm);
   transition: background-color var(--transition-fast);
 }
 .feature-toggle .slider::before {
@@ -162,9 +163,17 @@ p {
   transform: translateX(16px);
 }
 
+.feature-toggle input:checked + .slider {
+  background-color: var(--primary-color);
+}
+
 .feature-toggle input:not(:checked) + .slider::before {
   animation: toggle-off 0.25s forwards;
   transform: translateX(0);
+}
+
+.feature-toggle input:not(:checked) + .slider {
+  background-color: var(--border-color);
 }
 @keyframes toggle-on {
   0% { transform: translateX(0); }

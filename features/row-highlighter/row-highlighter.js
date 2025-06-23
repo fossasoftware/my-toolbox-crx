@@ -200,17 +200,40 @@ function resetTable() {
   });
 }
 
+function showResetModal() {
+  const modal = document.getElementById("rowHighlightResetModal");
+  if (modal) {
+    modal.classList.add("active");
+  }
+}
+
 export function initializeRowHighlighter() {
   const addBtn = document.getElementById("rowHighlightAdd");
   const saveBtn = document.getElementById("rowHighlightSave");
   const resetBtn = document.getElementById("rowHighlightReset");
+  const resetModal = document.getElementById("rowHighlightResetModal");
+  const confirmResetBtn = document.getElementById("rowHighlightConfirmReset");
+  const cancelResetBtn = document.getElementById("rowHighlightCancelReset");
   const exportBtn = document.getElementById("rowHighlightExport");
   const importBtn = document.getElementById("rowHighlightImport");
   const importFile = document.getElementById("rowHighlightImportFile");
 
   if (addBtn) addBtn.addEventListener("click", () => addRow());
   if (saveBtn) saveBtn.addEventListener("click", saveHighlightSettings);
-  if (resetBtn) resetBtn.addEventListener("click", resetTable);
+  if (resetBtn) resetBtn.addEventListener("click", showResetModal);
+  if (confirmResetBtn && resetModal) {
+    confirmResetBtn.addEventListener("click", () => {
+      resetModal.classList.remove("active");
+      resetTable();
+    });
+  }
+  if (cancelResetBtn && resetModal) {
+    const hide = () => resetModal.classList.remove("active");
+    cancelResetBtn.addEventListener("click", hide);
+    resetModal.addEventListener("click", (e) => {
+      if (e.target === resetModal) hide();
+    });
+  }
   if (exportBtn) exportBtn.addEventListener("click", handleExport);
   if (importBtn && importFile) {
     importBtn.addEventListener("click", () => importFile.click());

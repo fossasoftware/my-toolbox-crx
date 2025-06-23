@@ -12,7 +12,7 @@
   "settingsTableKeyword": { "message": "Ключове слово" },
   "settingsTableColor": { "message": "Колір" },
   "inputStatusPlaceholder": { "message": "Назва статусу" },
-  "inputKeywordPlaceholder": { "message": "Введіть слово" },
+  "inputKeywordPlaceholder": { "message": "Введіть слово або фразу" },
   "addRowButton": { "message": "Додати статус" },
   "addKeywordButton": { "message": "Додати слово" },
   "saveButton": { "message": "Зберегти" },
