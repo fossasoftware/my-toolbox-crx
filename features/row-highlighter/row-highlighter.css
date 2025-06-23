@@ -1,0 +1,187 @@
+.settings-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: var(--spacing-2xl);
+  border: 1px solid var(--border-color-table);
+  border-radius: var(--border-radius-table);
+  overflow: hidden;
+  box-shadow: var(--box-shadow-table);
+  table-layout: fixed;
+  word-wrap: break-word;
+  background-color: var(--background-light);
+}
+.settings-table tbody tr {
+  transform-origin: center center;
+}
+.settings-table th,
+.settings-table td {
+  padding: var(--spacing-md);
+  text-align: left;
+  border-bottom: 1px solid var(--border-color-table);
+  vertical-align: middle;
+}
+.settings-table th:first-child {
+  width: 60%;
+}
+.settings-table th:nth-child(2) {
+  width: 30%;
+}
+.settings-table th:nth-child(3) {
+  width: 10%;
+}
+.settings-table th {
+  font-family: var(--font-heading);
+  font-weight: normal;
+  font-style: normal;
+  color: var(--light-text);
+  background-color: var(--button-secondary-bg);
+  text-transform: uppercase;
+  font-size: var(--font-size-table-header);
+  letter-spacing: 0.6px;
+  white-space: nowrap;
+}
+.settings-table th:nth-child(n + 2) {
+  text-align: center;
+}
+.settings-table td:nth-child(n + 2) {
+  text-align: center;
+}
+.settings-table tr:last-child td {
+  border-bottom: none;
+}
+.settings-table tr:hover td {
+  background-color: #f6f6f6;
+}
+.settings-table td:last-child {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-table input[type="text"],
+.settings-table input[type="color"],
+.settings-table input[type="checkbox"] {
+  font-family: var(--font-body);
+  font-size: 14px;
+  vertical-align: middle;
+}
+.settings-table input[type="text"] {
+  width: 100%;
+  height: var(--input-height);
+  padding: 5px;
+  line-height: 1.4;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-input);
+  background-color: var(--background-light);
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.settings-table input[type="text"]:focus {
+  outline: none;
+  border-color: var(--dark-text);
+  background-color: #fff;
+  box-shadow: 0 0 4px 0 rgba(13, 24, 28, 0.1), 0 0 8px 0 rgba(13, 24, 28, 0.1);
+}
+.settings-table input[type="color"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: calc(var(--input-height) - 2px);
+  height: calc(var(--input-height) - 2px);
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-input);
+  cursor: pointer;
+  background-color: transparent;
+}
+.settings-table input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 1px;
+  border-radius: var(--border-radius-input);
+}
+.settings-table input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 1px;
+}
+.settings-table input[type="color"]::-moz-color-swatch {
+  border: none;
+  border-radius: 1px;
+}
+.settings-table input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary-color);
+  cursor: pointer;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+.button-group-left,
+.button-group-right {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.button.button-delete-row {
+  background-color: transparent;
+  color: var(--secondary-text);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--transition-fast),
+    color var(--transition-fast);
+  box-shadow: none;
+  transform: none;
+  vertical-align: middle;
+}
+.button.button-delete-row:hover {
+  color: var(--danger-color);
+  background-color: rgba(227, 6, 19, 0.1);
+  box-shadow: none;
+  transform: none;
+}
+.button.button-delete-row svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+@keyframes fadeInRow {
+  from {
+    opacity: 0;
+    transform: scale(0.98) translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+@keyframes fadeOutRow {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+.row-entering {
+  animation: fadeInRow var(--row-animation-duration) ease-out forwards;
+}
+.row-leaving {
+  animation: fadeOutRow var(--row-animation-duration) ease-out forwards;
+}
