@@ -70,7 +70,7 @@
     0 2px 4px 0 rgba(13, 24, 28, 0.05);
   --box-shadow-modal: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --transition-fast: all 0.15s ease-in-out;
+  --transition-fast: all 0.25s ease-in-out;
   --transition-medium: all 0.3s ease-in-out;
   --row-animation-duration: 0.3s;
 }
@@ -543,41 +543,6 @@ a:hover {
   }
 }
 
-.feature-toggle {
-  margin-bottom: var(--spacing-lg);
-  display: flex;
-  align-items: center;
-  font-size: var(--font-size-base);
-}
-.feature-toggle input {
-  display: none;
-}
-.feature-toggle .slider {
-  position: relative;
-  width: 36px;
-  height: 20px;
-  background-color: var(--border-color);
-  border-radius: 10px;
-  margin-right: var(--spacing-sm);
-  transition: background-color var(--transition-fast);
-}
-.feature-toggle .slider::before {
-  content: "";
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 16px;
-  height: 16px;
-  background-color: var(--light-text);
-  border-radius: 50%;
-  transition: transform var(--transition-fast);
-}
-.feature-toggle input:checked + .slider {
-  background-color: var(--primary-color);
-}
-.feature-toggle input:checked + .slider::before {
-  transform: translateX(16px);
-}
 
 .icon-button {
   padding: 5px;

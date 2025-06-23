@@ -45,7 +45,7 @@
   --spacing-lg: 16px;
   --border-radius-button: 30px;
   --box-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --transition-fast: all 0.15s ease-in-out;
+  --transition-fast: all 0.25s ease-in-out;
   --input-height: 32px;
 }
 * {

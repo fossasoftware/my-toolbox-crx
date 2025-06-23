@@ -333,22 +333,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   );
 
-  const colorizerToggle = document.getElementById("colorizerEnabled");
-  const rowHighlighterToggle = document.getElementById("rowHighlighterEnabled");
-  chrome.storage.sync.get(["colorizerEnabled", "rowHighlighterEnabled"], (data) => {
-    if (colorizerToggle) {
-      colorizerToggle.checked = data.hasOwnProperty("colorizerEnabled") ? data.colorizerEnabled : true;
-      colorizerToggle.addEventListener("change", () => {
-        chrome.storage.sync.set({ colorizerEnabled: colorizerToggle.checked });
-      });
-    }
-    if (rowHighlighterToggle) {
-      rowHighlighterToggle.checked = data.hasOwnProperty("rowHighlighterEnabled") ? data.rowHighlighterEnabled : true;
-      rowHighlighterToggle.addEventListener("change", () => {
-        chrome.storage.sync.set({ rowHighlighterEnabled: rowHighlighterToggle.checked });
-      });
-    }
-  });
 
   initializeColorizer();
   initializeRowHighlighter();
