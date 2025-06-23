@@ -1,6 +1,6 @@
 let highlightSettings = [];
 
-function loadSettings(callback) {
+function loadRowHighlightSettings(callback) {
   chrome.storage.sync.get("rowHighlightSettings", (data) => {
     highlightSettings = Array.isArray(data.rowHighlightSettings)
       ? data.rowHighlightSettings
@@ -29,7 +29,7 @@ function observe() {
 }
 
 window.addEventListener("load", () => {
-  loadSettings(() => {
+  loadRowHighlightSettings(() => {
     observe();
     highlightRows();
   });
