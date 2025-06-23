@@ -156,9 +156,23 @@ p {
   border-radius: 50%;
   transition: transform var(--transition-fast);
 }
-.feature-toggle input:checked + .slider {
-  background-color: var(--primary-color);
-}
+
 .feature-toggle input:checked + .slider::before {
+  animation: toggle-on 0.25s forwards;
   transform: translateX(16px);
+}
+
+.feature-toggle input:not(:checked) + .slider::before {
+  animation: toggle-off 0.25s forwards;
+  transform: translateX(0);
+}
+@keyframes toggle-on {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(18px); }
+  100% { transform: translateX(16px); }
+}
+@keyframes toggle-off {
+  0% { transform: translateX(16px); }
+  50% { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
 }

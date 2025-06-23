@@ -48,10 +48,10 @@
   "popupOpenOptionsButton": { "message": "Відкрити налаштування" },
   "languageLabel": { "message": "Мова" },
   "optionsTabColorizer": { "message": "Колоризатор Статусів" },
-  "optionsTabRowHighlighter": { "message": "Колоризатор Рядків" },
+  "optionsTabRowHighlighter": { "message": "Підсвічування Рядків" },
   "optionsTabNotepad": { "message": "Нотатник" },
   "colorizerTitle": { "message": "Колоризатор Статусів" },
-  "rowHighlighterTitle": { "message": "Колоризатор Рядків" },
+  "rowHighlighterTitle": { "message": "Підсвічування Рядків" },
   "notepadTitle": { "message": "Мої Нотатки" },
   "notepadPlaceholder": { "message": "Друкуйте нотатки тут... Вміст зберігається автоматично." },
   "notepadStatusSaving": { "message": "Збереження..." },
@@ -65,7 +65,7 @@
   "toastImportErrorValidation": { "message": "Помилка імпорту. Невірний формат налаштувань у файлі." },
   "toastImportErrorSave": { "message": "Помилка збереження імпортованих налаштувань." },
   "toggleColorizerLabel": { "message": "Колоризатор статусів" },
-  "toggleRowHighlighterLabel": { "message": "Колоризатор рядків" },
+  "toggleRowHighlighterLabel": { "message": "Підсвічування рядків" },
   "menuLabel": { "message": "Меню" },
   "versionText": { "message": "Версія $VERSION$", "placeholders": { "version": { "content": "$1" } } }
 }
