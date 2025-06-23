@@ -542,3 +542,14 @@ a:hover {
     transform: translateX(calc(-100% + 64px));
   }
 }
+
+.feature-toggle {
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  font-size: var(--font-size-base);
+}
+.feature-toggle input {
+  margin-right: var(--spacing-sm);
+}
+
