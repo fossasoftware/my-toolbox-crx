@@ -37,10 +37,14 @@ function loadSettings(callback) {
   });
 }
 
-function addGlobalStyle(css) {
+const styleCache = new Set();
+function addGlobalStyle(css, id) {
+  if (id && styleCache.has(id)) return;
   const style = document.createElement("style");
+  if (id) style.dataset.id = id;
   style.innerHTML = css;
   document.head.appendChild(style);
+  if (id) styleCache.add(id);
 }
 
 function generateRibbonCSS(statusSetting) {
@@ -87,10 +91,9 @@ function paintStatuses() {
           }
           if (statusSetting.animationClass) {
             const ribbonCSS = generateRibbonCSS(statusSetting);
-            addGlobalStyle(ribbonCSS);
-            element.firstChild.classList.add(
-              `ribbon-${statusSetting.statusName.replace(/\s+/g, "-")}`
-            );
+            const cls = `ribbon-${statusSetting.statusName.replace(/\s+/g, "-")}`;
+            addGlobalStyle(ribbonCSS, cls);
+            element.firstChild.classList.add(cls);
           }
         }
       } else {
@@ -102,10 +105,9 @@ function paintStatuses() {
         }
         if (statusSetting.animationClass) {
           const ribbonCSS = generateRibbonCSS(statusSetting);
-          addGlobalStyle(ribbonCSS);
-          element.classList.add(
-            `ribbon-${statusSetting.statusName.replace(/\s+/g, "-")}`
-          );
+          const cls = `ribbon-${statusSetting.statusName.replace(/\s+/g, "-")}`;
+          addGlobalStyle(ribbonCSS, cls);
+          element.classList.add(cls);
         }
       }
     }
@@ -125,10 +127,9 @@ function paintStatuses() {
         }
         if (setting.animationClass) {
           const ribbonCSS = generateRibbonCSS(setting);
-          addGlobalStyle(ribbonCSS);
-          span.classList.add(
-            `ribbon-${setting.statusName.replace(/\s+/g, "-")}`
-          );
+          const cls = `ribbon-${setting.statusName.replace(/\s+/g, "-")}`;
+          addGlobalStyle(ribbonCSS, cls);
+          span.classList.add(cls);
         }
       }
     }
@@ -148,10 +149,9 @@ function paintStatuses() {
         }
         if (setting.animationClass) {
           const ribbonCSS = generateRibbonCSS(setting);
-          addGlobalStyle(ribbonCSS);
-          span.classList.add(
-            `ribbon-${setting.statusName.replace(/\s+/g, "-")}`
-          );
+          const cls = `ribbon-${setting.statusName.replace(/\s+/g, "-")}`;
+          addGlobalStyle(ribbonCSS, cls);
+          span.classList.add(cls);
         }
       }
     });
@@ -185,10 +185,9 @@ function paintTicketButton() {
         }
         if (statusSetting.animationClass) {
           const ribbonCSS = generateRibbonCSS(statusSetting);
-          addGlobalStyle(ribbonCSS);
-          ticketButton.classList.add(
-            `ribbon-${statusSetting.statusName.replace(/\s+/g, "-")}`
-          );
+          const cls = `ribbon-${statusSetting.statusName.replace(/\s+/g, "-")}`;
+          addGlobalStyle(ribbonCSS, cls);
+          ticketButton.classList.add(cls);
         }
       }
     }

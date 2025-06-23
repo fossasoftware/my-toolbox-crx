@@ -29,6 +29,7 @@ export async function loadMessages(lang) {
     return messages;
   } catch (error) {
     console.error(`Could not load messages for language "${lang}":`, error);
+    showToast('toastErrorLoading');
     if (lang !== "en") {
       return await loadMessages("en");
     } else {

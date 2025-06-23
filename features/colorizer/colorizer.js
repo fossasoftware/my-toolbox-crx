@@ -6,6 +6,8 @@ import {
   showDefaultSettingsModal,
   getLoadedDefaultSettings,
 } from "../../options/options-main.js";
+import { storageGet, storageSet } from "../../utils/storage.js";
+import { validateImportedData } from "../../utils/validateImportedData.js";
 
 function updateButtonVisibility() {
   const tbody = document.querySelector("#statusTable tbody");
@@ -25,32 +27,24 @@ function updateButtonVisibility() {
   exportBtn.style.display = shouldShow ? "" : "none";
 }
 
-function restoreStatusSettings() {
+async function restoreStatusSettings() {
   const loadedDefaults = getLoadedDefaultSettings();
-
-  chrome.storage.sync.get("statusColorSettings", function (data) {
-    if (chrome.runtime.lastError) {
-      console.error(
-        "Colorizer Error restoring settings:",
-        chrome.runtime.lastError
-      );
-      showToast("toastErrorLoading");
-      updateButtonVisibility();
-      return;
+  const data = await storageGet("statusColorSettings");
+  if (data === null) {
+    updateButtonVisibility();
+    return;
+  }
+  let usedDefaults = false;
+  let settings;
+  if (data === undefined) {
+    settings = loadedDefaults;
+    usedDefaults = true;
+  } else {
+    settings = data;
+    if (!Array.isArray(settings) || settings.length === 0) {
+      settings = [];
     }
-    let usedDefaults = false;
-    let settings;
-
-    if (!data.hasOwnProperty("statusColorSettings")) {
-      settings = loadedDefaults;
-      usedDefaults = true;
-    } else {
-      settings = data.statusColorSettings;
-
-      if (!Array.isArray(settings) || settings.length === 0) {
-        settings = [];
-      }
-    }
+  }
 
     const tbody = document.querySelector("#statusTable tbody");
     if (!tbody) {
@@ -254,29 +248,20 @@ function saveStatusSettings() {
       secondaryColor: animationEnabled ? secondaryColor : undefined,
     });
   }
-  chrome.storage.sync.set({ statusColorSettings: settings }, function () {
-    if (chrome.runtime.lastError) {
-      console.error("Error saving settings:", chrome.runtime.lastError);
-      showValidationErrorModal(
-        "errorSavingSettings",
-        chrome.runtime.lastError.message
-      );
+  storageSet({ statusColorSettings: settings }).then((ok) => {
+    if (!ok) {
+      showValidationErrorModal("errorSavingSettings", chrome.runtime.lastError?.message || "");
     } else {
       showToast("toastSaved");
     }
   });
 }
 function handleExport() {
-  chrome.storage.sync.get("statusColorSettings", (data) => {
-    if (chrome.runtime.lastError) {
-      console.error(
-        "Error getting settings for export:",
-        chrome.runtime.lastError
-      );
-      showToast("toastErrorGeneric");
+  storageGet("statusColorSettings").then((data) => {
+    if (data === null) {
       return;
     }
-    const settingsToExport = data.statusColorSettings || [];
+    const settingsToExport = data || [];
     const jsonString = JSON.stringify(settingsToExport, null, 2);
     const blob = new Blob([jsonString], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -290,83 +275,6 @@ function handleExport() {
     URL.revokeObjectURL(url);
     showToast("toastExportSuccess");
   });
-}
-function validateImportedData(data) {
-  if (!Array.isArray(data)) {
-    console.error("Import validation failed: Data is not an array.");
-    return false;
-  }
-  const colorRegex = /^#[0-9a-f]{6}$/i;
-  const requiredKeys = ["statusName", "backgroundColor"];
-  for (const item of data) {
-    if (typeof item !== "object" || item === null) {
-      console.error("Import validation failed: Item is not an object.", item);
-      return false;
-    }
-    for (const key of requiredKeys) {
-      if (!(key in item)) {
-        console.error(
-          `Import validation failed: Item missing required key "${key}".`,
-          item
-        );
-        return false;
-      }
-    }
-    if (typeof item.statusName !== "string" || item.statusName.trim() === "") {
-      console.error(
-        `Import validation failed: Invalid statusName "${item.statusName}".`,
-        item
-      );
-      return false;
-    }
-    if (
-      typeof item.backgroundColor !== "string" ||
-      !colorRegex.test(item.backgroundColor)
-    ) {
-      console.error(
-        `Import validation failed: Invalid backgroundColor "${item.backgroundColor}".`,
-        item
-      );
-      return false;
-    }
-    if (
-      "textColor" in item &&
-      (typeof item.textColor !== "string" ||
-        !colorRegex.test(item.textColor)) &&
-      item.textColor !== ""
-    ) {
-      console.error(
-        `Import validation failed: Invalid textColor "${item.textColor}".`,
-        item
-      );
-      return false;
-    }
-    if ("animationClass" in item && item.animationClass === "ribbon") {
-      if (
-        !("primaryColor" in item) ||
-        typeof item.primaryColor !== "string" ||
-        !colorRegex.test(item.primaryColor)
-      ) {
-        console.error(
-          `Import validation failed: Missing or invalid primaryColor for animation.`,
-          item
-        );
-        return false;
-      }
-      if (
-        !("secondaryColor" in item) ||
-        typeof item.secondaryColor !== "string" ||
-        !colorRegex.test(item.secondaryColor)
-      ) {
-        console.error(
-          `Import validation failed: Missing or invalid secondaryColor for animation.`,
-          item
-        );
-        return false;
-      }
-    }
-  }
-  return true;
 }
 function handleImport(event) {
   const file = event.target.files?.[0];
@@ -390,12 +298,8 @@ function handleImport(event) {
       event.target.value = null;
       return;
     }
-    chrome.storage.sync.set({ statusColorSettings: importedSettings }, () => {
-      if (chrome.runtime.lastError) {
-        console.error(
-          "Error saving imported settings:",
-          chrome.runtime.lastError
-        );
+    storageSet({ statusColorSettings: importedSettings }).then((ok) => {
+      if (!ok) {
         showToast("toastImportErrorSave");
       } else {
         showToast("toastImportSuccess");
@@ -461,12 +365,8 @@ export function initializeColorizer() {
 
   if (confirmResetTableBtn && confirmResetTableModal) {
     confirmResetTableBtn.addEventListener("click", () => {
-      chrome.storage.sync.set({ statusColorSettings: [] }, function () {
-        if (chrome.runtime.lastError) {
-          console.error(
-            "!!! Reset Table Save Error:",
-            chrome.runtime.lastError
-          );
+      storageSet({ statusColorSettings: [] }).then((ok) => {
+        if (!ok) {
           showToast("toastErrorGeneric");
         } else {
           showToast("toastResetTable");
@@ -496,22 +396,15 @@ export function initializeColorizer() {
         confirmDefaultModal.classList.remove("active");
         return;
       }
-      chrome.storage.sync.set(
-        { statusColorSettings: loadedDefaults },
-        function () {
-          if (chrome.runtime.lastError) {
-            console.error(
-              "Error resetting settings:",
-              chrome.runtime.lastError
-            );
-            showToast("toastErrorGeneric");
-          } else {
-            showToast("toastResetDefault");
-            restoreStatusSettings();
-          }
-          confirmDefaultModal.classList.remove("active");
+      storageSet({ statusColorSettings: loadedDefaults }).then((ok) => {
+        if (!ok) {
+          showToast("toastErrorGeneric");
+        } else {
+          showToast("toastResetDefault");
+          restoreStatusSettings();
         }
-      );
+        confirmDefaultModal.classList.remove("active");
+      });
     });
   } else {
     console.error("Colorizer: Missing Confirm Default button or modal");

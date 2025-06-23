@@ -1,42 +1,37 @@
 import { getText, showToast } from "../../options/options-main.js";
+import { storageGet, storageSet } from "../../utils/storage.js";
 
 let notepadSaveTimeout;
 const NOTEPAD_SAVE_DELAY = 750;
 
-function loadNotepadContent() {
+async function loadNotepadContent() {
   const notepadArea = document.getElementById('notepadArea');
   if (notepadArea) {
-    chrome.storage.sync.get('notepadContent', (data) => {
-      if (chrome.runtime.lastError) {
-        console.error("Notepad: Error loading content:", chrome.runtime.lastError);
-        showToast('toastErrorLoading');
-      } else {
-        notepadArea.value = data.notepadContent || '';
-        renderMarkdownPreview();
-      }
-    });
+    const data = await storageGet('notepadContent');
+    if (data !== null) {
+      notepadArea.value = data || '';
+      renderMarkdownPreview();
+    }
   }
 }
 
-function saveNotepadContent() {
+async function saveNotepadContent() {
   const notepadArea = document.getElementById('notepadArea');
   const statusDiv = document.getElementById('notepadStatus');
   if (notepadArea && statusDiv) {
     const content = notepadArea.value;
     statusDiv.textContent = getText('notepadStatusSaving');
-    chrome.storage.sync.set({ notepadContent: content }, () => {
-      if (chrome.runtime.lastError) {
-        console.error("Notepad: Error saving content:", chrome.runtime.lastError);
-        statusDiv.textContent = getText('toastErrorSaving');
-      } else {
-        statusDiv.textContent = getText('notepadStatusSaved');
-        setTimeout(() => {
-          if (statusDiv.textContent === getText('notepadStatusSaved')) {
-            statusDiv.textContent = '';
-          }
-        }, 2000);
-      }
-    });
+    const ok = await storageSet({ notepadContent: content });
+    if (ok) {
+      statusDiv.textContent = getText('notepadStatusSaved');
+      setTimeout(() => {
+        if (statusDiv.textContent === getText('notepadStatusSaved')) {
+          statusDiv.textContent = '';
+        }
+      }, 2000);
+    } else {
+      statusDiv.textContent = getText('toastErrorSaving');
+    }
   }
 }
 
@@ -62,6 +57,7 @@ function renderMarkdownPreview() {
 
   if (typeof marked?.parse !== 'function' || typeof DOMPurify !== 'function') {
     console.error("Notepad: Libraries missing or not global");
+    showToast('toastErrorGeneric');
     notepadPreview.textContent = "⚠️ Markdown support unavailable";
     return;
   }
@@ -73,6 +69,7 @@ function renderMarkdownPreview() {
     notepadPreview.innerHTML = cleanHtml;
   } catch (error) {
     console.error("Markdown rendering error:", error);
+    showToast('toastErrorGeneric');
     notepadPreview.textContent = "Error rendering preview.";
   }
 }
@@ -84,6 +81,7 @@ function waitForMarkdownAndThenInit(retries = 40, delay = 200) {
       loadNotepadContent();
     } else if (retries-- <= 0) {
       console.error("[❌] Markdown libs did not become ready in time.");
+      showToast('toastErrorGeneric');
     } else {
       setTimeout(check, delay);
     }
@@ -95,6 +93,7 @@ export function initializeNotepad() {
   const notepadArea = document.getElementById('notepadArea');
   if (!notepadArea) {
     console.error("Notepad: Missing Notepad textarea");
+    showToast('toastErrorGeneric');
     return;
   }
 
