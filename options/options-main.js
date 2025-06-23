@@ -6,6 +6,14 @@ let currentLang = "en";
 const supportedLangs = ["en", "uk"];
 let loadedDefaultSettings = [];
 
+function updateVersionText() {
+  const manifest = chrome.runtime.getManifest();
+  const versionEl = document.getElementById("appVersion");
+  if (versionEl && manifest && manifest.version) {
+    versionEl.textContent = getText("versionText", manifest.version);
+  }
+}
+
 export async function loadMessages(lang) {
   if (!supportedLangs.includes(lang)) {
     lang = "en";
@@ -161,6 +169,7 @@ async function setLanguage(lang) {
   currentLang = supportedLangs.includes(lang) ? lang : "en";
   await loadMessages(currentLang);
   applyTranslations();
+  updateVersionText();
 
   const langButtonsContainer = document.querySelector(".language-buttons");
   const langOptions = document.querySelectorAll(".lang-option");
@@ -214,11 +223,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
   await setLanguage(langPref);
 
-  const manifest = chrome.runtime.getManifest();
-  const versionEl = document.getElementById("appVersion");
-  if (versionEl && manifest && manifest.version) {
-    versionEl.textContent = getText("versionText", manifest.version);
-  }
+  updateVersionText();
 
   if (menuToggle && sideMenu) {
     menuToggle.addEventListener("click", () => {
