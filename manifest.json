@@ -10,7 +10,8 @@
     "16": "icons/sc-toolbox-16px.png"
   },
   "permissions": [
-    "storage"
+    "storage",
+    "tabs"
   ],
   "action": {
     "default_popup": "popup/popup.html",

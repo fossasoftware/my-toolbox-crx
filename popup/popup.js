@@ -63,7 +63,13 @@ function loadColorizerToggle() {
 
 function saveColorizerToggle() {
   if (!colorizerToggleEl) return;
-  chrome.storage.sync.set({ colorizerEnabled: colorizerToggleEl.checked });
+  chrome.storage.sync.set({ colorizerEnabled: colorizerToggleEl.checked }, () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs && tabs.length > 0) {
+        chrome.tabs.reload(tabs[0].id);
+      }
+    });
+  });
 }
 
 async function initializePopup() {

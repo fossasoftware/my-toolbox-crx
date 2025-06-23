@@ -137,6 +137,7 @@ p {
 
 .toggle-label {
   margin-right: var(--spacing-sm);
+  font-size: 16px;
 }
 
 .switch {
@@ -184,3 +185,4 @@ p {
 .switch input:checked + .switch-slider::before {
   transform: translateX(16px);
 }
+
