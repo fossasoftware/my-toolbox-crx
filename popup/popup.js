@@ -4,6 +4,15 @@ const supportedLangs = ["en", "uk"];
 let colorizerToggleEl;
 let colorizerSliderEl;
 let toggleWrapperEl;
+let preloadedColorizerEnabled = null;
+try {
+  const stored = localStorage.getItem("colorizerEnabled");
+  if (stored !== null) {
+    preloadedColorizerEnabled = stored !== "false";
+  }
+} catch (e) {
+  preloadedColorizerEnabled = null;
+}
 async function loadMessages(lang) {
   if (!supportedLangs.includes(lang)) {
     lang = "en";
@@ -55,7 +64,7 @@ function applyPopupTranslations() {
   });
 }
 
-function loadColorizerToggle() {
+function loadColorizerToggle(done) {
   chrome.storage.sync.get("colorizerEnabled", (data) => {
     if (colorizerToggleEl) {
       colorizerToggleEl.checked = data.colorizerEnabled !== false;
@@ -67,6 +76,9 @@ function loadColorizerToggle() {
       if (toggleWrapperEl) {
         toggleWrapperEl.classList.remove("loading");
       }
+      if (typeof done === "function") {
+        done();
+      }
     });
   });
 }
@@ -75,6 +87,11 @@ function saveColorizerToggle() {
   if (!colorizerToggleEl) return;
   const enabled = colorizerToggleEl.checked;
   chrome.storage.sync.set({ colorizerEnabled: enabled }, () => {
+    try {
+      localStorage.setItem("colorizerEnabled", String(enabled));
+    } catch (e) {
+      console.debug("Unable to access localStorage", e);
+    }
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs && tabs.length > 0) {
         chrome.tabs.sendMessage(
@@ -103,6 +120,9 @@ async function initializePopup() {
   colorizerToggleEl = document.getElementById("colorizerToggle");
   colorizerSliderEl = document.querySelector("#colorizerToggle + .switch-slider");
   toggleWrapperEl = document.querySelector(".toggle-wrapper");
+  if (preloadedColorizerEnabled !== null && colorizerToggleEl) {
+    colorizerToggleEl.checked = preloadedColorizerEnabled;
+  }
   if (colorizerSliderEl) {
     colorizerSliderEl.classList.add("no-transition");
   }
@@ -111,7 +131,11 @@ async function initializePopup() {
   }
   if (colorizerToggleEl) {
     colorizerToggleEl.addEventListener("change", saveColorizerToggle);
-    loadColorizerToggle();
+    loadColorizerToggle(() => {
+      document.body.classList.remove("preload");
+    });
+  } else {
+    document.body.classList.remove("preload");
   }
   const optionsBtn = document.getElementById("openOptionsBtn");
   if (optionsBtn) {

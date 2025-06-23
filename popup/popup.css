@@ -195,3 +195,7 @@ p {
   transform: translateX(16px);
 }
 
+body.preload {
+  visibility: hidden;
+}
+
