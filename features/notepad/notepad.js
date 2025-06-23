@@ -79,7 +79,8 @@ function renderMarkdownPreview() {
 
 function waitForMarkdownAndThenInit(retries = 40, delay = 200) {
   const check = () => {
-    if (typeof window.marked === 'object' && typeof window.marked.parse === 'function'
+    if ((typeof window.marked === 'object' || typeof window.marked === 'function')
+      && typeof window.marked.parse === 'function'
       && typeof window.DOMPurify === 'function') {
       loadNotepadContent();
     } else if (retries-- <= 0) {

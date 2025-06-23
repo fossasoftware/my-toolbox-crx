@@ -1,4 +1,5 @@
 let statusColorSettings = [];
+const insertedRibbonClasses = new Set();
 
 function loadSettings(callback) {
   chrome.storage.sync.get("statusColorSettings", (data) => {
@@ -39,16 +40,22 @@ function loadSettings(callback) {
   });
 }
 
-function addGlobalStyle(css) {
+function addGlobalStyle(css, className) {
+  if (insertedRibbonClasses.has(className)) return;
   const style = document.createElement("style");
   style.innerHTML = css;
   document.head.appendChild(style);
+  insertedRibbonClasses.add(className);
+}
+
+function sanitizeStatusName(statusName) {
+  return statusName.trim().toLowerCase().replace(/[^a-z0-9]+/gi, "-");
 }
 
 function generateRibbonCSS(statusSetting) {
   const { statusName, primaryColor, secondaryColor } = statusSetting;
-  const className = `ribbon-${statusName.replace(/\s+/g, "-")}`;
-  return `
+  const className = `ribbon-${sanitizeStatusName(statusName)}`;
+  const css = `
     @keyframes ${className} {
       0% { background-position: 0% 50%; }
       100% { background-position: 200% 50%; }
@@ -66,6 +73,7 @@ function generateRibbonCSS(statusSetting) {
       color: black;
     }
   `;
+  return { css, className };
 }
 
 function paintStatuses() {
@@ -88,11 +96,9 @@ function paintStatuses() {
             element.firstChild.firstChild.style.color = statusSetting.textColor;
           }
           if (statusSetting.animationClass) {
-            const ribbonCSS = generateRibbonCSS(statusSetting);
-            addGlobalStyle(ribbonCSS);
-            element.firstChild.classList.add(
-              `ribbon-${statusSetting.statusName.replace(/\s+/g, "-")}`
-            );
+            const { css: ribbonCSS, className } = generateRibbonCSS(statusSetting);
+            addGlobalStyle(ribbonCSS, className);
+            element.firstChild.classList.add(className);
           }
         }
       } else {
@@ -103,11 +109,9 @@ function paintStatuses() {
           inner.style.color = statusSetting.textColor;
         }
         if (statusSetting.animationClass) {
-          const ribbonCSS = generateRibbonCSS(statusSetting);
-          addGlobalStyle(ribbonCSS);
-          element.classList.add(
-            `ribbon-${statusSetting.statusName.replace(/\s+/g, "-")}`
-          );
+          const { css: ribbonCSS, className } = generateRibbonCSS(statusSetting);
+          addGlobalStyle(ribbonCSS, className);
+          element.classList.add(className);
         }
       }
     }
@@ -126,11 +130,9 @@ function paintStatuses() {
           span.style.color = setting.textColor;
         }
         if (setting.animationClass) {
-          const ribbonCSS = generateRibbonCSS(setting);
-          addGlobalStyle(ribbonCSS);
-          span.classList.add(
-            `ribbon-${setting.statusName.replace(/\s+/g, "-")}`
-          );
+          const { css: ribbonCSS, className } = generateRibbonCSS(setting);
+          addGlobalStyle(ribbonCSS, className);
+          span.classList.add(className);
         }
       }
     }
@@ -149,11 +151,9 @@ function paintStatuses() {
           span.style.color = setting.textColor;
         }
         if (setting.animationClass) {
-          const ribbonCSS = generateRibbonCSS(setting);
-          addGlobalStyle(ribbonCSS);
-          span.classList.add(
-            `ribbon-${setting.statusName.replace(/\s+/g, "-")}`
-          );
+          const { css: ribbonCSS, className } = generateRibbonCSS(setting);
+          addGlobalStyle(ribbonCSS, className);
+          span.classList.add(className);
         }
       }
     });
@@ -186,11 +186,9 @@ function paintTicketButton() {
           );
         }
         if (statusSetting.animationClass) {
-          const ribbonCSS = generateRibbonCSS(statusSetting);
-          addGlobalStyle(ribbonCSS);
-          ticketButton.classList.add(
-            `ribbon-${statusSetting.statusName.replace(/\s+/g, "-")}`
-          );
+          const { css: ribbonCSS, className } = generateRibbonCSS(statusSetting);
+          addGlobalStyle(ribbonCSS, className);
+          ticketButton.classList.add(className);
         }
       }
     }
