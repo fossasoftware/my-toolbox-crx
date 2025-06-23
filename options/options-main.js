@@ -1,4 +1,5 @@
 import { initializeColorizer } from "../features/colorizer/colorizer.js";
+import { initializeRowHighlighter } from "../features/row-highlighter/row-highlighter.js";
 import { initializeNotepad } from "../features/notepad/notepad.js";
 
 let currentMessages = {};
@@ -158,6 +159,11 @@ function applyTranslations() {
     .querySelectorAll('#statusTable tbody input[type="text"]')
     .forEach((input) => {
       input.placeholder = getText("inputStatusPlaceholder");
+    });
+  document
+    .querySelectorAll('#rowHighlightTable tbody input[type="text"]')
+    .forEach((input) => {
+      input.placeholder = getText("inputKeywordPlaceholder");
     });
   const notepadArea = document.getElementById("notepadArea");
   if (notepadArea) {
@@ -319,6 +325,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   );
 
   initializeColorizer();
+  initializeRowHighlighter();
   initializeNotepad();
 
 });

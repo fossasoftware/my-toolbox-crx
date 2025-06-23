@@ -1,7 +1,7 @@
 let statusColorSettings = [];
 const insertedRibbonClasses = new Set();
 
-function loadSettings(callback) {
+function loadStatusColorSettings(callback) {
   chrome.storage.sync.get("statusColorSettings", (data) => {
     if (chrome.runtime.lastError) {
       console.error("Colorizer: Error loading settings", chrome.runtime.lastError);
@@ -206,7 +206,7 @@ function observeDOMChanges() {
 }
 
 window.addEventListener("load", function () {
-  loadSettings(function () {
+  loadStatusColorSettings(function () {
     observeDOMChanges();
     paintStatuses();
   });
