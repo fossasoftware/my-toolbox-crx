@@ -44,7 +44,7 @@
   "content_scripts": [
     {
       "matches": ["*://*.atlassian.net/*"],
-      "js": ["features/colorizer/status-colorizer-worker.js"],
+      "js": ["features/colorizer/colorizer-worker.js"],
       "run_at": "document_idle"
     },
     {
