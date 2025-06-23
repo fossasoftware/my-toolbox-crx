@@ -2,6 +2,7 @@ let currentMessages = {};
 let currentLang = "en";
 const supportedLangs = ["en", "uk"];
 let colorizerToggleEl;
+let colorizerSliderEl;
 async function loadMessages(lang) {
   if (!supportedLangs.includes(lang)) {
     lang = "en";
@@ -58,6 +59,11 @@ function loadColorizerToggle() {
     if (colorizerToggleEl) {
       colorizerToggleEl.checked = data.colorizerEnabled !== false;
     }
+    if (colorizerSliderEl) {
+      requestAnimationFrame(() => {
+        colorizerSliderEl.classList.remove("no-transition");
+      });
+    }
   });
 }
 
@@ -86,6 +92,10 @@ async function initializePopup() {
   await loadMessages(currentLang);
   applyPopupTranslations();
   colorizerToggleEl = document.getElementById("colorizerToggle");
+  colorizerSliderEl = document.querySelector("#colorizerToggle + .switch-slider");
+  if (colorizerSliderEl) {
+    colorizerSliderEl.classList.add("no-transition");
+  }
   if (colorizerToggleEl) {
     colorizerToggleEl.addEventListener("change", saveColorizerToggle);
     loadColorizerToggle();
