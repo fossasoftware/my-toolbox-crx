@@ -1,6 +1,6 @@
 {
   "appName": { "message": "Мій Тулбокс" },
-  "appDescription": { "message": "Додайте ясності дошкам Jira Cloud. Розфарбуйте статуси, опційні анімації, зберігайте пресети і нотатки у вбудованому редакторі." },
+  "appDescription": { "message": "Додайте ясності дошкам Jira Cloud. Розфарбуйте статуси, додайте анімації, зберігайте пресети і нотатки у вбудованому редакторі." },
   "optionsTitle": { "message": "Мій Тулбокс" },
   "settingsTableStatus": { "message": "Статус" },
   "settingsTableBackground": { "message": "Фон" },
