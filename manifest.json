@@ -49,7 +49,7 @@
     },
     {
       "matches": ["*://*.atlassian.net/*"],
-      "js": ["features/row-highlighter/content.js"],
+      "js": ["features/row-highlighter/highlighter-worker.js"],
       "run_at": "document_idle"
     }
   ],
