@@ -203,7 +203,7 @@ function paintRows() {
   const rows = document.querySelectorAll("div[role='row']");
   rows.forEach((row) => {
     if (row.innerText.toLowerCase().includes(keyword)) {
-      row.style.backgroundColor = rowColorSetting.color;
+      row.style.setProperty("background-color", rowColorSetting.color, "important");
     }
   });
 }
