@@ -59,8 +59,6 @@
   "toastImportErrorValidation": { "message": "Import failed. Invalid settings format in file." },
   "toastImportErrorSave": { "message": "Error saving imported settings." },
   "colorizerToggleLabel": { "message": "Status Colorizer" },
-  "quickNoteTitle": { "message": "Quick Note" },
-  "quickNotePlaceholder": { "message": "Type a quick note..." },
   "menuLabel": { "message": "Menu" },
   "versionText": { "message": "Version $VERSION$", "placeholders": { "version": { "content": "$1" } } }
 }

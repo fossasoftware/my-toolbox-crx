@@ -2,9 +2,6 @@ let currentMessages = {};
 let currentLang = "en";
 const supportedLangs = ["en", "uk"];
 let colorizerToggleEl;
-let noteAreaEl;
-let noteSaveTimeout;
-const NOTE_SAVE_DELAY = 750;
 async function loadMessages(lang) {
   if (!supportedLangs.includes(lang)) {
     lang = "en";
@@ -69,24 +66,6 @@ function saveColorizerToggle() {
   chrome.storage.sync.set({ colorizerEnabled: colorizerToggleEl.checked });
 }
 
-function loadQuickNote() {
-  chrome.storage.sync.get("notepadContent", (data) => {
-    if (noteAreaEl) {
-      noteAreaEl.value = data.notepadContent || "";
-    }
-  });
-}
-
-function saveQuickNote() {
-  if (!noteAreaEl) return;
-  const content = noteAreaEl.value;
-  chrome.storage.sync.set({ notepadContent: content });
-}
-
-function debouncedSaveNote() {
-  clearTimeout(noteSaveTimeout);
-  noteSaveTimeout = setTimeout(saveQuickNote, NOTE_SAVE_DELAY);
-}
 async function initializePopup() {
   const langPref = await new Promise((resolve) => {
     chrome.storage.sync.get("userLanguage", (data) => {
@@ -97,14 +76,9 @@ async function initializePopup() {
   await loadMessages(currentLang);
   applyPopupTranslations();
   colorizerToggleEl = document.getElementById("colorizerToggle");
-  noteAreaEl = document.getElementById("quickNoteArea");
   if (colorizerToggleEl) {
     colorizerToggleEl.addEventListener("change", saveColorizerToggle);
     loadColorizerToggle();
-  }
-  if (noteAreaEl) {
-    noteAreaEl.addEventListener("input", debouncedSaveNote);
-    loadQuickNote();
   }
   const optionsBtn = document.getElementById("openOptionsBtn");
   if (optionsBtn) {
