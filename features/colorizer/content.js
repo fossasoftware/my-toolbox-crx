@@ -1,4 +1,12 @@
 let statusColorSettings = [];
+let colorizerEnabled = true;
+
+function loadColorizerEnabled(callback) {
+  chrome.storage.sync.get("colorizerEnabled", (data) => {
+    colorizerEnabled = data.colorizerEnabled !== false;
+    if (callback) callback();
+  });
+}
 
 function loadSettings(callback) {
   chrome.storage.sync.get("statusColorSettings", (data) => {
@@ -206,8 +214,11 @@ function observeDOMChanges() {
 }
 
 window.addEventListener("load", function () {
-  loadSettings(function () {
-    observeDOMChanges();
-    paintStatuses();
+  loadColorizerEnabled(function () {
+    if (!colorizerEnabled) return;
+    loadSettings(function () {
+      observeDOMChanges();
+      paintStatuses();
+    });
   });
 });

@@ -58,6 +58,9 @@
   "toastImportErrorJsonParse": { "message": "Помилка розбору файлу. Переконайтеся, що це валідний JSON." },
   "toastImportErrorValidation": { "message": "Помилка імпорту. Невірний формат налаштувань у файлі." },
   "toastImportErrorSave": { "message": "Помилка збереження імпортованих налаштувань." },
+  "colorizerToggleLabel": { "message": "Колоризатор" },
+  "quickNoteTitle": { "message": "Швидка Нотатка" },
+  "quickNotePlaceholder": { "message": "Введіть швидку нотатку..." },
   "menuLabel": { "message": "Меню" },
   "versionText": { "message": "Версія $VERSION$", "placeholders": { "version": { "content": "$1" } } }
 }

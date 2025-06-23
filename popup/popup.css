@@ -126,3 +126,37 @@ p {
   background-color: #cc0511;
   border-color: #cc0511;
 }
+
+.toggle-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-sm);
+}
+.toggle-wrapper input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin-right: var(--spacing-sm);
+  accent-color: var(--primary-color);
+  cursor: pointer;
+}
+
+.quick-note-wrapper {
+  margin-bottom: var(--spacing-lg);
+}
+
+.quick-note-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 13px;
+  resize: vertical;
+}
+.quick-note-textarea:focus {
+  outline: none;
+  border-color: var(--dark-text);
+  box-shadow: var(--box-shadow-sm);
+}

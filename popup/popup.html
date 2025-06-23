@@ -8,7 +8,28 @@
   <body>
     <h3 data-i18n="popupTitle"></h3>
     <p data-i18n="popupDescription"></p>
-    <button id="openOptionsBtn" class="button button-primary" data-i18n="popupOpenOptionsButton"></button>
+
+    <div class="toggle-wrapper">
+      <label>
+        <input type="checkbox" id="colorizerToggle" />
+        <span data-i18n="colorizerToggleLabel"></span>
+      </label>
+    </div>
+
+    <div class="quick-note-wrapper">
+      <h4 data-i18n="quickNoteTitle"></h4>
+      <textarea
+        id="quickNoteArea"
+        class="quick-note-textarea"
+        data-i18n-placeholder="quickNotePlaceholder"
+      ></textarea>
+    </div>
+
+    <button
+      id="openOptionsBtn"
+      class="button button-primary"
+      data-i18n="popupOpenOptionsButton"
+    ></button>
     <script src="./popup.js"></script>
   </body>
 </html>
