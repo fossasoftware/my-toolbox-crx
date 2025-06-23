@@ -44,6 +44,7 @@
   "popupOpenOptionsButton": { "message": "Відкрити налаштування" },
   "languageLabel": { "message": "Мова" },
   "optionsTabColorizer": { "message": "Колоризатор Статусів" },
+  "optionsTabRowHighlighter": { "message": "Колоризатор Рядків" },
   "optionsTabNotepad": { "message": "Нотатник" },
   "colorizerTitle": { "message": "Колоризатор Статусів" },
   "notepadTitle": { "message": "Мої Нотатки" },
@@ -64,5 +65,11 @@
   "keywordLabel": { "message": "Ключове слово" },
   "keywordPlaceholder": { "message": "Введіть слово" },
   "rowColorLabel": { "message": "Колір рядка" },
-  "saveRowColorButton": { "message": "Зберегти" }
+  "saveRowColorButton": { "message": "Зберегти" },
+  "rowTableKeyword": { "message": "Ключове слово" },
+  "rowTableColor": { "message": "Колір" },
+  "addKeywordButton": { "message": "Додати слово" },
+  "errorKeywordEmpty": { "message": "Рядок $ROW$ помилка: Ключове слово не може бути порожнім.", "placeholders": { "row": { "content": "$1" } } },
+  "errorDuplicateKeyword": { "message": "Рядок $ROW$ помилка: Дубль ключового слова \"$KEY$\".", "placeholders": { "row": { "content": "$1" }, "key": { "content": "$2" } } },
+  "errorInvalidRowColor": { "message": "Рядок $ROW$ помилка: Некоректний колір рядка \"$COLOR$\". Використовуйте формат #rrggbb.", "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } } }
 }

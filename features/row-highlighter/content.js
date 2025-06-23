@@ -1,31 +1,34 @@
-let rowColorSetting = null;
+let highlightSettings = [];
 
-function loadRowColorSetting(callback) {
-  chrome.storage.sync.get("rowColorSetting", (data) => {
-    rowColorSetting = data.rowColorSetting || null;
+function loadSettings(callback) {
+  chrome.storage.sync.get("rowHighlightSettings", (data) => {
+    highlightSettings = Array.isArray(data.rowHighlightSettings) ? data.rowHighlightSettings : [];
     if (callback) callback();
   });
 }
 
-function paintRows() {
-  if (!rowColorSetting || !rowColorSetting.keyword) return;
-  const keyword = rowColorSetting.keyword.toLowerCase();
+function highlightRows() {
+  if (!highlightSettings.length) return;
   const rows = document.querySelectorAll("div[role='row']");
   rows.forEach((row) => {
-    if (row.innerText.toLowerCase().includes(keyword)) {
-      row.style.setProperty("background-color", rowColorSetting.color, "important");
+    const text = row.innerText.toLowerCase();
+    for (const item of highlightSettings) {
+      if (text.includes(item.keyword.toLowerCase())) {
+        row.style.setProperty("background-color", item.color, "important");
+        break;
+      }
     }
   });
 }
 
-function observeDOMChanges() {
-  const observer = new MutationObserver(paintRows);
+function observe() {
+  const observer = new MutationObserver(highlightRows);
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
 window.addEventListener("load", () => {
-  loadRowColorSetting(() => {
-    observeDOMChanges();
-    paintRows();
+  loadSettings(() => {
+    observe();
+    highlightRows();
   });
 });

@@ -44,6 +44,7 @@
   "popupOpenOptionsButton": { "message": "Open Settings" },
   "languageLabel": { "message": "Language" },
   "optionsTabColorizer": { "message": "Status Colorizer" },
+  "optionsTabRowHighlighter": { "message": "Row Highlighter" },
   "optionsTabNotepad": { "message": "Notepad" },
   "colorizerTitle": { "message": "Status Colorizer" },
   "notepadTitle": { "message": "My Notes" },
@@ -64,5 +65,11 @@
   "keywordLabel": { "message": "Keyword" },
   "keywordPlaceholder": { "message": "Enter keyword" },
   "rowColorLabel": { "message": "Row Color" },
-  "saveRowColorButton": { "message": "Save" }
+  "saveRowColorButton": { "message": "Save" },
+  "rowTableKeyword": { "message": "Keyword" },
+  "rowTableColor": { "message": "Color" },
+  "addKeywordButton": { "message": "Add Keyword" },
+  "errorKeywordEmpty": { "message": "Row $ROW$ error: Keyword can't be empty.", "placeholders": { "row": { "content": "$1" } } },
+  "errorDuplicateKeyword": { "message": "Row $ROW$ error: Duplicate keyword \"$KEY$\".", "placeholders": { "row": { "content": "$1" }, "key": { "content": "$2" } } },
+  "errorInvalidRowColor": { "message": "Row $ROW$ error: Invalid row color \"$COLOR$\". Use #rrggbb format.", "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } } }
 }

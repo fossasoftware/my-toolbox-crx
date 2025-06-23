@@ -160,6 +160,11 @@ function applyTranslations() {
     .forEach((input) => {
       input.placeholder = getText("inputStatusPlaceholder");
     });
+  document
+    .querySelectorAll('#rowHighlighterTable tbody input[type="text"]')
+    .forEach((input) => {
+      input.placeholder = getText("keywordPlaceholder");
+    });
   const notepadArea = document.getElementById("notepadArea");
   if (notepadArea) {
     notepadArea.placeholder = getText("notepadPlaceholder");

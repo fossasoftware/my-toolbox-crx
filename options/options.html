@@ -25,6 +25,7 @@
     </div>
     <div class="tab-nav">
       <button class="tab-link active" data-tab="colorizerTab" data-i18n="optionsTabColorizer"></button>
+      <button class="tab-link" data-tab="rowHighlighterTab" data-i18n="optionsTabRowHighlighter"></button>
       <button class="tab-link" data-tab="notepadTab" data-i18n="optionsTabNotepad"></button>
     </div>
     <div class="footer">
@@ -67,20 +68,6 @@
         </div>
       </div>
 
-      <div id="rowColorizerSection" class="row-colorizer">
-        <h3 data-i18n="rowColorizerTitle"></h3>
-        <label>
-          <span data-i18n="keywordLabel"></span>
-          <input type="text" id="rowKeyword" data-i18n="keywordPlaceholder">
-        </label>
-        <label>
-          <span data-i18n="rowColorLabel"></span>
-          <input type="color" id="rowColor" value="#ffff00">
-        </label>
-        <button id="saveRowColor" class="button button-primary" data-i18n="saveRowColorButton"></button>
-      </div>
-
-      <div id="toast" class="toast"></div>
 
       <div id="confirmModal" class="modal-overlay">
         <div class="modal-box">
@@ -113,6 +100,27 @@
       </div>
     </div>
 
+    <div id="rowHighlighterTab" class="tab-pane">
+      <h2 data-i18n="rowColorizerTitle"></h2>
+      <table class="settings-table" id="rowHighlighterTable">
+        <thead>
+          <tr>
+            <th data-i18n="rowTableKeyword"></th>
+            <th data-i18n="rowTableColor"></th>
+            <th data-i18n="settingsTableRemoveRow"></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="button-container">
+        <div class="button-group-right">
+          <button id="addRowKeyword" class="button button-primary" data-i18n="addKeywordButton"></button>
+          <button id="saveRowSettings" class="button button-primary" data-i18n="saveButton"></button>
+          <button id="clearRowSettings" class="button button-danger" data-i18n="resetButton"></button>
+        </div>
+      </div>
+    </div>
+
     <div id="notepadTab" class="tab-pane">
 
       <h2 data-i18n="notepadTitle"></h2>
@@ -121,8 +129,10 @@
         <div id="notepadPreview" class="notepad-preview"></div>
       </div>
       <div id="notepadStatus" class="notepad-status"></div>
-      
+
     </div>
+
+    <div id="toast" class="toast"></div>
 
   </div>
 
