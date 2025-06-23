@@ -3,6 +3,7 @@ let currentLang = "en";
 const supportedLangs = ["en", "uk"];
 let colorizerToggleEl;
 let colorizerSliderEl;
+let toggleWrapperEl;
 async function loadMessages(lang) {
   if (!supportedLangs.includes(lang)) {
     lang = "en";
@@ -59,11 +60,14 @@ function loadColorizerToggle() {
     if (colorizerToggleEl) {
       colorizerToggleEl.checked = data.colorizerEnabled !== false;
     }
-    if (colorizerSliderEl) {
-      requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      if (colorizerSliderEl) {
         colorizerSliderEl.classList.remove("no-transition");
-      });
-    }
+      }
+      if (toggleWrapperEl) {
+        toggleWrapperEl.classList.remove("loading");
+      }
+    });
   });
 }
 
@@ -73,10 +77,15 @@ function saveColorizerToggle() {
   chrome.storage.sync.set({ colorizerEnabled: enabled }, () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs && tabs.length > 0) {
-        chrome.tabs.sendMessage(tabs[0].id, {
-          action: "setColorizerEnabled",
-          enabled,
-        });
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          { action: "setColorizerEnabled", enabled },
+          () => {
+            if (chrome.runtime.lastError) {
+              console.debug("No receiver for setColorizerEnabled");
+            }
+          }
+        );
       }
     });
   });
@@ -93,8 +102,12 @@ async function initializePopup() {
   applyPopupTranslations();
   colorizerToggleEl = document.getElementById("colorizerToggle");
   colorizerSliderEl = document.querySelector("#colorizerToggle + .switch-slider");
+  toggleWrapperEl = document.querySelector(".toggle-wrapper");
   if (colorizerSliderEl) {
     colorizerSliderEl.classList.add("no-transition");
+  }
+  if (toggleWrapperEl) {
+    toggleWrapperEl.classList.add("loading");
   }
   if (colorizerToggleEl) {
     colorizerToggleEl.addEventListener("change", saveColorizerToggle);
