@@ -1,4 +1,5 @@
 import { initializeColorizer } from "../features/colorizer/colorizer.js";
+import { initializeRowHighlighter } from "../features/row-highlighter/row-highlighter.js";
 import { initializeNotepad } from "../features/notepad/notepad.js";
 
 let currentMessages = {};
@@ -319,6 +320,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   );
 
   initializeColorizer();
+  initializeRowHighlighter();
   initializeNotepad();
 
 });

@@ -78,34 +78,6 @@ function restoreStatusSettings() {
   });
 }
 
-function restoreRowColorSetting() {
-  chrome.storage.sync.get("rowColorSetting", (data) => {
-    const keywordInput = document.getElementById("rowKeyword");
-    const colorInput = document.getElementById("rowColor");
-    if (!keywordInput || !colorInput) return;
-    const setting = data.rowColorSetting || { keyword: "", color: "#ffff00" };
-    keywordInput.value = setting.keyword || "";
-    colorInput.value = setting.color || "#ffff00";
-  });
-}
-
-function saveRowColorSetting() {
-  const keywordInput = document.getElementById("rowKeyword");
-  const colorInput = document.getElementById("rowColor");
-  if (!keywordInput || !colorInput) return;
-  const setting = {
-    keyword: keywordInput.value.trim().toLowerCase(),
-    color: colorInput.value,
-  };
-  chrome.storage.sync.set({ rowColorSetting: setting }, () => {
-    if (chrome.runtime.lastError) {
-      console.error("RowColor Save Error", chrome.runtime.lastError);
-      showToast("toastErrorSaving");
-    } else {
-      showToast("toastSaved");
-    }
-  });
-}
 
 function addRow(
   statusName = "",
@@ -453,7 +425,6 @@ export function initializeColorizer() {
   const confirmResetTableBtn = document.getElementById("confirmDelete");
   const confirmDefaultModal = document.getElementById("resetConfirmModal");
   const confirmDefaultBtn = document.getElementById("confirmReset");
-  const saveRowColorBtn = document.getElementById("saveRowColor");
 
   if (addRowBtn) {
     addRowBtn.addEventListener("click", () => addRow());
@@ -489,11 +460,6 @@ export function initializeColorizer() {
     console.error("Colorizer: Missing Import Settings button or file input");
   }
 
-  if (saveRowColorBtn) {
-    saveRowColorBtn.addEventListener("click", saveRowColorSetting);
-  } else {
-    console.error("Colorizer: Missing Save Row Color button");
-  }
 
   if (confirmResetTableBtn && confirmResetTableModal) {
     confirmResetTableBtn.addEventListener("click", () => {
@@ -554,5 +520,4 @@ export function initializeColorizer() {
   }
 
   restoreStatusSettings();
-  restoreRowColorSetting();
 }

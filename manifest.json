@@ -46,6 +46,11 @@
       "matches": ["*://*.atlassian.net/*"],
       "js": ["features/colorizer/content.js"],
       "run_at": "document_idle"
+    },
+    {
+      "matches": ["*://*.atlassian.net/*"],
+      "js": ["features/row-highlighter/content.js"],
+      "run_at": "document_idle"
     }
   ],
    "author": "Vitalii Kopach"

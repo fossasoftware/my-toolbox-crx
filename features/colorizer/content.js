@@ -1,9 +1,8 @@
 let statusColorSettings = [];
-let rowColorSetting = null;
 const insertedRibbonClasses = new Set();
 
 function loadSettings(callback) {
-  chrome.storage.sync.get(["statusColorSettings", "rowColorSetting"], (data) => {
+  chrome.storage.sync.get("statusColorSettings", (data) => {
     if (chrome.runtime.lastError) {
       console.error("Colorizer: Error loading settings", chrome.runtime.lastError);
       statusColorSettings = [];
@@ -36,7 +35,6 @@ function loadSettings(callback) {
     statusColorSettings = Array.isArray(data.statusColorSettings)
       ? data.statusColorSettings
       : [];
-    rowColorSetting = data.rowColorSetting || null;
 
     if (callback) callback();
   });
@@ -197,21 +195,9 @@ function paintTicketButton() {
   }
 }
 
-function paintRows() {
-  if (!rowColorSetting || !rowColorSetting.keyword) return;
-  const keyword = rowColorSetting.keyword.toLowerCase();
-  const rows = document.querySelectorAll("div[role='row']");
-  rows.forEach((row) => {
-    if (row.innerText.toLowerCase().includes(keyword)) {
-      row.style.setProperty("background-color", rowColorSetting.color, "important");
-    }
-  });
-}
-
 function observeDOMChanges() {
   const observer = new MutationObserver(() => {
     paintStatuses();
-    paintRows();
   });
   observer.observe(document.body, {
     childList: true,
@@ -223,6 +209,5 @@ window.addEventListener("load", function () {
   loadSettings(function () {
     observeDOMChanges();
     paintStatuses();
-    paintRows();
   });
 });
