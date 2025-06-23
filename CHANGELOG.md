@@ -7,6 +7,11 @@ All notable changes to the "My ToolBox" Chrome extension will be documented in t
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (starting from this documented version).
 
+## [4.3.2] - 2025-06-23
+
+### Fixed
+- Reset Table now clears custom status colors without restoring defaults after refresh
+
 ## [4.3.1] - 2025-06-23
 
 ### Fixed

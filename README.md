@@ -10,7 +10,7 @@
 
 **My ToolBox** is a browser extension for Chrome designed to enhance the workflow for Service Center specialists, primarily focusing on Jira Cloud modifications and providing handy tools like a built-in notepad.
 
-**Version:** 4.3.1
+**Version:** 4.3.2
 **Author:** Vitalii Kopach
 
 ### Features
@@ -55,7 +55,7 @@
 
 **Мій Тулбокс** – це розширення для браузера Chrome, створене для покращення робочого процесу спеціалістів Сервісного Центру. Воно зосереджене на модифікаціях Jira Cloud та надає зручні інструменти, такі як вбудований нотатник.
 
-**Версія:** 4.3.1
+**Версія:** 4.3.2
 **Автор:** Віталій Копач
 
 ### Можливості

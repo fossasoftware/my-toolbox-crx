@@ -9,9 +9,7 @@ function loadSettings(callback) {
       return;
     }
 
-    statusColorSettings = data.statusColorSettings;
-
-    if (!Array.isArray(statusColorSettings) || statusColorSettings.length === 0) {
+    if (!data.hasOwnProperty("statusColorSettings")) {
       const defaultsUrl = chrome.runtime.getURL("data/defaultSettings.json");
       fetch(defaultsUrl)
         .then((response) => (response.ok ? response.json() : []))
@@ -32,6 +30,10 @@ function loadSettings(callback) {
         });
       return;
     }
+
+    statusColorSettings = Array.isArray(data.statusColorSettings)
+      ? data.statusColorSettings
+      : [];
 
     if (callback) callback();
   });
