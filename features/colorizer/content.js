@@ -1,5 +1,6 @@
 let statusColorSettings = [];
 let colorizerEnabled = true;
+let domObserver = null;
 
 function loadColorizerEnabled(callback) {
   chrome.storage.sync.get("colorizerEnabled", (data) => {
@@ -167,6 +168,46 @@ function paintStatuses() {
   paintTicketButton();
 }
 
+function clearStatuses() {
+  document
+    .querySelectorAll("span > div._1e0c1txw._1bsb1osq")
+    .forEach((el) => {
+      if (el.firstChild) {
+        el.firstChild.style.backgroundColor = "";
+        if (el.firstChild.firstChild) {
+          el.firstChild.firstChild.style.color = "";
+        }
+        el.firstChild.className = el.firstChild.className
+          .replace(/ribbon-[^\s]+/g, "")
+          .trim();
+      }
+    });
+  document.querySelectorAll("span._2rko1l7b").forEach((el) => {
+    el.style.backgroundColor = "";
+    const inner = el.querySelector("span, div");
+    if (inner) inner.style.color = "";
+    el.className = el.className.replace(/ribbon-[^\s]+/g, "").trim();
+  });
+  document
+    .querySelectorAll("td.status span, table.issue-table td.status span")
+    .forEach((span) => {
+      span.style.backgroundColor = "";
+      span.style.color = "";
+      span.className = span.className.replace(/ribbon-[^\s]+/g, "").trim();
+    });
+
+  const ticketButton = document.querySelector(
+    "button[data-testid='issue-field-status.ui.status-view.status-button.status-button']"
+  );
+  if (ticketButton) {
+    ticketButton.style.removeProperty("background-color");
+    ticketButton.style.removeProperty("color");
+    ticketButton.className = ticketButton.className
+      .replace(/ribbon-[^\s]+/g, "")
+      .trim();
+  }
+}
+
 function paintTicketButton() {
   let ticketButton = document.querySelector(
     "button[data-testid='issue-field-status.ui.status-view.status-button.status-button']"
@@ -204,13 +245,21 @@ function paintTicketButton() {
 }
 
 function observeDOMChanges() {
-  const observer = new MutationObserver(() => {
+  if (domObserver) return;
+  domObserver = new MutationObserver(() => {
     paintStatuses();
   });
-  observer.observe(document.body, {
+  domObserver.observe(document.body, {
     childList: true,
     subtree: true,
   });
+}
+
+function disconnectObserver() {
+  if (domObserver) {
+    domObserver.disconnect();
+    domObserver = null;
+  }
 }
 
 window.addEventListener("load", function () {
@@ -221,4 +270,19 @@ window.addEventListener("load", function () {
       paintStatuses();
     });
   });
+});
+
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.action === "setColorizerEnabled") {
+    colorizerEnabled = msg.enabled;
+    if (colorizerEnabled) {
+      loadSettings(() => {
+        observeDOMChanges();
+        paintStatuses();
+      });
+    } else {
+      disconnectObserver();
+      clearStatuses();
+    }
+  }
 });
