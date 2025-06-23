@@ -169,6 +169,15 @@ function applyTranslations() {
   if (notepadArea) {
     notepadArea.placeholder = getText("notepadPlaceholder");
   }
+
+  const importBtn = document.getElementById("importSettingsBtn");
+  if (importBtn) importBtn.title = getText("importButton");
+  const exportBtn = document.getElementById("exportSettingsBtn");
+  if (exportBtn) exportBtn.title = getText("exportButton");
+  const rhImportBtn = document.getElementById("rowHighlightImport");
+  if (rhImportBtn) rhImportBtn.title = getText("importButton");
+  const rhExportBtn = document.getElementById("rowHighlightExport");
+  if (rhExportBtn) rhExportBtn.title = getText("exportButton");
 }
 
 async function setLanguage(lang) {

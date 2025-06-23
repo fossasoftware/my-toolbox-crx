@@ -40,7 +40,7 @@
     <div class="tab-content">
       <div id="colorizerTab" class="tab-pane active">
       <h2 data-i18n="colorizerTitle"></h2>
-      <label class="feature-toggle"><input type="checkbox" id="colorizerEnabled" /> <span data-i18n="toggleColorizerLabel"></span></label>
+      <label class="feature-toggle switch"><input type="checkbox" id="colorizerEnabled" /><span class="slider"></span><span data-i18n="toggleColorizerLabel"></span></label>
       <table class="settings-table" id="statusTable">
         <thead>
           <tr>
@@ -59,14 +59,14 @@
       <div class="button-container">
         <div class="button-group-left">
             <input type="file" id="importFile" accept=".json" style="display: none;">
-            <button id="importSettingsBtn" class="button button-secondary" data-i18n="importButton"></button>
-            <button id="exportSettingsBtn" class="button button-secondary" data-i18n="exportButton"></button>
+            <button id="importSettingsBtn" class="button button-secondary icon-button"><img src="../icons/import.svg" alt="" /></button>
+            <button id="exportSettingsBtn" class="button button-secondary icon-button"><img src="../icons/export.svg" alt="" /></button>
         </div>
         <div class="button-group-right">
             <button id="addRow" class="button button-primary" data-i18n="addRowButton"></button>
-            <button id="saveSettings" class="button button-primary" data-i18n="saveButton"></button>
-            <button id="resetStatusSettings" class="button button-secondary" data-i18n="defaultButton"></button>
             <button id="clearAll" class="button button-danger" data-i18n="resetButton"></button>
+            <button id="resetStatusSettings" class="button button-secondary" data-i18n="defaultButton"></button>
+            <button id="saveSettings" class="button button-primary" data-i18n="saveButton"></button>
         </div>
       </div>
 
@@ -103,7 +103,7 @@
 
     <div id="rowHighlighterTab" class="tab-pane">
       <h2 data-i18n="rowHighlighterTitle"></h2>
-      <label class="feature-toggle"><input type="checkbox" id="rowHighlighterEnabled" /> <span data-i18n="toggleRowHighlighterLabel"></span></label>
+      <label class="feature-toggle switch"><input type="checkbox" id="rowHighlighterEnabled" /><span class="slider"></span><span data-i18n="toggleRowHighlighterLabel"></span></label>
       <table class="settings-table" id="rowHighlightTable">
         <thead>
           <tr>
@@ -118,13 +118,13 @@
       <div class="button-container">
         <div class="button-group-left">
             <input type="file" id="rowHighlightImportFile" accept=".json" style="display: none;">
-            <button id="rowHighlightImport" class="button button-secondary" data-i18n="importButton"></button>
-            <button id="rowHighlightExport" class="button button-secondary" data-i18n="exportButton"></button>
+            <button id="rowHighlightImport" class="button button-secondary icon-button"><img src="../icons/import.svg" alt="" /></button>
+            <button id="rowHighlightExport" class="button button-secondary icon-button"><img src="../icons/export.svg" alt="" /></button>
         </div>
         <div class="button-group-right">
             <button id="rowHighlightAdd" class="button button-primary" data-i18n="addKeywordButton"></button>
-            <button id="rowHighlightSave" class="button button-primary" data-i18n="saveButton"></button>
             <button id="rowHighlightReset" class="button button-danger" data-i18n="resetButton"></button>
+            <button id="rowHighlightSave" class="button button-primary" data-i18n="saveButton"></button>
         </div>
       </div>
     </div>

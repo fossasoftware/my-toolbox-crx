@@ -550,6 +550,42 @@ a:hover {
   font-size: var(--font-size-base);
 }
 .feature-toggle input {
+  display: none;
+}
+.feature-toggle .slider {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background-color: var(--border-color);
+  border-radius: 10px;
   margin-right: var(--spacing-sm);
+  transition: background-color var(--transition-fast);
+}
+.feature-toggle .slider::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background-color: var(--light-text);
+  border-radius: 50%;
+  transition: transform var(--transition-fast);
+}
+.feature-toggle input:checked + .slider {
+  background-color: var(--primary-color);
+}
+.feature-toggle input:checked + .slider::before {
+  transform: translateX(16px);
+}
+
+.icon-button {
+  padding: 5px;
+  width: var(--input-height);
+}
+.icon-button img,
+.icon-button svg {
+  width: 18px;
+  height: 18px;
 }
 
