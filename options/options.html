@@ -9,22 +9,35 @@
 </head>
 <body>
 
-  <div class="options-header">
-    <h1 data-i18n="optionsTitle"></h1>
-    <div class="language-buttons">
-      <div class="lang-highlight"></div>
-      <button class="lang-option" data-lang="en">🇬🇧 EN</button>
-      <button class="lang-option" data-lang="uk">🇺🇦 УК</button>
+  <div id="sideRibbon" class="side-ribbon">
+    <button id="menuToggle" class="menu-toggle">☰</button>
+    <div class="app-vertical" data-i18n="appName"></div>
+  </div>
+
+  <nav id="sideMenu" class="side-menu">
+    <div class="options-header">
+      <h1 data-i18n="menuLabel"></h1>
+      <div class="language-buttons">
+        <div class="lang-highlight"></div>
+        <button class="lang-option" data-lang="en">🇬🇧 EN</button>
+        <button class="lang-option" data-lang="uk">🇺🇦 УК</button>
+      </div>
     </div>
-  </div>
+    <div class="tab-nav">
+      <button class="tab-link active" data-tab="colorizerTab" data-i18n="optionsTabColorizer"></button>
+      <button class="tab-link" data-tab="notepadTab" data-i18n="optionsTabNotepad"></button>
+    </div>
+    <div class="footer">
+      <p data-i18n="footerText"></p>
+      <p id="appVersion"></p>
+    </div>
+  </nav>
 
-  <div class="tab-nav">
-    <button class="tab-link active" data-tab="colorizerTab" data-i18n="optionsTabColorizer"></button>
-    <button class="tab-link" data-tab="notepadTab" data-i18n="optionsTabNotepad"></button>
-  </div>
+  <div class="page-container">
 
-  <div class="tab-content">
-    <div id="colorizerTab" class="tab-pane active">
+    <div class="tab-content">
+      <div id="colorizerTab" class="tab-pane active">
+      <h2 data-i18n="colorizerTitle"></h2>
       <table class="settings-table" id="statusTable">
         <thead>
           <tr>
@@ -100,9 +113,6 @@
 
   </div>
 
-  <div class="footer">
-    <p data-i18n="footerText"></p>
-    <p id="appVersion"></p>
   </div>
 
   <script src="../libs/marked.min.js"></script>

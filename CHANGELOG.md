@@ -3,8 +3,18 @@
 All notable changes to the "My ToolBox" Chrome extension will be documented in this file.
 
 
+
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (starting from this documented version).
+
+## [4.3.0] - 2025-06-22
+
+### Added
+
+- Collapsible side menu with vertical app title and toggle button
+- Navigation tabs moved into the side menu
+- Animated slide-in/out behavior for opening and closing the menu
+- Footer and language selector relocated inside the menu
 
 ## [4.2.4] - 2025-06-21
 

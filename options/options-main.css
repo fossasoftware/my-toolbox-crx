@@ -410,3 +410,135 @@ a:hover {
   gap: var(--spacing-md);
   margin-top: var(--spacing-xl);
 }
+
+/* Side menu styles */
+.side-ribbon {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 64px;
+  background-color: var(--background-medium);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10000;
+}
+
+.side-ribbon .app-vertical {
+  margin-top: auto;
+  padding-top: 20px;
+  padding-bottom: 40px;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-align: center;
+  text-transform: uppercase;
+  font-family: var(--font-heading);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 420px;
+  background-color: var(--background-medium);
+  border-right: 1px solid var(--border-color);
+  padding: var(--spacing-xl) var(--spacing-md) var(--spacing-xl) 80px;
+  box-shadow: var(--box-shadow-table);
+  transform: translateX(calc(-100% + 64px));
+  transition: transform var(--transition-medium);
+  display: flex;
+  flex-direction: column;
+  z-index: 9999;
+}
+
+.side-menu.animating-open {
+  animation: menu-slide-in 0.3s forwards;
+}
+
+.side-menu.animating-close {
+  animation: menu-slide-out 0.3s forwards;
+}
+
+.side-menu.open {
+  transform: translateX(0);
+}
+
+.menu-toggle {
+  background-color: var(--primary-color);
+  color: var(--light-text);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-top: var(--spacing-xl);
+  font-size: 26px; /* larger burger icon */
+  padding-bottom: 2px; /* small offset for nicer alignment */
+}
+
+.page-container {
+  margin-left: 64px;
+  transition: margin-left var(--transition-medium);
+}
+
+.page-container.shifted {
+  margin-left: 420px;
+}
+
+.side-menu .tab-nav {
+  display: flex;
+  flex-direction: column;
+  border-bottom: none;
+  width: calc(100% - 80px);
+  margin-bottom: var(--spacing-xl);
+}
+
+.side-menu .tab-link {
+  border-bottom: none;
+  border-left: 3px solid transparent;
+  width: 100%;
+  text-align: left;
+}
+
+.side-menu .tab-link.active {
+  border-left-color: var(--primary-color);
+}
+
+
+.side-menu .footer {
+  margin-top: auto;
+  width: 100%;
+  padding-bottom: var(--spacing-xl);
+}
+
+/* smaller title size when header is inside the side menu */
+.side-menu .options-header h1 {
+  font-size: var(--font-size-h2);
+}
+
+@keyframes menu-slide-in {
+  from {
+    transform: translateX(calc(-100% + 64px));
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes menu-slide-out {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-100% + 64px));
+  }
+}

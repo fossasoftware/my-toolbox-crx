@@ -183,6 +183,9 @@ async function setLanguage(lang) {
 
 document.addEventListener("DOMContentLoaded", async () => {
   const languageButtonsContainer = document.querySelector(".language-buttons");
+  const menuToggle = document.getElementById("menuToggle");
+  const sideMenu = document.getElementById("sideMenu");
+  const pageContainer = document.querySelector(".page-container");
   const confirmResetTableModal = document.getElementById("confirmModal");
   const cancelResetTableBtn = document.getElementById("cancelDelete");
   const confirmDefaultModal = document.getElementById("resetConfirmModal");
@@ -215,6 +218,35 @@ document.addEventListener("DOMContentLoaded", async () => {
   const versionEl = document.getElementById("appVersion");
   if (versionEl && manifest && manifest.version) {
     versionEl.textContent = getText("versionText", manifest.version);
+  }
+
+  if (menuToggle && sideMenu) {
+    menuToggle.addEventListener("click", () => {
+      if (sideMenu.classList.contains("open")) {
+        sideMenu.classList.add("animating-close");
+        if (pageContainer) {
+          pageContainer.classList.remove("shifted");
+        }
+        sideMenu.addEventListener(
+          "animationend",
+          () => {
+            sideMenu.classList.remove("animating-close");
+            sideMenu.classList.remove("open");
+          },
+          { once: true }
+        );
+      } else {
+        sideMenu.classList.add("open", "animating-open");
+        if (pageContainer) {
+          pageContainer.classList.add("shifted");
+        }
+        sideMenu.addEventListener(
+          "animationend",
+          () => sideMenu.classList.remove("animating-open"),
+          { once: true }
+        );
+      }
+    });
   }
 
   if (languageButtonsContainer) {

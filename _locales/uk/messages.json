@@ -45,6 +45,7 @@
   "languageLabel": { "message": "Мова" },
   "optionsTabColorizer": { "message": "Колоризатор Статусів" },
   "optionsTabNotepad": { "message": "Нотатник" },
+  "colorizerTitle": { "message": "Колоризатор Статусів" },
   "notepadTitle": { "message": "Мої Нотатки" },
   "notepadPlaceholder": { "message": "Друкуйте нотатки тут... Вміст зберігається автоматично." },
   "notepadStatusSaving": { "message": "Збереження..." },
@@ -56,6 +57,7 @@
   "toastImportErrorFileRead": { "message": "Помилка читання файлу." },
   "toastImportErrorJsonParse": { "message": "Помилка розбору файлу. Переконайтеся, що це валідний JSON." },
   "toastImportErrorValidation": { "message": "Помилка імпорту. Невірний формат налаштувань у файлі." },
-  "toastImportErrorSave": { "message": "Помилка збереження імпортованих налаштувань." }
+  "toastImportErrorSave": { "message": "Помилка збереження імпортованих налаштувань." },
+  "menuLabel": { "message": "Меню" }
   ,"versionText": { "message": "Версія $VERSION$", "placeholders": { "version": { "content": "$1" } } }
 }

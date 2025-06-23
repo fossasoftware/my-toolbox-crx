@@ -45,6 +45,7 @@
   "languageLabel": { "message": "Language" },
   "optionsTabColorizer": { "message": "Status Colorizer" },
   "optionsTabNotepad": { "message": "Notepad" },
+  "colorizerTitle": { "message": "Status Colorizer" },
   "notepadTitle": { "message": "My Notes" },
   "notepadPlaceholder": { "message": "Type your notes here... Content is saved automatically." },
   "notepadStatusSaving": { "message": "Saving..." },
@@ -56,6 +57,7 @@
   "toastImportErrorFileRead": { "message": "Error reading file." },
   "toastImportErrorJsonParse": { "message": "Error parsing file. Make sure it's a valid JSON." },
   "toastImportErrorValidation": { "message": "Import failed. Invalid settings format in file." },
-  "toastImportErrorSave": { "message": "Error saving imported settings." }
+  "toastImportErrorSave": { "message": "Error saving imported settings." },
+  "menuLabel": { "message": "Menu" }
   ,"versionText": { "message": "Version $VERSION$", "placeholders": { "version": { "content": "$1" } } }
 }
