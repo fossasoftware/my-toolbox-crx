@@ -550,17 +550,10 @@ a:hover {
   overflow: hidden;
   min-width: var(--input-height);
   max-width: var(--input-height);
-  height: var(--input-height);
-  border-radius: 4px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: max-width 280ms var(--md-ease), box-shadow 280ms var(--md-ease);
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
+  transition: max-width 280ms var(--md-ease);
 }
 .icon-button:hover {
   max-width: 240px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 .icon-button img,
 .icon-button svg {
