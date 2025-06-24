@@ -73,6 +73,7 @@
   --transition-fast: all 0.25s ease-in-out;
   --transition-medium: all 0.3s ease-in-out;
   --row-animation-duration: 0.3s;
+  --md-ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
 * {
   box-sizing: border-box;
@@ -550,13 +551,16 @@ a:hover {
   min-width: var(--input-height);
   max-width: var(--input-height);
   height: var(--input-height);
-  transition: max-width var(--transition-medium);
+  border-radius: 4px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: max-width 280ms var(--md-ease), box-shadow 280ms var(--md-ease);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
 }
 .icon-button:hover {
   max-width: 240px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 .icon-button img,
 .icon-button svg {
@@ -568,7 +572,7 @@ a:hover {
   opacity: 0;
   margin-left: 0;
   white-space: nowrap;
-  transition: margin-left var(--transition-medium), max-width var(--transition-medium), opacity var(--transition-medium);
+  transition: margin-left 280ms var(--md-ease), max-width 280ms var(--md-ease), opacity 180ms var(--md-ease);
   pointer-events: none;
 }
 .icon-button:hover .btn-label {
