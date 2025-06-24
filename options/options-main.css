@@ -548,8 +548,8 @@ a:hover {
   --expanded-width: 180px;
   padding: 5px;
   overflow: hidden;
-  max-width: var(--input-height);
-  transition: max-width var(--transition-medium);
+  width: var(--input-height);
+  transition: width var(--transition-medium);
   white-space: nowrap;
 }
 .icon-button img,
@@ -565,7 +565,7 @@ a:hover {
   pointer-events: none;
 }
 .icon-button:hover {
-  max-width: var(--expanded-width);
+  width: var(--expanded-width);
 }
 .icon-button:hover .btn-label {
   opacity: 1;
