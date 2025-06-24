@@ -1,35 +1,5 @@
-@font-face {
-  font-family: "Sigma Sans";
-  font-style: normal;
-  font-weight: 400;
-  src: url("../fonts/SigmaSans-Regular.woff2") format("woff2"),
-    url("../fonts/SigmaSans-Regular.woff") format("woff");
-  font-display: swap;
-}
-@font-face {
-  font-family: "Sigma Sans";
-  font-style: oblique;
-  font-weight: 400;
-  src: url("../fonts/SigmaSans-Oblique.woff2") format("woff2"),
-    url("../fonts/SigmaSans-Oblique.woff") format("woff");
-  font-display: swap;
-}
-@font-face {
-  font-family: "Sigma Sans Condensed";
-  font-style: normal;
-  font-weight: 400;
-  src: url("../fonts/SigmaSansCondensed-Regular.woff2") format("woff2"),
-    url("../fonts/SigmaSansCondensed-Regular.woff") format("woff");
-  font-display: swap;
-}
-@font-face {
-  font-family: "Sigma Sans ExtraCondensed";
-  font-style: normal;
-  font-weight: 700;
-  src: url("../fonts/SigmaSansExtraCondensed-Bold.woff2") format("woff2"),
-    url("../fonts/SigmaSansExtraCondensed-Bold.woff") format("woff");
-  font-display: swap;
-}
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined");
 
 :root {
   --primary-color: #e30613;
@@ -46,8 +16,8 @@
   --button-secondary-bg: #868b8d;
   --button-secondary-hover: #6e7477;
   --button-secondary-text: #ffffff;
-  --font-body: "Sigma Sans", "Roboto Condensed", sans-serif;
-  --font-heading: "Sigma Sans Condensed", "Oswald", sans-serif;
+  --font-body: "Roboto", sans-serif;
+  --font-heading: "Roboto", sans-serif;
   --font-size-base: 14px;
   --font-size-h1: 36px;
   --font-size-h2: 28px;
@@ -572,5 +542,19 @@ a:hover {
   max-width: 200px;
   opacity: 1;
   margin-left: 6px;
+}
+
+md-filled-button.danger {
+  --md-filled-button-container-color: var(--danger-color);
+  --md-filled-button-label-text-color: var(--light-text);
+}
+md-filled-button.danger:hover {
+  --md-filled-button-container-color: var(--danger-hover);
+}
+
+md-filled-button .material-symbols-outlined,
+md-outlined-button .material-symbols-outlined {
+  font-size: 18px;
+  margin-right: 4px;
 }
 

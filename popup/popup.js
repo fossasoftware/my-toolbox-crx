@@ -64,15 +64,15 @@ async function initializePopup() {
   const rowHighlighterToggle = document.getElementById("rowHighlighterTogglePopup");
   chrome.storage.sync.get(["colorizerEnabled", "rowHighlighterEnabled"], (data) => {
     if (colorizerToggle) {
-      colorizerToggle.checked = data.hasOwnProperty("colorizerEnabled") ? data.colorizerEnabled : true;
+      colorizerToggle.selected = data.hasOwnProperty("colorizerEnabled") ? data.colorizerEnabled : true;
       colorizerToggle.addEventListener("change", () => {
-        chrome.storage.sync.set({ colorizerEnabled: colorizerToggle.checked });
+        chrome.storage.sync.set({ colorizerEnabled: colorizerToggle.selected });
       });
     }
     if (rowHighlighterToggle) {
-      rowHighlighterToggle.checked = data.hasOwnProperty("rowHighlighterEnabled") ? data.rowHighlighterEnabled : true;
+      rowHighlighterToggle.selected = data.hasOwnProperty("rowHighlighterEnabled") ? data.rowHighlighterEnabled : true;
       rowHighlighterToggle.addEventListener("change", () => {
-        chrome.storage.sync.set({ rowHighlighterEnabled: rowHighlighterToggle.checked });
+        chrome.storage.sync.set({ rowHighlighterEnabled: rowHighlighterToggle.selected });
       });
     }
   });

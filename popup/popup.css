@@ -1,31 +1,5 @@
-@font-face {
-  font-family: "Sigma Sans";
-  font-style: normal;
-  font-weight: 400;
-  src: url("../fonts/SigmaSans-Regular.woff2") format("woff2"), url("../fonts/SigmaSans-Regular.woff") format("woff");
-  font-display: swap;
-}
-@font-face {
-  font-family: "Sigma Sans";
-  font-style: oblique;
-  font-weight: 400;
-  src: url("../fonts/SigmaSans-Oblique.woff2") format("woff2"), url("../fonts/SigmaSans-Oblique.woff") format("woff");
-  font-display: swap;
-}
-@font-face {
-  font-family: "Sigma Sans Condensed";
-  font-style: normal;
-  font-weight: 400;
-  src: url("../fonts/SigmaSansCondensed-Regular.woff2") format("woff2"), url("../fonts/SigmaSansCondensed-Regular.woff") format("woff");
-  font-display: swap;
-}
-@font-face {
-  font-family: "Sigma Sans ExtraCondensed";
-  font-style: normal;
-  font-weight: 700;
-  src: url("../fonts/SigmaSansExtraCondensed-Bold.woff2") format("woff2"), url("../fonts/SigmaSansExtraCondensed-Bold.woff") format("woff");
-  font-display: swap;
-}
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined");
 
 :root {
   --primary-color: #e30613;
@@ -35,8 +9,8 @@
   --border-color: #d4d6dd;
   --background-light: #ffffff;
   --background-medium: #f9fafb;
-  --font-body: "Sigma Sans", "Roboto Condensed", sans-serif;
-  --font-heading: "Sigma Sans Condensed", "Oswald", sans-serif;
+  --font-body: "Roboto", sans-serif;
+  --font-heading: "Roboto", sans-serif;
   --font-size-base: 14px;
   --font-size-sm: 12px;
   --font-size-button: 11px;
@@ -184,4 +158,26 @@ p {
   0% { transform: translateX(16px); }
   50% { transform: translateX(-2px); }
   100% { transform: translateX(0); }
+}
+
+md-switch {
+  margin-bottom: var(--spacing-lg);
+}
+
+md-filled-button {
+  width: 100%;
+  margin-top: var(--spacing-md);
+}
+
+md-filled-button .material-symbols-outlined {
+  font-size: 18px;
+  margin-right: 4px;
+}
+
+md-filled-button.danger {
+  --md-filled-button-container-color: var(--primary-color);
+  --md-filled-button-label-text-color: var(--light-text);
+}
+md-filled-button.danger:hover {
+  --md-filled-button-container-color: var(--primary-hover);
 }
