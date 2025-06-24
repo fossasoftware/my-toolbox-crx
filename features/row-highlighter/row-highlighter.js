@@ -1,4 +1,4 @@
-import { getText, showToast } from "../../options/options-main.js";
+import { getText, showToast, showValidationErrorModal } from "../../options/options-main.js";
 
 function updateButtonVisibility() {
   const tbody = document.querySelector("#rowHighlightTable tbody");
@@ -71,23 +71,39 @@ function addRow(keyword = "", color = "#ffffff") {
 function saveHighlightSettings() {
   const rows = document.querySelectorAll("#rowHighlightTable tbody tr");
   const settings = [];
+  const uniqueKeywords = new Set();
   const colorRegex = /^#[0-9a-f]{6}$/i;
-  for (const [index, row] of rows.entries()) {
+  let rowIndex = 0;
+  for (const row of rows) {
+    const idx = rowIndex++;
     const keywordInput = row.cells[0]?.querySelector('input[type="text"]');
     const colorInput = row.cells[1]?.querySelector('input[type="color"]');
     if (!keywordInput || !colorInput) {
-      showToast("toastErrorGeneric");
+      showValidationErrorModal("errorInternalRow", String(idx + 1));
       return;
     }
     const keyword = keywordInput.value.trim();
     const color = colorInput.value;
     if (!keyword) {
-      showToast("toastErrorGeneric");
+      showValidationErrorModal("errorKeywordEmpty", String(idx + 1));
       keywordInput.focus();
       return;
     }
+    const lowered = keyword.toLowerCase();
+    if (uniqueKeywords.has(lowered)) {
+      showValidationErrorModal("errorDuplicateKeyword", [
+        String(idx + 1),
+        keyword,
+      ]);
+      keywordInput.focus();
+      return;
+    }
+    uniqueKeywords.add(lowered);
     if (!colorRegex.test(color)) {
-      showToast("toastErrorGeneric");
+      showValidationErrorModal("errorInvalidColor", [
+        String(idx + 1),
+        color,
+      ]);
       colorInput.focus();
       return;
     }
@@ -99,7 +115,10 @@ function saveHighlightSettings() {
         "Row Highlighter: Error saving settings",
         chrome.runtime.lastError
       );
-      showToast("toastErrorSaving");
+      showValidationErrorModal(
+        "errorSavingSettings",
+        chrome.runtime.lastError.message
+      );
     } else {
       showToast("toastSaved");
     }
