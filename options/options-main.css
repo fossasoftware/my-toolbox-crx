@@ -545,12 +545,30 @@ a:hover {
 
 
 .icon-button {
+  --expanded-width: 180px;
   padding: 5px;
-  width: var(--input-height);
+  overflow: hidden;
+  max-width: var(--input-height);
+  transition: max-width var(--transition-medium);
+  white-space: nowrap;
 }
 .icon-button img,
 .icon-button svg {
   width: 18px;
   height: 18px;
+}
+.icon-button .btn-label {
+  margin-left: 6px;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity var(--transition-medium), transform var(--transition-medium);
+  pointer-events: none;
+}
+.icon-button:hover {
+  max-width: var(--expanded-width);
+}
+.icon-button:hover .btn-label {
+  opacity: 1;
+  transform: translateX(0);
 }
 
