@@ -1,4 +1,12 @@
 let highlightSettings = [];
+let rowHighlighterEnabled = true;
+
+function loadRowHighlighterEnabled(callback) {
+  chrome.storage.sync.get("rowHighlighterEnabled", (data) => {
+    rowHighlighterEnabled = data.hasOwnProperty("rowHighlighterEnabled") ? data.rowHighlighterEnabled : true;
+    if (callback) callback();
+  });
+}
 
 function loadRowHighlightSettings(callback) {
   chrome.storage.sync.get("rowHighlightSettings", (data) => {
@@ -29,8 +37,12 @@ function observe() {
 }
 
 window.addEventListener("load", () => {
-  loadRowHighlightSettings(() => {
-    observe();
-    highlightRows();
+  loadRowHighlighterEnabled(() => {
+    if (!rowHighlighterEnabled) return;
+    loadRowHighlightSettings(() => {
+      observe();
+      highlightRows();
+    });
   });
 });
+

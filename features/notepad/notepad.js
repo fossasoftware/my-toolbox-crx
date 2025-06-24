@@ -20,21 +20,14 @@ function loadNotepadContent() {
 
 function saveNotepadContent() {
   const notepadArea = document.getElementById('notepadArea');
-  const statusDiv = document.getElementById('notepadStatus');
-  if (notepadArea && statusDiv) {
+  if (notepadArea) {
     const content = notepadArea.value;
-    statusDiv.textContent = getText('notepadStatusSaving');
     chrome.storage.sync.set({ notepadContent: content }, () => {
       if (chrome.runtime.lastError) {
-        console.error("Notepad: Error saving content:", chrome.runtime.lastError);
-        statusDiv.textContent = getText('toastErrorSaving');
+        console.error('Notepad: Error saving content:', chrome.runtime.lastError);
+        showToast('toastErrorSaving');
       } else {
-        statusDiv.textContent = getText('notepadStatusSaved');
-        setTimeout(() => {
-          if (statusDiv.textContent === getText('notepadStatusSaved')) {
-            statusDiv.textContent = '';
-          }
-        }, 2000);
+        showToast('notepadStatusSaved');
       }
     });
   }
@@ -42,8 +35,7 @@ function saveNotepadContent() {
 
 function debouncedSaveNotepad() {
   clearTimeout(notepadSaveTimeout);
-  const statusDiv = document.getElementById('notepadStatus');
-  if (statusDiv) statusDiv.textContent = getText('notepadStatusSaving');
+  showToast('notepadStatusSaving');
   notepadSaveTimeout = setTimeout(saveNotepadContent, NOTEPAD_SAVE_DELAY);
 }
 

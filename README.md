@@ -10,7 +10,7 @@
 
 **My ToolBox** is a browser extension for Chrome designed to enhance the workflow for Service Center specialists, primarily focusing on Jira Cloud modifications and providing handy tools like a built-in notepad.
 
-**Version:** 4.4.0
+**Version:** 4.4.1
 **Author:** Vitalii Kopach
 
 ### Features
@@ -20,6 +20,10 @@
   * Apply optional animated "ribbon" effects to statuses.
   * Configure primary and secondary colors for animations.
   * Import and Export your color presets as JSON files for easy sharing or backup.
+* **Row Highlighter:**
+  * Highlight table rows in Jira issue lists when a word or phrase matches.
+  * Choose a custom highlight color for each keyword.
+  * Import and Export your highlight rules as JSON.
 * **Notepad:**
   * A simple, integrated notepad accessible from the extension's options page.
   * Supports Markdown formatting with a live preview.
@@ -49,13 +53,21 @@
 4. Select your preferred language (EN/UK) using the toggle switch in the options page header.
 5. The Status Colorizer will automatically apply colors to Jira statuses when you browse matching Atlassian domains (`*://*.atlassian.net/*`). Changes might require a page refresh to take effect initially.
 
+### Technical Details
+
+* Built on **Manifest V3** with content scripts (`colorizer-worker.js` and `row-highlighter-worker.js`) that inject CSS into Atlassian pages.
+* All user settings are stored via `chrome.storage.sync` for automatic cross-device synchronization.
+* The notepad preview relies on [`marked.js`](libs/marked.min.js) and sanitizes HTML output with [`DOMPurify`](libs/purify.min.js).
+* Import and export actions simply read or write JSON files containing your configuration.
+* Source files for each tool reside inside the `features` directory.
+
 ---
 
 ## Українська
 
 **Мій Тулбокс** – це розширення для браузера Chrome, створене для покращення робочого процесу спеціалістів Сервісного Центру. Воно зосереджене на модифікаціях Jira Cloud та надає зручні інструменти, такі як вбудований нотатник.
 
-**Версія:** 4.4.0
+**Версія:** 4.4.1
 **Автор:** Віталій Копач
 
 ### Можливості
@@ -65,6 +77,10 @@
   * Застосовуйте опціональні анімовані ефекти "стрічки" до статусів.
   * Налаштуйте основний та вторинний кольори для анімацій.
   * Імпортуйте та експортуйте ваші налаштування кольорів у форматі JSON для легкого обміну чи резервного копіювання.
+* **Підсвічування Рядків:**
+  * Виділяйте рядки у списках Jira, якщо вони містять задані слова чи фрази.
+  * Для кожного слова можна обрати індивідуальний колір підсвічування.
+  * Підтримується імпорт та експорт правил у форматі JSON.
 * **Нотатник:**
   * Простий, інтегрований нотатник, доступний зі сторінки налаштувань розширення.
   * Підтримує форматування Markdown з живим попереднім переглядом.
@@ -90,6 +106,15 @@
 2. Натисніть "Відкрити налаштування" у спливаючому вікні. Або ж перейдіть до `chrome://extensions/`, знайдіть "Мій Тулбокс", натисніть "Деталі", а потім "Параметри розширення".
 3. Використовуйте вкладки на сторінці налаштувань:
     * **Колоризатор Статусів:** Додавайте/редагуйте/видаляйте правила для статусів за допомогою таблиці. Вибирайте кольори фону/тексту, вмикайте/вимикайте анімацію та встановлюйте її кольори. Використовуйте кнопки "Імпорт" та "Експорт" для керування пресетами. Натисніть "Зберегти" для застосування налаштувань. Використовуйте "За замовчуванням" для відновлення типового набору кольорів або "Скинути" для очищення таблиці.
+    * **Підсвічування Рядків:** Додавайте ключові слова та обирайте колір, яким буде підсвічено рядок, якщо воно зустрінеться. Можна імпортувати та експортувати правила у форматі JSON.
     * **Нотатник:** Вводьте нотатки, використовуючи Markdown, у лівій панелі. Живий попередній перегляд з'явиться у правій панелі. Вміст автоматично зберігається у сховищі синхронізації вашого браузера.
 4. Виберіть бажану мову (EN/UK) за допомогою перемикача у заголовку сторінки налаштувань.
 5. Колоризатор Статусів автоматично застосовуватиме кольори до статусів Jira під час перегляду відповідних доменів Atlassian (`*://*.atlassian.net/*`). Зміни можуть потребувати оновлення сторінки для початкового застосування.
+
+### Технічні деталі
+
+* Розширення побудоване на основі **Manifest V3** та використовує скрипти `colorizer-worker.js` і `row-highlighter-worker.js` як контент-скрипти для вставки стилів на сторінки Atlassian.
+* Усі налаштування зберігаються через `chrome.storage.sync`, тому вони синхронізуються між вашими браузерами.
+* Для попереднього перегляду Markdown застосовується [`marked.js`](libs/marked.min.js), а результуючий HTML очищається за допомогою [`DOMPurify`](libs/purify.min.js).
+* Імпорт та експорт правил здійснюється через JSON‑файли з вашими налаштуваннями.
+* Вихідні файли кожного інструменту знаходяться у папці `features`.

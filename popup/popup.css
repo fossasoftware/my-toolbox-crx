@@ -45,7 +45,7 @@
   --spacing-lg: 16px;
   --border-radius-button: 30px;
   --box-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --transition-fast: all 0.15s ease-in-out;
+  --transition-fast: all 0.25s ease-in-out;
   --input-height: 32px;
 }
 * {
@@ -125,4 +125,63 @@ p {
 .button.button-primary:active {
   background-color: #cc0511;
   border-color: #cc0511;
+}
+
+.feature-toggle {
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--font-size-base);
+}
+.feature-toggle input {
+  display: none;
+}
+.feature-toggle .slider {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background-color: var(--border-color);
+  border-radius: 10px;
+  margin-left: var(--spacing-sm);
+  transition: background-color var(--transition-fast);
+}
+.feature-toggle .slider::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background-color: var(--light-text);
+  border-radius: 50%;
+  transition: transform var(--transition-fast);
+}
+
+.feature-toggle input:checked + .slider::before {
+  animation: toggle-on 0.25s forwards;
+  transform: translateX(16px);
+}
+
+.feature-toggle input:checked + .slider {
+  background-color: var(--primary-color);
+}
+
+.feature-toggle input:not(:checked) + .slider::before {
+  animation: toggle-off 0.25s forwards;
+  transform: translateX(0);
+}
+
+.feature-toggle input:not(:checked) + .slider {
+  background-color: var(--border-color);
+}
+@keyframes toggle-on {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(18px); }
+  100% { transform: translateX(16px); }
+}
+@keyframes toggle-off {
+  0% { transform: translateX(16px); }
+  50% { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
 }

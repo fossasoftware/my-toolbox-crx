@@ -40,7 +40,7 @@
     <div class="tab-content">
       <div id="colorizerTab" class="tab-pane active">
       <h2 data-i18n="colorizerTitle"></h2>
-      <table class="settings-table" id="statusTable">
+      <table class="colorizer-table" id="statusTable">
         <thead>
           <tr>
             <th scope="col" data-i18n="settingsTableStatus"></th>
@@ -57,15 +57,15 @@
 
       <div class="button-container">
         <div class="button-group-left">
-            <input type="file" id="importFile" accept=".json" style="display: none;">
-            <button id="importSettingsBtn" class="button button-secondary" data-i18n="importButton"></button>
-            <button id="exportSettingsBtn" class="button button-secondary" data-i18n="exportButton"></button>
+            <button id="addRow" class="button button-primary icon-button"><img src="../img/add.svg" alt="" /></button>
+            <button id="saveSettings" class="button button-primary icon-button"><img src="../img/save.svg" alt="" /></button>
+            <button id="clearAll" class="button button-danger icon-button"><img src="../img/reset.svg" alt="" /></button>
+            <button id="resetStatusSettings" class="button button-secondary" data-i18n="defaultButton"></button>
         </div>
         <div class="button-group-right">
-            <button id="addRow" class="button button-primary" data-i18n="addRowButton"></button>
-            <button id="saveSettings" class="button button-primary" data-i18n="saveButton"></button>
-            <button id="resetStatusSettings" class="button button-secondary" data-i18n="defaultButton"></button>
-            <button id="clearAll" class="button button-danger" data-i18n="resetButton"></button>
+            <input type="file" id="importFile" accept=".json" style="display: none;">
+            <button id="importSettingsBtn" class="button button-secondary icon-button"><img src="../img/export.svg" alt="" /></button>
+            <button id="exportSettingsBtn" class="button button-secondary icon-button"><img src="../img/import.svg" alt="" /></button>
         </div>
       </div>
 
@@ -89,20 +89,11 @@
            </div>
          </div>
        </div>
-      <div id="validationErrorModal" class="modal-overlay">
-        <div class="modal-box">
-          <h5 data-i18n="validationErrorTitle"></h5>
-          <p id="validationErrorMessage"></p>
-          <div class="modal-actions">
-            <button id="validationErrorOkBtn" class="button button-primary" data-i18n="validationErrorOk"></button>
-          </div>
-        </div>
-      </div>
       </div>
 
     <div id="rowHighlighterTab" class="tab-pane">
       <h2 data-i18n="rowHighlighterTitle"></h2>
-      <table class="settings-table" id="rowHighlightTable">
+      <table class="highlighter-table" id="rowHighlightTable">
         <thead>
           <tr>
             <th scope="col" data-i18n="settingsTableKeyword"></th>
@@ -115,14 +106,24 @@
 
       <div class="button-container">
         <div class="button-group-left">
-            <input type="file" id="rowHighlightImportFile" accept=".json" style="display: none;">
-            <button id="rowHighlightImport" class="button button-secondary" data-i18n="importButton"></button>
-            <button id="rowHighlightExport" class="button button-secondary" data-i18n="exportButton"></button>
+            <button id="rowHighlightAdd" class="button button-primary icon-button"><img src="../img/add.svg" alt="" /></button>
+            <button id="rowHighlightSave" class="button button-primary icon-button"><img src="../img/save.svg" alt="" /></button>
+            <button id="rowHighlightReset" class="button button-danger icon-button"><img src="../img/reset.svg" alt="" /></button>
         </div>
         <div class="button-group-right">
-            <button id="rowHighlightAdd" class="button button-primary" data-i18n="addKeywordButton"></button>
-            <button id="rowHighlightSave" class="button button-primary" data-i18n="saveButton"></button>
-            <button id="rowHighlightReset" class="button button-danger" data-i18n="resetButton"></button>
+            <input type="file" id="rowHighlightImportFile" accept=".json" style="display: none;">
+            <button id="rowHighlightImport" class="button button-secondary icon-button"><img src="../img/export.svg" alt="" /></button>
+            <button id="rowHighlightExport" class="button button-secondary icon-button"><img src="../img/import.svg" alt="" /></button>
+        </div>
+      </div>
+      <div id="rowHighlightResetModal" class="modal-overlay">
+        <div class="modal-box">
+          <h5 data-i18n="confirmResetTableTitle"></h5>
+          <p data-i18n="confirmResetTableText"></p>
+          <div class="modal-actions">
+            <button id="rowHighlightConfirmReset" class="button button-danger" data-i18n="confirmResetTableYes"></button>
+            <button id="rowHighlightCancelReset" class="button button-secondary" data-i18n="confirmResetTableCancel"></button>
+          </div>
         </div>
       </div>
     </div>
@@ -141,6 +142,16 @@
   </div>
 
   <div id="toast" class="toast"></div>
+
+  <div id="validationErrorModal" class="modal-overlay">
+    <div class="modal-box">
+      <h5 data-i18n="validationErrorTitle"></h5>
+      <p id="validationErrorMessage"></p>
+      <div class="modal-actions">
+        <button id="validationErrorOkBtn" class="button button-primary" data-i18n="validationErrorOk"></button>
+      </div>
+    </div>
+  </div>
 
   </div>
 
