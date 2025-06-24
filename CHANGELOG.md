@@ -13,9 +13,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sliding button labels appear on hover for Add, Save, Reset, Import and Export
   actions.
 
-### Changed
-- Updated interface icons to follow Material Design style.
-
 ## [4.4.1] - 2025-06-24
 
 ### Changed
