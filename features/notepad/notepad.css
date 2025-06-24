@@ -7,7 +7,7 @@
   line-height: 1.5;
   resize: vertical;
   margin-bottom: var(--spacing-lg);
-  font-family: monospace;
+  font-family: var(--font-body);
   font-size: 13px;
   vertical-align: top;
 }
@@ -42,7 +42,7 @@
   margin-bottom: var(--spacing-sm);
   padding-bottom: var(--spacing-xs);
   border-bottom: 1px solid var(--border-color-table);
-  font-weight: normal;
+  font-weight: 400;
 }
 .notepad-preview h1 {
   font-size: 1.8em;
@@ -79,7 +79,7 @@
   background-color: var(--background-medium);
   padding: 2px 5px;
   border-radius: var(--border-radius-sm);
-  font-family: monospace;
+  font-family: var(--font-body);
   font-size: 0.9em;
   border: 1px solid var(--border-color);
 }
@@ -111,7 +111,7 @@
   margin: var(--spacing-xl) 0;
 }
 .notepad-preview strong {
-  font-weight: bold;
+  font-weight: 500;
 }
 .notepad-preview em {
   font-style: italic;

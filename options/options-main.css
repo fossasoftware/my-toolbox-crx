@@ -1,34 +1,97 @@
 @font-face {
-  font-family: "Sigma Sans";
-  font-style: normal;
-  font-weight: 400;
-  src: url("../fonts/SigmaSans-Regular.woff2") format("woff2"),
-    url("../fonts/SigmaSans-Regular.woff") format("woff");
-  font-display: swap;
+    font-family: 'Oswald';
+    src: url('../fonts/Oswald/Oswald-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
 }
+
 @font-face {
-  font-family: "Sigma Sans";
-  font-style: oblique;
-  font-weight: 400;
-  src: url("../fonts/SigmaSans-Oblique.woff2") format("woff2"),
-    url("../fonts/SigmaSans-Oblique.woff") format("woff");
-  font-display: swap;
+    font-family: 'Oswald';
+    src: url('../fonts/Oswald/Oswald-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
 }
+
 @font-face {
-  font-family: "Sigma Sans Condensed";
-  font-style: normal;
-  font-weight: 400;
-  src: url("../fonts/SigmaSansCondensed-Regular.woff2") format("woff2"),
-    url("../fonts/SigmaSansCondensed-Regular.woff") format("woff");
-  font-display: swap;
+    font-family: 'Oswald';
+    src: url('../fonts/Oswald/Oswald-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
 }
+
 @font-face {
-  font-family: "Sigma Sans ExtraCondensed";
-  font-style: normal;
-  font-weight: 700;
-  src: url("../fonts/SigmaSansExtraCondensed-Bold.woff2") format("woff2"),
-    url("../fonts/SigmaSansExtraCondensed-Bold.woff") format("woff");
-  font-display: swap;
+    font-family: 'Oswald';
+    src: url('../fonts/Oswald/Oswald-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roboto Condensed';
+    src: url('../fonts/RobotoCondensed/RobotoCondensed-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roboto Condensed';
+    src: url('../fonts/RobotoCondensed/RobotoCondensed-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roboto Condensed';
+    src: url('../fonts/RobotoCondensed/RobotoCondensed-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roboto Condensed';
+    src: url('../fonts/RobotoCondensed/RobotoCondensed-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roboto Condensed';
+    src: url('../fonts/RobotoCondensed/RobotoCondensed-Italic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roboto Condensed';
+    src: url('../fonts/RobotoCondensed/RobotoCondensed-MediumItalic.ttf') format('truetype');
+    font-weight: 500;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roboto Condensed';
+    src: url('../fonts/RobotoCondensed/RobotoCondensed-SemiBoldItalic.ttf') format('truetype');
+    font-weight: 600;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roboto Condensed';
+    src: url('../fonts/RobotoCondensed/RobotoCondensed-BoldItalic.ttf') format('truetype');
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
 }
 
 :root {
@@ -46,8 +109,8 @@
   --button-secondary-bg: #868b8d;
   --button-secondary-hover: #6e7477;
   --button-secondary-text: #ffffff;
-  --font-body: "Sigma Sans", "Roboto Condensed", sans-serif;
-  --font-heading: "Sigma Sans Condensed", "Oswald", sans-serif;
+  --font-body: "Roboto Condensed", sans-serif;
+  --font-heading: "Oswald", sans-serif;
   --font-size-base: 14px;
   --font-size-h1: 36px;
   --font-size-h2: 28px;
@@ -93,7 +156,7 @@ body {
   background-color: var(--background-light);
   padding: var(--spacing-xl);
   line-height: 1.4;
-  font-weight: normal;
+  font-weight: 400;
   font-style: normal;
 }
 
@@ -111,7 +174,7 @@ body {
   border: none;
   line-height: 1;
   font-family: var(--font-heading);
-  font-weight: normal;
+  font-weight: 500;
   font-style: normal;
   text-transform: uppercase;
   font-size: var(--font-size-h1);
@@ -132,7 +195,7 @@ body {
   padding: var(--spacing-xs) var(--spacing-md);
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
-  font-weight: 500;
+  font-weight: 400;
   color: var(--secondary-text);
   cursor: pointer;
   position: relative;
@@ -147,7 +210,7 @@ body {
 }
 .lang-option.active {
   color: var(--light-text);
-  font-weight: bold;
+  font-weight: 500;
   cursor: default;
 }
 .lang-highlight {
@@ -167,7 +230,7 @@ body {
 
 h2 {
   font-family: var(--font-heading);
-  font-weight: normal;
+  font-weight: 500;
   font-style: normal;
   text-transform: uppercase;
   font-size: var(--font-size-h2);
@@ -182,7 +245,7 @@ h4 {
   text-transform: uppercase;
   margin-bottom: var(--spacing-md);
   color: var(--secondary-text);
-  font-weight: normal;
+  font-weight: 400;
 }
 a {
   color: var(--dark-text);
@@ -202,7 +265,7 @@ a:hover {
 .tab-link {
   font-family: var(--font-heading);
   font-size: var(--font-size-sm);
-  font-weight: 500;
+  font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 0.6px;
   color: var(--dark-text);
@@ -224,7 +287,7 @@ a:hover {
   opacity: 1;
   color: var(--dark-text);
   border-bottom-color: var(--primary-color);
-  font-weight: bold;
+  font-weight: 500;
 }
 .tab-link:focus {
   outline: none;
@@ -252,7 +315,7 @@ a:hover {
   padding: 5px 15px;
   font-family: var(--font-heading);
   font-size: var(--font-size-button);
-  font-weight: bold;
+  font-weight: 500;
   border-radius: var(--border-radius-button);
   border: 1px solid transparent;
   cursor: pointer;
@@ -389,7 +452,7 @@ a:hover {
 }
 .modal-box h5 {
   font-family: var(--font-heading);
-  font-weight: normal;
+  font-weight: 400;
   font-style: normal;
   text-transform: uppercase;
   font-size: var(--font-size-base);
@@ -437,7 +500,9 @@ a:hover {
   text-transform: uppercase;
   font-family: var(--font-heading);
   font-size: 28px;
+  font-weight: 500;
   line-height: 1;
+  color: #00000030;
 }
 
 .side-menu {

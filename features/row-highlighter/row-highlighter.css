@@ -32,7 +32,7 @@
 }
 .highlighter-table th {
   font-family: var(--font-heading);
-  font-weight: normal;
+  font-weight: 500;
   font-style: normal;
   color: var(--light-text);
   background-color: var(--button-secondary-bg);
