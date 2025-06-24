@@ -544,16 +544,7 @@ a:hover {
   margin-left: 6px;
 }
 
-md-filled-button.danger {
-  --md-filled-button-container-color: var(--danger-color);
-  --md-filled-button-label-text-color: var(--light-text);
-}
-md-filled-button.danger:hover {
-  --md-filled-button-container-color: var(--danger-hover);
-}
-
-md-filled-button .material-symbols-outlined,
-md-outlined-button .material-symbols-outlined {
+button .material-symbols-outlined {
   font-size: 18px;
   margin-right: 4px;
 }

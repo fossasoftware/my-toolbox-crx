@@ -6,14 +6,13 @@
     <link rel="stylesheet" href="./popup.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
-    <script type="module" src="https://unpkg.com/@material/web/all.js?module"></script>
   </head>
   <body>
     <h3 data-i18n="popupTitle"></h3>
     <p data-i18n="popupDescription"></p>
-    <md-switch id="colorizerTogglePopup" class="feature-toggle" aria-label="Colorizer"></md-switch>
-    <md-switch id="rowHighlighterTogglePopup" class="feature-toggle" aria-label="Row Highlighter"></md-switch>
-    <md-filled-button id="openOptionsBtn" data-i18n="popupOpenOptionsButton"></md-filled-button>
-    <script src="./popup.js" type="module"></script>
+    <label class="feature-toggle switch"><span data-i18n="toggleColorizerLabel"></span><input type="checkbox" id="colorizerTogglePopup" /><span class="slider"></span></label>
+    <label class="feature-toggle switch"><span data-i18n="toggleRowHighlighterLabel"></span><input type="checkbox" id="rowHighlighterTogglePopup" /><span class="slider"></span></label>
+    <button id="openOptionsBtn" class="button button-primary" data-i18n="popupOpenOptionsButton"></button>
+    <script src="./popup.js"></script>
   </body>
 </html>

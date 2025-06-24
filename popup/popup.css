@@ -160,24 +160,7 @@ p {
   100% { transform: translateX(0); }
 }
 
-md-switch {
-  margin-bottom: var(--spacing-lg);
-}
-
-md-filled-button {
-  width: 100%;
-  margin-top: var(--spacing-md);
-}
-
-md-filled-button .material-symbols-outlined {
+button .material-symbols-outlined {
   font-size: 18px;
   margin-right: 4px;
-}
-
-md-filled-button.danger {
-  --md-filled-button-container-color: var(--primary-color);
-  --md-filled-button-label-text-color: var(--light-text);
-}
-md-filled-button.danger:hover {
-  --md-filled-button-container-color: var(--primary-hover);
 }

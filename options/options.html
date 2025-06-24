@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="../features/notepad/notepad.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
-  <script type="module" src="https://unpkg.com/@material/web/all.js?module"></script>
 </head>
 <body>
 
@@ -60,15 +59,15 @@
 
       <div class="button-container">
         <div class="button-group-left">
-            <md-filled-button id="addRow"><span class="material-symbols-outlined">add</span><span class="btn-label" data-i18n="addRowButton"></span></md-filled-button>
-            <md-filled-button id="saveSettings"><span class="material-symbols-outlined">save</span><span class="btn-label" data-i18n="saveButton"></span></md-filled-button>
-            <md-filled-button id="clearAll" class="danger"><span class="material-symbols-outlined">refresh</span><span class="btn-label" data-i18n="resetButton"></span></md-filled-button>
-            <md-outlined-button id="resetStatusSettings" data-i18n="defaultButton"></md-outlined-button>
+            <button id="addRow" class="button button-primary icon-button"><span class="material-symbols-outlined">add</span><span class="btn-label" data-i18n="addRowButton"></span></button>
+            <button id="saveSettings" class="button button-primary icon-button"><span class="material-symbols-outlined">save</span><span class="btn-label" data-i18n="saveButton"></span></button>
+            <button id="clearAll" class="button button-danger icon-button"><span class="material-symbols-outlined">refresh</span><span class="btn-label" data-i18n="resetButton"></span></button>
+            <button id="resetStatusSettings" class="button button-secondary" data-i18n="defaultButton"></button>
         </div>
         <div class="button-group-right">
             <input type="file" id="importFile" accept=".json" style="display: none;">
-            <md-outlined-button id="importSettingsBtn"><span class="material-symbols-outlined">file_upload</span><span class="btn-label" data-i18n="importButton"></span></md-outlined-button>
-            <md-outlined-button id="exportSettingsBtn"><span class="material-symbols-outlined">file_download</span><span class="btn-label" data-i18n="exportButton"></span></md-outlined-button>
+            <button id="importSettingsBtn" class="button button-secondary icon-button"><span class="material-symbols-outlined">file_upload</span><span class="btn-label" data-i18n="importButton"></span></button>
+            <button id="exportSettingsBtn" class="button button-secondary icon-button"><span class="material-symbols-outlined">file_download</span><span class="btn-label" data-i18n="exportButton"></span></button>
         </div>
       </div>
 
@@ -77,8 +76,8 @@
           <h5 data-i18n="confirmResetTableTitle"></h5>
           <p data-i18n="confirmResetTableText"></p>
           <div class="modal-actions">
-            <md-filled-button id="confirmDelete" class="danger" data-i18n="confirmResetTableYes"></md-filled-button>
-            <md-outlined-button id="cancelDelete" data-i18n="confirmResetTableCancel"></md-outlined-button>
+            <button id="confirmDelete" class="button button-danger" data-i18n="confirmResetTableYes"></button>
+            <button id="cancelDelete" class="button button-secondary" data-i18n="confirmResetTableCancel"></button>
           </div>
         </div>
       </div>
@@ -87,8 +86,8 @@
            <h5 data-i18n="confirmDefaultTitle"></h5>
            <p data-i18n="confirmDefaultText"></p>
            <div class="modal-actions">
-             <md-filled-button id="confirmReset" data-i18n="confirmDefaultYes"></md-filled-button>
-             <md-outlined-button id="cancelReset" data-i18n="confirmDefaultCancel"></md-outlined-button>
+             <button id="confirmReset" class="button button-primary" data-i18n="confirmDefaultYes"></button>
+             <button id="cancelReset" class="button button-secondary" data-i18n="confirmDefaultCancel"></button>
            </div>
          </div>
        </div>
@@ -109,14 +108,14 @@
 
       <div class="button-container">
         <div class="button-group-left">
-            <md-filled-button id="rowHighlightAdd"><span class="material-symbols-outlined">add</span><span class="btn-label" data-i18n="addKeywordButton"></span></md-filled-button>
-            <md-filled-button id="rowHighlightSave"><span class="material-symbols-outlined">save</span><span class="btn-label" data-i18n="saveButton"></span></md-filled-button>
-            <md-filled-button id="rowHighlightReset" class="danger"><span class="material-symbols-outlined">refresh</span><span class="btn-label" data-i18n="resetButton"></span></md-filled-button>
+            <button id="rowHighlightAdd" class="button button-primary icon-button"><span class="material-symbols-outlined">add</span><span class="btn-label" data-i18n="addKeywordButton"></span></button>
+            <button id="rowHighlightSave" class="button button-primary icon-button"><span class="material-symbols-outlined">save</span><span class="btn-label" data-i18n="saveButton"></span></button>
+            <button id="rowHighlightReset" class="button button-danger icon-button"><span class="material-symbols-outlined">refresh</span><span class="btn-label" data-i18n="resetButton"></span></button>
         </div>
         <div class="button-group-right">
             <input type="file" id="rowHighlightImportFile" accept=".json" style="display: none;">
-            <md-outlined-button id="rowHighlightImport"><span class="material-symbols-outlined">file_upload</span><span class="btn-label" data-i18n="importButton"></span></md-outlined-button>
-            <md-outlined-button id="rowHighlightExport"><span class="material-symbols-outlined">file_download</span><span class="btn-label" data-i18n="exportButton"></span></md-outlined-button>
+            <button id="rowHighlightImport" class="button button-secondary icon-button"><span class="material-symbols-outlined">file_upload</span><span class="btn-label" data-i18n="importButton"></span></button>
+            <button id="rowHighlightExport" class="button button-secondary icon-button"><span class="material-symbols-outlined">file_download</span><span class="btn-label" data-i18n="exportButton"></span></button>
         </div>
       </div>
       <div id="rowHighlightResetModal" class="modal-overlay">
@@ -124,8 +123,8 @@
           <h5 data-i18n="confirmResetTableTitle"></h5>
           <p data-i18n="confirmResetTableText"></p>
           <div class="modal-actions">
-            <md-filled-button id="rowHighlightConfirmReset" class="danger" data-i18n="confirmResetTableYes"></md-filled-button>
-            <md-outlined-button id="rowHighlightCancelReset" data-i18n="confirmResetTableCancel"></md-outlined-button>
+            <button id="rowHighlightConfirmReset" class="button button-danger" data-i18n="confirmResetTableYes"></button>
+            <button id="rowHighlightCancelReset" class="button button-secondary" data-i18n="confirmResetTableCancel"></button>
           </div>
         </div>
       </div>
@@ -151,7 +150,7 @@
       <h5 data-i18n="validationErrorTitle"></h5>
       <p id="validationErrorMessage"></p>
       <div class="modal-actions">
-        <md-filled-button id="validationErrorOkBtn" data-i18n="validationErrorOk"></md-filled-button>
+        <button id="validationErrorOkBtn" class="button button-primary" data-i18n="validationErrorOk"></button>
       </div>
     </div>
   </div>
