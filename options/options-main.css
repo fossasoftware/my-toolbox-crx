@@ -70,9 +70,10 @@
     0 2px 4px 0 rgba(13, 24, 28, 0.05);
   --box-shadow-modal: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --transition-fast: all 0.15s ease-in-out;
+  --transition-fast: all 0.25s ease-in-out;
   --transition-medium: all 0.3s ease-in-out;
   --row-animation-duration: 0.3s;
+  --md-ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
 * {
   box-sizing: border-box;
@@ -542,3 +543,34 @@ a:hover {
     transform: translateX(calc(-100% + 64px));
   }
 }
+
+
+.icon-button {
+  padding: 5px;
+  overflow: hidden;
+  min-width: var(--input-height);
+  max-width: var(--input-height);
+  transition: max-width 280ms var(--md-ease);
+}
+.icon-button:hover {
+  max-width: 240px;
+}
+.icon-button img,
+.icon-button svg {
+  width: 18px;
+  height: 18px;
+}
+.icon-button .btn-label {
+  max-width: 0;
+  opacity: 0;
+  margin-left: 0;
+  white-space: nowrap;
+  transition: margin-left 280ms var(--md-ease), max-width 280ms var(--md-ease), opacity 180ms var(--md-ease);
+  pointer-events: none;
+}
+.icon-button:hover .btn-label {
+  max-width: 200px;
+  opacity: 1;
+  margin-left: 6px;
+}
+

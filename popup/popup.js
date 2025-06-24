@@ -60,6 +60,22 @@ async function initializePopup() {
   currentLang = langPref;
   await loadMessages(currentLang);
   applyPopupTranslations();
+  const colorizerToggle = document.getElementById("colorizerTogglePopup");
+  const rowHighlighterToggle = document.getElementById("rowHighlighterTogglePopup");
+  chrome.storage.sync.get(["colorizerEnabled", "rowHighlighterEnabled"], (data) => {
+    if (colorizerToggle) {
+      colorizerToggle.checked = data.hasOwnProperty("colorizerEnabled") ? data.colorizerEnabled : true;
+      colorizerToggle.addEventListener("change", () => {
+        chrome.storage.sync.set({ colorizerEnabled: colorizerToggle.checked });
+      });
+    }
+    if (rowHighlighterToggle) {
+      rowHighlighterToggle.checked = data.hasOwnProperty("rowHighlighterEnabled") ? data.rowHighlighterEnabled : true;
+      rowHighlighterToggle.addEventListener("change", () => {
+        chrome.storage.sync.set({ rowHighlighterEnabled: rowHighlighterToggle.checked });
+      });
+    }
+  });
   const optionsBtn = document.getElementById("openOptionsBtn");
   if (optionsBtn) {
     optionsBtn.addEventListener("click", () => {
@@ -77,3 +93,4 @@ async function initializePopup() {
   }
 }
 document.addEventListener("DOMContentLoaded", initializePopup);
+

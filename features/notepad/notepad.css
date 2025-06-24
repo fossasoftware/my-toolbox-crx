@@ -118,18 +118,14 @@
 }
 
 .notepad-status {
-  font-size: var(--font-size-sm);
-  color: var(--secondary-text);
-  text-align: right;
-  height: 1.5em;
-  font-style: italic;
+  display: none;
 }
 
 .notepad-wrapper {
   display: flex;
   gap: var(--spacing-md);
   align-items: stretch;
-  height: 600px;
+  height: calc(100vh - 100px);
 }
 
 .notepad-textarea,

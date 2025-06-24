@@ -1,4 +1,5 @@
 import { initializeColorizer } from "../features/colorizer/colorizer.js";
+import { initializeRowHighlighter } from "../features/row-highlighter/row-highlighter.js";
 import { initializeNotepad } from "../features/notepad/notepad.js";
 
 let currentMessages = {};
@@ -159,10 +160,37 @@ function applyTranslations() {
     .forEach((input) => {
       input.placeholder = getText("inputStatusPlaceholder");
     });
+  document
+    .querySelectorAll('#rowHighlightTable tbody input[type="text"]')
+    .forEach((input) => {
+      input.placeholder = getText("inputKeywordPlaceholder");
+    });
   const notepadArea = document.getElementById("notepadArea");
   if (notepadArea) {
     notepadArea.placeholder = getText("notepadPlaceholder");
   }
+
+  const importBtn = document.getElementById("importSettingsBtn");
+  if (importBtn) importBtn.title = getText("importButton");
+  const exportBtn = document.getElementById("exportSettingsBtn");
+  if (exportBtn) exportBtn.title = getText("exportButton");
+  const rhImportBtn = document.getElementById("rowHighlightImport");
+  if (rhImportBtn) rhImportBtn.title = getText("importButton");
+  const rhExportBtn = document.getElementById("rowHighlightExport");
+  if (rhExportBtn) rhExportBtn.title = getText("exportButton");
+
+  const addRowBtn = document.getElementById("addRow");
+  if (addRowBtn) addRowBtn.title = getText("addRowButton");
+  const saveSettingsBtn = document.getElementById("saveSettings");
+  if (saveSettingsBtn) saveSettingsBtn.title = getText("saveButton");
+  const clearAllBtn = document.getElementById("clearAll");
+  if (clearAllBtn) clearAllBtn.title = getText("resetButton");
+  const rowAddBtn = document.getElementById("rowHighlightAdd");
+  if (rowAddBtn) rowAddBtn.title = getText("addKeywordButton");
+  const rowSaveBtn = document.getElementById("rowHighlightSave");
+  if (rowSaveBtn) rowSaveBtn.title = getText("saveButton");
+  const rowResetBtn = document.getElementById("rowHighlightReset");
+  if (rowResetBtn) rowResetBtn.title = getText("resetButton");
 }
 
 async function setLanguage(lang) {
@@ -318,7 +346,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   );
 
+
   initializeColorizer();
+  initializeRowHighlighter();
   initializeNotepad();
 
 });
