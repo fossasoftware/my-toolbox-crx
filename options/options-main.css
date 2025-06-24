@@ -548,11 +548,15 @@ a:hover {
   padding: 5px;
   overflow: hidden;
   min-width: var(--input-height);
+  max-width: var(--input-height);
   height: var(--input-height);
-  transition: width var(--transition-medium);
+  transition: max-width var(--transition-medium);
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+.icon-button:hover {
+  max-width: 240px;
 }
 .icon-button img,
 .icon-button svg {
