@@ -4,8 +4,14 @@ All notable changes to the "My ToolBox" Chrome extension will be documented in t
 
 
 
+
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (starting from this documented version).
+
+## [4.4.4] - 2025-06-25
+
+### Changed
+- Highlight rows containing keywords in search results, on custom dashboards, in the Activity Stream, on board cards, and in "For you" lists.
 
 ## [4.4.3] - 2025-06-24
 
