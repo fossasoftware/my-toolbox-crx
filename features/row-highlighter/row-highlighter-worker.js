@@ -28,6 +28,7 @@ function ensureStyle() {
       .row-highlighter [role='gridcell'] {
         background: var(--row-highlight-color) !important;
         background-color: var(--row-highlight-color) !important;
+        --_1hphqkz: var(--row-highlight-color) !important;
       }
     `;
     document.head.appendChild(style);
@@ -47,6 +48,7 @@ function highlightRows() {
       if (text.includes(item.keyword.toLowerCase())) {
         row.classList.add("row-highlighter");
         row.style.setProperty("--row-highlight-color", item.color, "important");
+        row.style.setProperty("--_1hphqkz", item.color, "important");
         break;
       }
     }
