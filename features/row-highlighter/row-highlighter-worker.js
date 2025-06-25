@@ -20,7 +20,14 @@ function loadRowHighlightSettings(callback) {
 function highlightRows() {
   if (!highlightSettings.length) return;
   const rows = document.querySelectorAll(
-    "div[role='row'], tr[role='row'], tr.issuerow, a[data-testid='issue-navigator.ui.issue-results.detail-view.card-list.card']"
+    [
+      "div[role='row']",
+      "tr[role='row']",
+      "tr.issuerow",
+      "a[data-testid='issue-navigator.ui.issue-results.detail-view.card-list.card']",
+      "div[data-testid='platform-board-kit.ui.card.card']",
+      "li.activity-item"
+    ].join(",")
   );
   rows.forEach((row) => {
     const text = row.innerText.toLowerCase();
