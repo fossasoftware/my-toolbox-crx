@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.4.4] - 2025-06-25
 
 ### Changed
-- Highlight rows containing keywords in search results, on custom dashboards, and in the Activity Stream.
+- Highlight rows containing keywords in search results, on custom dashboards, in the Activity Stream, on board cards, and in "For you" lists.
 
 ## [4.4.3] - 2025-06-24
 

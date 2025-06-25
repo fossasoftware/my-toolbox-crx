@@ -26,7 +26,8 @@ function highlightRows() {
       "tr.issuerow",
       "a[data-testid='issue-navigator.ui.issue-results.detail-view.card-list.card']",
       "div[data-testid='platform-board-kit.ui.card.card']",
-      "li.activity-item"
+      "li.activity-item",
+      "a[data-test-id^='global-pages.home.ui.tab-container.tab.item-list.item-link']"
     ].join(",")
   );
   rows.forEach((row) => {
