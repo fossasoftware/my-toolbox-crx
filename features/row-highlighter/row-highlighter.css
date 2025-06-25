@@ -109,10 +109,31 @@
   border-radius: 1px;
 }
 .highlighter-table input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--primary-color);
+  -webkit-appearance: none;
+  appearance: none;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-input);
   cursor: pointer;
+  background-color: var(--background-light);
+  position: relative;
+}
+.highlighter-table input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 8px;
+  width: 8px;
+  height: 14px;
+  border: solid var(--primary-color);
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+.highlighter-table input[type="checkbox"]:checked::after {
+  opacity: 1;
 }
 
 .button-container {
