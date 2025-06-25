@@ -11,6 +11,7 @@
   "settingsTableRemoveRow": { "message": "Видалити" },
   "settingsTableKeyword": { "message": "Ключове слово" },
   "settingsTableColor": { "message": "Колір" },
+  "settingsTableEnabled": { "message": "Увімкнено" },
   "inputStatusPlaceholder": { "message": "Назва статусу" },
   "inputKeywordPlaceholder": { "message": "Введіть слово або фразу" },
   "addRowButton": { "message": "Додати статус" },

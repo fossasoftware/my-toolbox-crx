@@ -11,6 +11,7 @@
   "settingsTableRemoveRow": { "message": "Delete" },
   "settingsTableKeyword": { "message": "Keyword" },
   "settingsTableColor": { "message": "Color" },
+  "settingsTableEnabled": { "message": "Enabled" },
   "inputStatusPlaceholder": { "message": "Enter status name" },
   "inputKeywordPlaceholder": { "message": "Enter word or phrase" },
   "addRowButton": { "message": "Add Status" },

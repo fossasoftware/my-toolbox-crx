@@ -22,12 +22,15 @@
   vertical-align: middle;
 }
 .highlighter-table th:first-child {
-  width: 60%;
+  width: 50%;
 }
 .highlighter-table th:nth-child(2) {
-  width: 30%;
+  width: 25%;
 }
 .highlighter-table th:nth-child(3) {
+  width: 15%;
+}
+.highlighter-table th:nth-child(4) {
   width: 10%;
 }
 .highlighter-table th {
