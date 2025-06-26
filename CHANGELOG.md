@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.4.5] - 2025-06-26
 
+### Added
+- Row Highlighter now lets you enable or disable keywords without deleting them
+
 ### Changed
 - Renamed the Colorizer feature to **Status Colorizer** across the extension
 - Updated bundled libraries: DOMPurify 3.2.6 and Marked 15.0.12

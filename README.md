@@ -23,6 +23,7 @@
 * **Row Highlighter:**
   * Highlight table rows in Jira issue lists when a word or phrase matches.
   * Choose a custom highlight color for each keyword.
+  * Enable or disable keywords without removing them.
   * Import and Export your highlight rules as JSON.
 * **Notepad:**
   * A simple, integrated notepad accessible from the extension's options page.
@@ -80,6 +81,7 @@
 * **Підсвічування Рядків:**
   * Виділяйте рядки у списках Jira, якщо вони містять задані слова чи фрази.
   * Для кожного слова можна обрати індивідуальний колір підсвічування.
+  * Можна вмикати або вимикати ключові слова без їх видалення.
   * Підтримується імпорт та експорт правил у форматі JSON.
 * **Нотатник:**
   * Простий, інтегрований нотатник, доступний зі сторінки налаштувань розширення.
