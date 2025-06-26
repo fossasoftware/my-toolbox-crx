@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.4.1] - 2025-06-24
 
 ### Changed
-- Settings tables renamed to `.colorizer-table` and `.highlighter-table` to avoid CSS conflicts
+- Settings tables renamed to `.status-colorizer-table` and `.highlighter-table` to avoid CSS conflicts
 - Status Colorizer now uses 30×30 px custom toggles
 - Notepad and buttons adapt to window size and show icon-only controls
 - Popup toggles with animation let you enable or disable each feature
@@ -41,11 +41,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New **Row Highlighter** module with settings UI, worker script, and styles
 
 ### Changed
-- Renamed the status colorizer worker script
+- Renamed the status-colorizer worker script
 - Toast notifications now remain visible across all tabs
 
 ### Fixed
-- Worker function name clashes resolved for colorizer and highlighter
+- Worker function name clashes resolved for status-colorizer and highlighter
 
 ## [4.3.3] - 2025-06-23
 

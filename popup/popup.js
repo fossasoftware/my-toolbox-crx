@@ -60,13 +60,13 @@ async function initializePopup() {
   currentLang = langPref;
   await loadMessages(currentLang);
   applyPopupTranslations();
-  const colorizerToggle = document.getElementById("colorizerTogglePopup");
+  const statusColorizerToggle = document.getElementById("statusColorizerTogglePopup");
   const rowHighlighterToggle = document.getElementById("rowHighlighterTogglePopup");
-  chrome.storage.sync.get(["colorizerEnabled", "rowHighlighterEnabled"], (data) => {
-    if (colorizerToggle) {
-      colorizerToggle.checked = data.hasOwnProperty("colorizerEnabled") ? data.colorizerEnabled : true;
-      colorizerToggle.addEventListener("change", () => {
-        chrome.storage.sync.set({ colorizerEnabled: colorizerToggle.checked });
+  chrome.storage.sync.get(["statusColorizerEnabled", "rowHighlighterEnabled"], (data) => {
+    if (statusColorizerToggle) {
+      statusColorizerToggle.checked = data.hasOwnProperty("statusColorizerEnabled") ? data.statusColorizerEnabled : true;
+      statusColorizerToggle.addEventListener("change", () => {
+        chrome.storage.sync.set({ statusColorizerEnabled: statusColorizerToggle.checked });
       });
     }
     if (rowHighlighterToggle) {

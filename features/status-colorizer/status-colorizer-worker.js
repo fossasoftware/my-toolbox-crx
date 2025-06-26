@@ -1,10 +1,10 @@
 let statusColorSettings = [];
 const insertedRibbonClasses = new Set();
-let colorizerEnabled = true;
+let statusColorizerEnabled = true;
 
-function loadColorizerEnabled(callback) {
-  chrome.storage.sync.get("colorizerEnabled", (data) => {
-    colorizerEnabled = data.hasOwnProperty("colorizerEnabled") ? data.colorizerEnabled : true;
+function loadStatusColorizerEnabled(callback) {
+  chrome.storage.sync.get("statusColorizerEnabled", (data) => {
+    statusColorizerEnabled = data.hasOwnProperty("statusColorizerEnabled") ? data.statusColorizerEnabled : true;
     if (callback) callback();
   });
 }
@@ -12,7 +12,7 @@ function loadColorizerEnabled(callback) {
 function loadStatusColorSettings(callback) {
   chrome.storage.sync.get("statusColorSettings", (data) => {
     if (chrome.runtime.lastError) {
-      console.error("Colorizer: Error loading settings", chrome.runtime.lastError);
+      console.error("Status Colorizer: Error loading settings", chrome.runtime.lastError);
       statusColorSettings = [];
       if (callback) callback();
       return;
@@ -31,7 +31,7 @@ function loadStatusColorSettings(callback) {
           }
         })
         .catch((error) => {
-          console.error("Colorizer: Failed to load default settings", error);
+          console.error("Status Colorizer: Failed to load default settings", error);
           statusColorSettings = [];
         })
         .finally(() => {
@@ -214,8 +214,8 @@ function observeDOMChanges() {
 }
 
 window.addEventListener("load", function () {
-  loadColorizerEnabled(() => {
-    if (!colorizerEnabled) return;
+  loadStatusColorizerEnabled(() => {
+    if (!statusColorizerEnabled) return;
     loadStatusColorSettings(function () {
       observeDOMChanges();
       paintStatuses();

@@ -55,7 +55,7 @@
 
 ### Technical Details
 
-* Built on **Manifest V3** with content scripts (`colorizer-worker.js` and `row-highlighter-worker.js`) that inject CSS into Atlassian pages.
+* Built on **Manifest V3** with content scripts (`status-colorizer-worker.js` and `row-highlighter-worker.js`) that inject CSS into Atlassian pages.
 * All user settings are stored via `chrome.storage.sync` for automatic cross-device synchronization.
 * The notepad preview relies on [`marked.js`](libs/marked.min.js) and sanitizes HTML output with [`DOMPurify`](libs/purify.min.js).
 * Import and export actions simply read or write JSON files containing your configuration.
@@ -113,7 +113,7 @@
 
 ### Технічні деталі
 
-* Розширення побудоване на основі **Manifest V3** та використовує скрипти `colorizer-worker.js` і `row-highlighter-worker.js` як контент-скрипти для вставки стилів на сторінки Atlassian.
+* Розширення побудоване на основі **Manifest V3** та використовує скрипти `status-colorizer-worker.js` і `row-highlighter-worker.js` як контент-скрипти для вставки стилів на сторінки Atlassian.
 * Усі налаштування зберігаються через `chrome.storage.sync`, тому вони синхронізуються між вашими браузерами.
 * Для попереднього перегляду Markdown застосовується [`marked.js`](libs/marked.min.js), а результуючий HTML очищається за допомогою [`DOMPurify`](libs/purify.min.js).
 * Імпорт та експорт правил здійснюється через JSON‑файли з вашими налаштуваннями.

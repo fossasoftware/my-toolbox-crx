@@ -14,7 +14,7 @@ function updateButtonVisibility() {
   const exportBtn = document.getElementById("exportSettingsBtn");
   if (!tbody || !saveBtn || !resetBtn || !exportBtn) {
     console.error(
-      "Colorizer: Cannot update button visibility - Elements not found."
+      "Status Colorizer: Cannot update button visibility - Elements not found."
     );
     return;
   }
@@ -31,7 +31,7 @@ function restoreStatusSettings() {
   chrome.storage.sync.get("statusColorSettings", function (data) {
     if (chrome.runtime.lastError) {
       console.error(
-        "Colorizer Error restoring settings:",
+        "Status Colorizer Error restoring settings:",
         chrome.runtime.lastError
       );
       showToast("toastErrorLoading");
@@ -54,7 +54,7 @@ function restoreStatusSettings() {
 
     const tbody = document.querySelector("#statusTable tbody");
     if (!tbody) {
-      console.error("Colorizer Restore failed: tbody not found!");
+      console.error("Status Colorizer Restore failed: tbody not found!");
       return;
     }
     tbody.innerHTML = "";
@@ -71,7 +71,7 @@ function restoreStatusSettings() {
       });
     } else {
       console.error(
-        "Colorizer: Settings data is not an array, cannot add rows."
+        "Status Colorizer: Settings data is not an array, cannot add rows."
       );
     }
     updateButtonVisibility();
@@ -88,7 +88,7 @@ function addRow(
 ) {
   const tbody = document.querySelector("#statusTable tbody");
   if (!tbody) {
-    console.error("Colorizer: Could not find table body");
+    console.error("Status Colorizer: Could not find table body");
     return;
   }
   const row = document.createElement("tr");
@@ -283,7 +283,7 @@ function handleExport() {
     const downloader = document.createElement("a");
     downloader.href = url;
     const timestamp = new Date().toISOString().slice(0, 10);
-    downloader.download = `sc-toolbox-colorizer-settings-${timestamp}.json`;
+    downloader.download = `sc-toolbox-status-colorizer-settings-${timestamp}.json`;
     document.body.appendChild(downloader);
     downloader.click();
     document.body.removeChild(downloader);
@@ -412,7 +412,7 @@ function handleImport(event) {
   reader.readAsText(file);
 }
 
-export function initializeColorizer() {
+export function initializeStatusColorizer() {
   const addRowBtn = document.getElementById("addRow");
   const saveSettingsBtn = document.getElementById("saveSettings");
   const defaultSettingsBtn = document.getElementById("resetStatusSettings");
@@ -428,27 +428,27 @@ export function initializeColorizer() {
   if (addRowBtn) {
     addRowBtn.addEventListener("click", () => addRow());
   } else {
-    console.error("Colorizer: Missing Add Row button");
+    console.error("Status Colorizer: Missing Add Row button");
   }
   if (saveSettingsBtn) {
     saveSettingsBtn.addEventListener("click", saveStatusSettings);
   } else {
-    console.error("Colorizer: Missing Save Settings button");
+    console.error("Status Colorizer: Missing Save Settings button");
   }
   if (defaultSettingsBtn) {
     defaultSettingsBtn.addEventListener("click", showDefaultSettingsModal);
   } else {
-    console.error("Colorizer: Missing Default Settings button");
+    console.error("Status Colorizer: Missing Default Settings button");
   }
   if (resetTableBtn) {
     resetTableBtn.addEventListener("click", showResetTableModal);
   } else {
-    console.error("Colorizer: Missing Reset Table button");
+    console.error("Status Colorizer: Missing Reset Table button");
   }
   if (exportSettingsBtn) {
     exportSettingsBtn.addEventListener("click", handleExport);
   } else {
-    console.error("Colorizer: Missing Export Settings button");
+    console.error("Status Colorizer: Missing Export Settings button");
   }
   if (importSettingsBtn && importFileInput) {
     importSettingsBtn.addEventListener("click", () => {
@@ -456,7 +456,7 @@ export function initializeColorizer() {
     });
     importFileInput.addEventListener("change", handleImport);
   } else {
-    console.error("Colorizer: Missing Import Settings button or file input");
+    console.error("Status Colorizer: Missing Import Settings button or file input");
   }
 
   if (confirmResetTableBtn && confirmResetTableModal) {
@@ -478,7 +478,7 @@ export function initializeColorizer() {
       });
     });
   } else {
-    console.error("Colorizer: Missing Confirm Reset Table button or modal");
+    console.error("Status Colorizer: Missing Confirm Reset Table button or modal");
   }
 
   if (confirmDefaultBtn && confirmDefaultModal) {
@@ -514,7 +514,7 @@ export function initializeColorizer() {
       );
     });
   } else {
-    console.error("Colorizer: Missing Confirm Default button or modal");
+    console.error("Status Colorizer: Missing Confirm Default button or modal");
   }
 
   restoreStatusSettings();
