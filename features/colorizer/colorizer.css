@@ -64,7 +64,8 @@
   vertical-align: middle;
 }
 .colorizer-table input[type="text"] {
-  width: 100%;
+  width: calc(100% - calc(70% / 6 / 2));
+  margin-right: calc(70% / 6 / 2);
   height: var(--input-height);
   padding: 5px;
   line-height: 1.4;

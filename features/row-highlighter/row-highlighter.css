@@ -66,8 +66,8 @@
   vertical-align: middle;
 }
 .highlighter-table input[type="text"] {
-  width: calc(100% - var(--spacing-sm));
-  margin-right: var(--spacing-sm);
+  width: calc(100% - calc(30% / 3 / 2));
+  margin-right: calc(30% / 3 / 2);
   height: var(--input-height);
   padding: 5px;
   line-height: 1.4;
