@@ -19,12 +19,14 @@ function restoreHighlightSettings() {
     const settings = Array.isArray(data.rowHighlightSettings)
       ? data.rowHighlightSettings
       : [];
-    settings.forEach((item) => addRow(item.keyword, item.color));
+    settings.forEach((item) =>
+      addRow(item.keyword, item.color, item.hasOwnProperty("enabled") ? item.enabled : true)
+    );
     updateButtonVisibility();
   });
 }
 
-function addRow(keyword = "", color = "#ffffff") {
+function addRow(keyword = "", color = "#ffffff", enabled = true) {
   const tbody = document.querySelector("#rowHighlightTable tbody");
   if (!tbody) return;
   const row = document.createElement("tr");
@@ -44,6 +46,13 @@ function addRow(keyword = "", color = "#ffffff") {
   inputColor.value = color;
   cellColor.appendChild(inputColor);
   row.appendChild(cellColor);
+
+  const cellEnabled = document.createElement("td");
+  const inputEnabled = document.createElement("input");
+  inputEnabled.type = "checkbox";
+  inputEnabled.checked = enabled;
+  cellEnabled.appendChild(inputEnabled);
+  row.appendChild(cellEnabled);
 
   const cellAction = document.createElement("td");
   const deleteBtn = document.createElement("button");
@@ -78,7 +87,8 @@ function saveHighlightSettings() {
     const idx = rowIndex++;
     const keywordInput = row.cells[0]?.querySelector('input[type="text"]');
     const colorInput = row.cells[1]?.querySelector('input[type="color"]');
-    if (!keywordInput || !colorInput) {
+    const enabledInput = row.cells[2]?.querySelector('input[type="checkbox"]');
+    if (!keywordInput || !colorInput || !enabledInput) {
       showValidationErrorModal("errorInternalRow", String(idx + 1));
       return;
     }
@@ -107,7 +117,7 @@ function saveHighlightSettings() {
       colorInput.focus();
       return;
     }
-    settings.push({ keyword, color });
+    settings.push({ keyword, color, enabled: enabledInput ? enabledInput.checked : true });
   }
   chrome.storage.sync.set({ rowHighlightSettings: settings }, () => {
     if (chrome.runtime.lastError) {
@@ -159,10 +169,9 @@ function validateImportedData(data) {
   const colorRegex = /^#[0-9a-f]{6}$/i;
   for (const item of data) {
     if (typeof item !== "object" || !item) return false;
-    if (typeof item.keyword !== "string" || item.keyword.trim() === "")
-      return false;
-    if (typeof item.color !== "string" || !colorRegex.test(item.color))
-      return false;
+    if (typeof item.keyword !== "string" || item.keyword.trim() === "") return false;
+    if (typeof item.color !== "string" || !colorRegex.test(item.color)) return false;
+    if ("enabled" in item && typeof item.enabled !== "boolean") return false;
   }
   return true;
 }

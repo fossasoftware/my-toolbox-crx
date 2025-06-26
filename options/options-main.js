@@ -1,4 +1,4 @@
-import { initializeColorizer } from "../features/colorizer/colorizer.js";
+import { initializeStatusColorizer } from "../features/status-colorizer/status-colorizer.js";
 import { initializeRowHighlighter } from "../features/row-highlighter/row-highlighter.js";
 import { initializeNotepad } from "../features/notepad/notepad.js";
 
@@ -347,7 +347,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   );
 
 
-  initializeColorizer();
+  initializeStatusColorizer();
   initializeRowHighlighter();
   initializeNotepad();
 

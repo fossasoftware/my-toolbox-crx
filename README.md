@@ -10,7 +10,7 @@
 
 **My ToolBox** is a browser extension for Chrome designed to enhance the workflow for Service Center specialists, primarily focusing on Jira Cloud modifications and providing handy tools like a built-in notepad.
 
-**Version:** 4.4.4
+**Version:** 4.4.5
 **Author:** Vitalii Kopach
 
 ### Features
@@ -23,6 +23,7 @@
 * **Row Highlighter:**
   * Highlight table rows in Jira issue lists when a word or phrase matches.
   * Choose a custom highlight color for each keyword.
+  * Enable or disable keywords without removing them.
   * Import and Export your highlight rules as JSON.
 * **Notepad:**
   * A simple, integrated notepad accessible from the extension's options page.
@@ -55,7 +56,7 @@
 
 ### Technical Details
 
-* Built on **Manifest V3** with content scripts (`colorizer-worker.js` and `row-highlighter-worker.js`) that inject CSS into Atlassian pages.
+* Built on **Manifest V3** with content scripts (`status-colorizer-worker.js` and `row-highlighter-worker.js`) that inject CSS into Atlassian pages.
 * All user settings are stored via `chrome.storage.sync` for automatic cross-device synchronization.
 * The notepad preview relies on [`marked.js`](libs/marked.min.js) and sanitizes HTML output with [`DOMPurify`](libs/purify.min.js).
 * Import and export actions simply read or write JSON files containing your configuration.
@@ -67,7 +68,7 @@
 
 **Мій Тулбокс** – це розширення для браузера Chrome, створене для покращення робочого процесу спеціалістів Сервісного Центру. Воно зосереджене на модифікаціях Jira Cloud та надає зручні інструменти, такі як вбудований нотатник.
 
-**Версія:** 4.4.4
+**Версія:** 4.4.5
 **Автор:** Віталій Копач
 
 ### Можливості
@@ -80,6 +81,7 @@
 * **Підсвічування Рядків:**
   * Виділяйте рядки у списках Jira, якщо вони містять задані слова чи фрази.
   * Для кожного слова можна обрати індивідуальний колір підсвічування.
+  * Можна вмикати або вимикати ключові слова без їх видалення.
   * Підтримується імпорт та експорт правил у форматі JSON.
 * **Нотатник:**
   * Простий, інтегрований нотатник, доступний зі сторінки налаштувань розширення.
@@ -113,7 +115,7 @@
 
 ### Технічні деталі
 
-* Розширення побудоване на основі **Manifest V3** та використовує скрипти `colorizer-worker.js` і `row-highlighter-worker.js` як контент-скрипти для вставки стилів на сторінки Atlassian.
+* Розширення побудоване на основі **Manifest V3** та використовує скрипти `status-colorizer-worker.js` і `row-highlighter-worker.js` як контент-скрипти для вставки стилів на сторінки Atlassian.
 * Усі налаштування зберігаються через `chrome.storage.sync`, тому вони синхронізуються між вашими браузерами.
 * Для попереднього перегляду Markdown застосовується [`marked.js`](libs/marked.min.js), а результуючий HTML очищається за допомогою [`DOMPurify`](libs/purify.min.js).
 * Імпорт та експорт правил здійснюється через JSON‑файли з вашими налаштуваннями.
