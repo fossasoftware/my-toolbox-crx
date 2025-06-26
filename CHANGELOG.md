@@ -5,8 +5,15 @@ All notable changes to the "My ToolBox" Chrome extension will be documented in t
 
 
 
+
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (starting from this documented version).
+
+## [4.4.5] - 2025-06-26
+
+### Changed
+- Renamed the Colorizer feature to **Status Colorizer** across the extension
+- Updated bundled libraries: DOMPurify 3.2.6 and Marked 15.0.12
 
 ## [4.4.4] - 2025-06-25
 
