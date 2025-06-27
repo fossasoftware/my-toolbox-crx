@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title data-i18n="appName"></title>
   <link rel="stylesheet" href="./options-main.css">
-  <link rel="stylesheet" href="../features/colorizer/colorizer.css">
+  <link rel="stylesheet" href="../features/status-colorizer/status-colorizer.css">
   <link rel="stylesheet" href="../features/row-highlighter/row-highlighter.css">
   <link rel="stylesheet" href="../features/notepad/notepad.css">
 </head>
@@ -25,7 +25,7 @@
       </div>
     </div>
     <div class="tab-nav">
-      <button class="tab-link active" data-tab="colorizerTab" data-i18n="optionsTabColorizer"></button>
+      <button class="tab-link active" data-tab="statusColorizerTab" data-i18n="optionsTabStatusColorizer"></button>
       <button class="tab-link" data-tab="rowHighlighterTab" data-i18n="optionsTabRowHighlighter"></button>
       <button class="tab-link" data-tab="notepadTab" data-i18n="optionsTabNotepad"></button>
     </div>
@@ -38,9 +38,9 @@
   <div class="page-container">
 
     <div class="tab-content">
-      <div id="colorizerTab" class="tab-pane active">
-      <h2 data-i18n="colorizerTitle"></h2>
-      <table class="colorizer-table" id="statusTable">
+      <div id="statusColorizerTab" class="tab-pane active">
+      <h2 data-i18n="statusColorizerTitle"></h2>
+      <table class="status-colorizer-table" id="statusTable">
         <thead>
           <tr>
             <th scope="col" data-i18n="settingsTableStatus"></th>
@@ -98,6 +98,7 @@
           <tr>
             <th scope="col" data-i18n="settingsTableKeyword"></th>
             <th scope="col" data-i18n="settingsTableColor"></th>
+            <th scope="col" data-i18n="settingsTableEnabled"></th>
             <th scope="col" data-i18n="settingsTableRemoveRow"></th>
           </tr>
         </thead>
