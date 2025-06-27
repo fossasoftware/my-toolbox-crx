@@ -54,7 +54,7 @@
     },
     {
       "matches": ["*://*.atlassian.net/*"],
-      "js": ["features/empty-queue-duck/empty-queue-duck-worker.js"],
+      "js": ["features/fun/empty-queue-duck/empty-queue-duck-worker.js"],
       "run_at": "document_idle"
     }
   ],

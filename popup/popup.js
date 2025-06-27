@@ -62,7 +62,8 @@ async function initializePopup() {
   applyPopupTranslations();
   const statusColorizerToggle = document.getElementById("statusColorizerTogglePopup");
   const rowHighlighterToggle = document.getElementById("rowHighlighterTogglePopup");
-  chrome.storage.sync.get(["statusColorizerEnabled", "rowHighlighterEnabled"], (data) => {
+  const funModeToggle = document.getElementById("funModeTogglePopup");
+  chrome.storage.sync.get(["statusColorizerEnabled", "rowHighlighterEnabled", "funModeEnabled"], (data) => {
     if (statusColorizerToggle) {
       statusColorizerToggle.checked = data.hasOwnProperty("statusColorizerEnabled") ? data.statusColorizerEnabled : true;
       statusColorizerToggle.addEventListener("change", () => {
@@ -73,6 +74,12 @@ async function initializePopup() {
       rowHighlighterToggle.checked = data.hasOwnProperty("rowHighlighterEnabled") ? data.rowHighlighterEnabled : true;
       rowHighlighterToggle.addEventListener("change", () => {
         chrome.storage.sync.set({ rowHighlighterEnabled: rowHighlighterToggle.checked });
+      });
+    }
+    if (funModeToggle) {
+      funModeToggle.checked = data.hasOwnProperty("funModeEnabled") ? data.funModeEnabled : true;
+      funModeToggle.addEventListener("change", () => {
+        chrome.storage.sync.set({ funModeEnabled: funModeToggle.checked });
       });
     }
   });

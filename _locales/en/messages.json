@@ -70,6 +70,7 @@
   "toastImportErrorSave": { "message": "Error saving imported settings." },
   "toggleStatusColorizerLabel": { "message": "Status Colorizer" },
   "toggleRowHighlighterLabel": { "message": "Row Highlighter" },
+  "toggleFunModeLabel": { "message": "Fun Mode" },
   "menuLabel": { "message": "Menu" },
   "versionText": { "message": "Version $VERSION$", "placeholders": { "version": { "content": "$1" } } }
 }

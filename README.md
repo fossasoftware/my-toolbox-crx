@@ -52,7 +52,8 @@
     * **Status Colorizer:** Add/edit/delete status rules using the table. Choose background/text colors, enable/disable animation, and set animation colors. Use the "Import" and "Export" buttons to manage presets. Click "Save Changes" to apply settings. Use "Defaults" to restore the default color set or "Reset" to clear the table.
     * **Notepad:** Type your notes using Markdown in the left pane. A live preview appears in the right pane. Content is saved automatically to your browser's sync storage.
 4. Select your preferred language (EN/UK) using the toggle switch in the options page header.
-5. The Status Colorizer will automatically apply colors to Jira statuses when you browse matching Atlassian domains (`*://*.atlassian.net/*`). Changes might require a page refresh to take effect initially.
+5. Toggle **Fun Mode** in the popup to enable playful extras like a dancing duck when there are no queue tickets.
+6. The Status Colorizer will automatically apply colors to Jira statuses when you browse matching Atlassian domains (`*://*.atlassian.net/*`). Changes might require a page refresh to take effect initially.
 
 ### Technical Details
 
@@ -60,7 +61,7 @@
 * All user settings are stored via `chrome.storage.sync` for automatic cross-device synchronization.
 * The notepad preview relies on [`marked.js`](libs/marked.min.js) and sanitizes HTML output with [`DOMPurify`](libs/purify.min.js).
 * Import and export actions simply read or write JSON files containing your configuration.
-* Source files for each tool reside inside the `features` directory.
+* Source files for each tool reside inside the `features` directory. Playful extras live under `features/fun`.
 
 ---
 
@@ -111,7 +112,8 @@
     * **Підсвічування Рядків:** Додавайте ключові слова та обирайте колір, яким буде підсвічено рядок, якщо воно зустрінеться. Можна імпортувати та експортувати правила у форматі JSON.
     * **Нотатник:** Вводьте нотатки, використовуючи Markdown, у лівій панелі. Живий попередній перегляд з'явиться у правій панелі. Вміст автоматично зберігається у сховищі синхронізації вашого браузера.
 4. Виберіть бажану мову (EN/UK) за допомогою перемикача у заголовку сторінки налаштувань.
-5. Колоризатор Статусів автоматично застосовуватиме кольори до статусів Jira під час перегляду відповідних доменів Atlassian (`*://*.atlassian.net/*`). Зміни можуть потребувати оновлення сторінки для початкового застосування.
+5. Увімкніть **Режим розваг** у спливаючому вікні, щоб побачити кумедні елементи, наприклад танцюючу качку, коли у черзі немає тікетів.
+6. Колоризатор Статусів автоматично застосовуватиме кольори до статусів Jira під час перегляду відповідних доменів Atlassian (`*://*.atlassian.net/*`). Зміни можуть потребувати оновлення сторінки для початкового застосування.
 
 ### Технічні деталі
 
@@ -119,4 +121,4 @@
 * Усі налаштування зберігаються через `chrome.storage.sync`, тому вони синхронізуються між вашими браузерами.
 * Для попереднього перегляду Markdown застосовується [`marked.js`](libs/marked.min.js), а результуючий HTML очищається за допомогою [`DOMPurify`](libs/purify.min.js).
 * Імпорт та експорт правил здійснюється через JSON‑файли з вашими налаштуваннями.
-* Вихідні файли кожного інструменту знаходяться у папці `features`.
+* Вихідні файли кожного інструменту знаходяться у папці `features`. Кумедні можливості розміщені у `features/fun`.

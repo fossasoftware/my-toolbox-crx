@@ -1,4 +1,12 @@
 const DUCK_CLASS = 'mytoolbox-dancing-duck';
+let funModeEnabled = true;
+
+function loadFunModeEnabled(callback) {
+  chrome.storage.sync.get('funModeEnabled', (data) => {
+    funModeEnabled = data.hasOwnProperty('funModeEnabled') ? data.funModeEnabled : true;
+    if (callback) callback();
+  });
+}
 
 function injectDuckStyle() {
   if (document.getElementById('mytoolbox-duck-style')) return;
@@ -45,4 +53,9 @@ function observeEmptyQueue() {
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
-window.addEventListener('load', observeEmptyQueue);
+window.addEventListener('load', () => {
+  loadFunModeEnabled(() => {
+    if (!funModeEnabled) return;
+    observeEmptyQueue();
+  });
+});

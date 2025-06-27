@@ -70,6 +70,7 @@
   "toastImportErrorSave": { "message": "Помилка збереження імпортованих налаштувань." },
   "toggleStatusColorizerLabel": { "message": "Колоризатор статусів" },
   "toggleRowHighlighterLabel": { "message": "Підсвічування рядків" },
+  "toggleFunModeLabel": { "message": "Режим розваг" },
   "menuLabel": { "message": "Меню" },
   "versionText": { "message": "Версія $VERSION$", "placeholders": { "version": { "content": "$1" } } }
 }
