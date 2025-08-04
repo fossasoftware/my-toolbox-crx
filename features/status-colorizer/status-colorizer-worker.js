@@ -86,7 +86,7 @@ function generateRibbonCSS(statusSetting) {
 
 function paintStatuses() {
   let elements = document.querySelectorAll(
-    "span > div._1e0c1txw._1bsb1osq, span._2rko1l7b"
+    "span > div._1e0c1txw._1bsb1osq, span._2rkosqtm"
   );
   elements.forEach((element) => {
     let statusText = element.textContent.trim().toLowerCase();
