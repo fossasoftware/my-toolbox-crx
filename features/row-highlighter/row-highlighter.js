@@ -1,5 +1,38 @@
 import { getText, showToast, showValidationErrorModal } from "../../options/options-main.js";
 
+const removeIconSvg =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+
+function normalizeKeyword(keyword) {
+  return typeof keyword === "string" ? keyword.trim().toLowerCase() : "";
+}
+
+function createAliasRow(aliasValue = "") {
+  const aliasRow = document.createElement("div");
+  aliasRow.className = "keyword-alias-row";
+
+  const aliasInput = document.createElement("input");
+  aliasInput.type = "text";
+  aliasInput.value = aliasValue;
+  aliasInput.placeholder = getText("inputKeywordAliasPlaceholder");
+  aliasInput.className = "keyword-alias-input";
+  aliasRow.appendChild(aliasInput);
+
+  const removeAliasBtn = document.createElement("button");
+  const removeAliasLabel = getText("keywordAliasRemoveLabel");
+  removeAliasBtn.type = "button";
+  removeAliasBtn.className = "keyword-alias-remove";
+  removeAliasBtn.setAttribute("aria-label", removeAliasLabel);
+  removeAliasBtn.title = removeAliasLabel;
+  removeAliasBtn.innerHTML = removeIconSvg;
+  removeAliasBtn.addEventListener("click", () => {
+    aliasRow.remove();
+  });
+  aliasRow.appendChild(removeAliasBtn);
+
+  return aliasRow;
+}
+
 function updateButtonVisibility() {
   const tbody = document.querySelector("#rowHighlightTable tbody");
   const saveBtn = document.getElementById("rowHighlightSave");
@@ -19,25 +52,81 @@ function restoreHighlightSettings() {
     const settings = Array.isArray(data.rowHighlightSettings)
       ? data.rowHighlightSettings
       : [];
-    settings.forEach((item) =>
-      addRow(item.keyword, item.color, item.hasOwnProperty("enabled") ? item.enabled : true)
-    );
+    settings.forEach((item) => {
+      const aliases = Array.isArray(item.aliases)
+        ? item.aliases
+        : Array.isArray(item.keywordAliases)
+          ? item.keywordAliases
+          : [];
+      addRow(
+        item.keyword,
+        item.color,
+        item.hasOwnProperty("enabled") ? item.enabled : true,
+        aliases
+      );
+    });
     updateButtonVisibility();
   });
 }
 
-function addRow(keyword = "", color = "#ffffff", enabled = true) {
+function addRow(keyword = "", color = "#ffffff", enabled = true, aliases = []) {
   const tbody = document.querySelector("#rowHighlightTable tbody");
   if (!tbody) return;
   const row = document.createElement("tr");
   row.classList.add("row-entering");
 
   const cellKeyword = document.createElement("td");
+  cellKeyword.className = "keyword-cell";
+
+  const keywordGroup = document.createElement("div");
+  keywordGroup.className = "keyword-group";
+
+  const keywordPrimary = document.createElement("div");
+  keywordPrimary.className = "keyword-primary";
+
   const inputKeyword = document.createElement("input");
   inputKeyword.type = "text";
   inputKeyword.value = keyword;
   inputKeyword.placeholder = getText("inputKeywordPlaceholder");
-  cellKeyword.appendChild(inputKeyword);
+  inputKeyword.className = "keyword-input";
+
+  const addAliasBtn = document.createElement("button");
+  const addAliasLabel = getText("keywordAliasAddLabel");
+  addAliasBtn.type = "button";
+  addAliasBtn.className = "keyword-alias-add";
+  addAliasBtn.textContent = "+";
+  addAliasBtn.setAttribute("aria-label", addAliasLabel);
+  addAliasBtn.title = addAliasLabel;
+
+  const aliasContainer = document.createElement("div");
+  aliasContainer.className = "keyword-aliases";
+
+  const appendAlias = (aliasValue = "") => {
+    const aliasRow = createAliasRow(aliasValue);
+    aliasContainer.appendChild(aliasRow);
+    return aliasRow;
+  };
+
+  addAliasBtn.addEventListener("click", () => {
+    const aliasRow = appendAlias("");
+    const aliasInput = aliasRow.querySelector(".keyword-alias-input");
+    if (aliasInput) aliasInput.focus();
+  });
+
+  if (Array.isArray(aliases)) {
+    aliases.forEach((alias) => {
+      if (typeof alias !== "string") return;
+      const trimmedAlias = alias.trim();
+      if (!trimmedAlias) return;
+      appendAlias(trimmedAlias);
+    });
+  }
+
+  keywordPrimary.appendChild(inputKeyword);
+  keywordPrimary.appendChild(addAliasBtn);
+  keywordGroup.appendChild(keywordPrimary);
+  keywordGroup.appendChild(aliasContainer);
+  cellKeyword.appendChild(keywordGroup);
   row.appendChild(cellKeyword);
 
   const cellColor = document.createElement("td");
@@ -56,9 +145,10 @@ function addRow(keyword = "", color = "#ffffff", enabled = true) {
 
   const cellAction = document.createElement("td");
   const deleteBtn = document.createElement("button");
+  deleteBtn.type = "button";
   deleteBtn.className = "button button-delete-row";
   deleteBtn.setAttribute("aria-label", getText("settingsTableRemoveRow"));
-  deleteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+  deleteBtn.innerHTML = removeIconSvg;
   deleteBtn.addEventListener("click", () => {
     row.classList.add("row-leaving");
     row.addEventListener(
@@ -85,7 +175,9 @@ function saveHighlightSettings() {
   let rowIndex = 0;
   for (const row of rows) {
     const idx = rowIndex++;
-    const keywordInput = row.cells[0]?.querySelector('input[type="text"]');
+    const keywordInput = row.cells[0]?.querySelector(".keyword-input");
+    const aliasInputs =
+      row.cells[0]?.querySelectorAll(".keyword-alias-input") || [];
     const colorInput = row.cells[1]?.querySelector('input[type="color"]');
     const enabledInput = row.cells[2]?.querySelector('input[type="checkbox"]');
     if (!keywordInput || !colorInput || !enabledInput) {
@@ -99,8 +191,8 @@ function saveHighlightSettings() {
       keywordInput.focus();
       return;
     }
-    const lowered = keyword.toLowerCase();
-    if (uniqueKeywords.has(lowered)) {
+    const normalizedKeyword = normalizeKeyword(keyword);
+    if (uniqueKeywords.has(normalizedKeyword)) {
       showValidationErrorModal("errorDuplicateKeyword", [
         String(idx + 1),
         keyword,
@@ -108,7 +200,25 @@ function saveHighlightSettings() {
       keywordInput.focus();
       return;
     }
-    uniqueKeywords.add(lowered);
+    uniqueKeywords.add(normalizedKeyword);
+    const aliases = [];
+    for (const aliasInput of aliasInputs) {
+      const alias = aliasInput.value.trim();
+      if (!alias) {
+        continue;
+      }
+      const normalizedAlias = normalizeKeyword(alias);
+      if (uniqueKeywords.has(normalizedAlias)) {
+        showValidationErrorModal("errorDuplicateKeyword", [
+          String(idx + 1),
+          aliasInput.value,
+        ]);
+        aliasInput.focus();
+        return;
+      }
+      uniqueKeywords.add(normalizedAlias);
+      aliases.push(alias);
+    }
     if (!colorRegex.test(color)) {
       showValidationErrorModal("errorInvalidColor", [
         String(idx + 1),
@@ -117,7 +227,12 @@ function saveHighlightSettings() {
       colorInput.focus();
       return;
     }
-    settings.push({ keyword, color, enabled: enabledInput ? enabledInput.checked : true });
+    settings.push({
+      keyword,
+      color,
+      enabled: enabledInput ? enabledInput.checked : true,
+      aliases: aliases.length > 0 ? aliases : undefined,
+    });
   }
   chrome.storage.sync.set({ rowHighlightSettings: settings }, () => {
     if (chrome.runtime.lastError) {
@@ -164,16 +279,126 @@ function handleExport() {
   });
 }
 
-function validateImportedData(data) {
-  if (!Array.isArray(data)) return false;
-  const colorRegex = /^#[0-9a-f]{6}$/i;
-  for (const item of data) {
-    if (typeof item !== "object" || !item) return false;
-    if (typeof item.keyword !== "string" || item.keyword.trim() === "") return false;
-    if (typeof item.color !== "string" || !colorRegex.test(item.color)) return false;
-    if ("enabled" in item && typeof item.enabled !== "boolean") return false;
+function sanitizeKeywordAliases(keyword, aliases) {
+  const normalizedKeyword = normalizeKeyword(keyword);
+  const aliasSet = new Set();
+  const cleaned = [];
+  for (const alias of aliases) {
+    if (typeof alias !== "string") {
+      continue;
+    }
+    const trimmed = alias.trim();
+    if (!trimmed) {
+      continue;
+    }
+    const normalized = normalizeKeyword(trimmed);
+    if (!normalized || normalized === normalizedKeyword || aliasSet.has(normalized)) {
+      continue;
+    }
+    aliasSet.add(normalized);
+    cleaned.push(trimmed);
   }
-  return true;
+  return cleaned;
+}
+
+function mergeKeywordEntry(target, source) {
+  if (!target || !source) return;
+  const aliasCandidates = [];
+  if (Array.isArray(target.aliases)) {
+    aliasCandidates.push(...target.aliases);
+  }
+  if (typeof source.keyword === "string") {
+    aliasCandidates.push(source.keyword);
+  }
+  if (Array.isArray(source.aliases)) {
+    aliasCandidates.push(...source.aliases);
+  }
+  const cleaned = sanitizeKeywordAliases(target.keyword, aliasCandidates);
+  target.aliases = cleaned.length > 0 ? cleaned : undefined;
+  if (target.color === undefined && source.color !== undefined) {
+    target.color = source.color;
+  }
+  if (target.enabled === undefined && source.enabled !== undefined) {
+    target.enabled = source.enabled;
+  }
+}
+
+function mergeImportedHighlightSettings(data) {
+  if (!Array.isArray(data)) return null;
+  const colorRegex = /^#[0-9a-f]{6}$/i;
+  const merged = [];
+  const indexByName = new Map();
+
+  const updateIndexMap = (entry, index) => {
+    const names = [entry.keyword, ...(entry.aliases || [])];
+    names.forEach((name) => {
+      const normalized = normalizeKeyword(name);
+      if (normalized) {
+        indexByName.set(normalized, index);
+      }
+    });
+  };
+
+  for (const item of data) {
+    if (typeof item !== "object" || !item) return null;
+    if (typeof item.keyword !== "string" || item.keyword.trim() === "") return null;
+    const keyword = item.keyword.trim();
+    if (typeof item.color !== "string" || !colorRegex.test(item.color)) return null;
+    if ("enabled" in item && typeof item.enabled !== "boolean") return null;
+
+    const aliasSources = [];
+    if ("aliases" in item) {
+      if (!Array.isArray(item.aliases)) return null;
+      aliasSources.push(...item.aliases);
+    }
+    if ("keywordAliases" in item) {
+      if (!Array.isArray(item.keywordAliases)) return null;
+      aliasSources.push(...item.keywordAliases);
+    }
+    for (const alias of aliasSources) {
+      if (typeof alias !== "string") return null;
+    }
+    const aliases = sanitizeKeywordAliases(keyword, aliasSources);
+
+    const entry = {
+      keyword,
+      color: item.color,
+    };
+    if ("enabled" in item) entry.enabled = item.enabled;
+    if (aliases.length > 0) entry.aliases = aliases;
+
+    const normalizedNames = new Set(
+      [entry.keyword, ...(entry.aliases || [])]
+        .map((name) => normalizeKeyword(name))
+        .filter(Boolean)
+    );
+    const indices = new Set();
+    normalizedNames.forEach((name) => {
+      const index = indexByName.get(name);
+      if (index !== undefined) {
+        indices.add(index);
+      }
+    });
+
+    if (indices.size === 0) {
+      const newIndex = merged.length;
+      merged.push(entry);
+      updateIndexMap(entry, newIndex);
+      continue;
+    }
+
+    const [targetIndex] = indices;
+    const target = merged[targetIndex];
+    for (const index of indices) {
+      if (index === targetIndex) continue;
+      mergeKeywordEntry(target, merged[index]);
+      merged[index] = null;
+    }
+    mergeKeywordEntry(target, entry);
+    updateIndexMap(target, targetIndex);
+  }
+
+  return merged.filter(Boolean);
 }
 
 function handleImport(event) {
@@ -189,12 +414,13 @@ function handleImport(event) {
       event.target.value = null;
       return;
     }
-    if (!validateImportedData(imported)) {
+    const mergedSettings = mergeImportedHighlightSettings(imported);
+    if (!mergedSettings) {
       showToast("toastImportErrorValidation");
       event.target.value = null;
       return;
     }
-    chrome.storage.sync.set({ rowHighlightSettings: imported }, () => {
+    chrome.storage.sync.set({ rowHighlightSettings: mergedSettings }, () => {
       if (chrome.runtime.lastError) {
         console.error(
           "Row Highlighter: Error saving imported settings",

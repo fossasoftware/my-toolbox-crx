@@ -156,14 +156,52 @@ function applyTranslations() {
     }
   });
   document
-    .querySelectorAll('#statusTable tbody input[type="text"]')
+    .querySelectorAll('#statusTable tbody .status-name-input')
     .forEach((input) => {
       input.placeholder = getText("inputStatusPlaceholder");
     });
   document
-    .querySelectorAll('#rowHighlightTable tbody input[type="text"]')
+    .querySelectorAll('#statusTable tbody .status-alias-input')
+    .forEach((input) => {
+      input.placeholder = getText("inputStatusAliasPlaceholder");
+    });
+  document
+    .querySelectorAll('#statusTable tbody .status-alias-add')
+    .forEach((button) => {
+      const label = getText("statusAliasAddLabel");
+      button.title = label;
+      button.setAttribute("aria-label", label);
+    });
+  document
+    .querySelectorAll('#statusTable tbody .status-alias-remove')
+    .forEach((button) => {
+      const label = getText("statusAliasRemoveLabel");
+      button.title = label;
+      button.setAttribute("aria-label", label);
+    });
+  document
+    .querySelectorAll('#rowHighlightTable tbody .keyword-input')
     .forEach((input) => {
       input.placeholder = getText("inputKeywordPlaceholder");
+    });
+  document
+    .querySelectorAll('#rowHighlightTable tbody .keyword-alias-input')
+    .forEach((input) => {
+      input.placeholder = getText("inputKeywordAliasPlaceholder");
+    });
+  document
+    .querySelectorAll('#rowHighlightTable tbody .keyword-alias-add')
+    .forEach((button) => {
+      const label = getText("keywordAliasAddLabel");
+      button.title = label;
+      button.setAttribute("aria-label", label);
+    });
+  document
+    .querySelectorAll('#rowHighlightTable tbody .keyword-alias-remove')
+    .forEach((button) => {
+      const label = getText("keywordAliasRemoveLabel");
+      button.title = label;
+      button.setAttribute("aria-label", label);
     });
   const notepadArea = document.getElementById("notepadArea");
   if (notepadArea) {

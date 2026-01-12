@@ -1,6 +1,21 @@
 let highlightSettings = [];
 let rowHighlighterEnabled = true;
 
+function normalizeKeyword(keyword) {
+  return typeof keyword === "string" ? keyword.trim().toLowerCase() : "";
+}
+
+function getKeywordVariants(item) {
+  const aliases = Array.isArray(item.aliases)
+    ? item.aliases
+    : Array.isArray(item.keywordAliases)
+      ? item.keywordAliases
+      : [];
+  return [item.keyword, ...aliases]
+    .map((value) => normalizeKeyword(value))
+    .filter(Boolean);
+}
+
 function loadRowHighlighterEnabled(callback) {
   chrome.storage.sync.get("rowHighlighterEnabled", (data) => {
     rowHighlighterEnabled = data.hasOwnProperty("rowHighlighterEnabled") ? data.rowHighlighterEnabled : true;
@@ -35,10 +50,13 @@ function highlightRows() {
   rows.forEach((row) => {
     const text = row.innerText.toLowerCase();
     for (const item of highlightSettings) {
-      if (item.enabled !== false && text.includes(item.keyword.toLowerCase())) {
-        row.style.setProperty("background-color", item.color, "important");
-        break;
-      }
+      if (item.enabled === false) continue;
+      const keywords = getKeywordVariants(item);
+      if (!keywords.length) continue;
+      const matched = keywords.some((keyword) => text.includes(keyword));
+      if (!matched) continue;
+      row.style.setProperty("background-color", item.color, "important");
+      break;
     }
   });
 }
@@ -57,4 +75,3 @@ window.addEventListener("load", () => {
     });
   });
 });
-

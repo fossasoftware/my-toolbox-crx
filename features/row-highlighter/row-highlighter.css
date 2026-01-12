@@ -53,9 +53,7 @@
   background-color: #f6f6f6;
 }
 .highlighter-table td:last-child {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  text-align: center;
 }
 
 .highlighter-table input[type="text"],
@@ -80,6 +78,87 @@
   border-color: var(--dark-text);
   background-color: #fff;
   box-shadow: 0 0 4px 0 rgba(13, 24, 28, 0.1), 0 0 8px 0 rgba(13, 24, 28, 0.1);
+}
+.highlighter-table td.keyword-cell {
+  vertical-align: top;
+}
+.keyword-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+.keyword-primary,
+.keyword-alias-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+.keyword-primary .keyword-input,
+.keyword-alias-row .keyword-alias-input {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+}
+.keyword-aliases {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+.keyword-alias-add {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px dashed var(--border-color);
+  background-color: transparent;
+  color: var(--secondary-text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: background-color var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    opacity var(--transition-fast);
+}
+.keyword-primary:hover .keyword-alias-add,
+.keyword-primary:focus-within .keyword-alias-add {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.keyword-alias-add:hover {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+  background-color: rgba(227, 6, 19, 0.08);
+}
+.keyword-alias-remove {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background-color: transparent;
+  color: var(--secondary-text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  transition: background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+.keyword-alias-remove:hover {
+  color: var(--danger-color);
+  background-color: rgba(227, 6, 19, 0.1);
+}
+.keyword-alias-remove svg {
+  width: 12px;
+  height: 12px;
+  display: block;
 }
 .highlighter-table input[type="color"] {
   -webkit-appearance: none;
@@ -166,6 +245,10 @@
   box-shadow: none;
   transform: none;
   vertical-align: middle;
+}
+.highlighter-table .button.button-delete-row {
+  display: inline-flex;
+  margin: 0 auto;
 }
 .button.button-delete-row:hover {
   color: var(--danger-color);

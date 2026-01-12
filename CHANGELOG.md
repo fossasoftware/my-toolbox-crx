@@ -5,6 +5,25 @@ All notable changes to the "My ToolBox" Chrome extension will be documented in t
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (starting from this documented version).
 
+## [4.5.1] - 2026-01-12
+
+### Fixed
+
+- Prevented double status ribbon animations in nested Jira markup.
+- Ribbon animations no longer get overridden by the base background color; text color still applies.
+
+### Changed
+
+- Import now merges duplicate status/keyword entries into a single rule with aliases.
+- Status Colorizer disables the background color input when animation is enabled.
+
+## [4.5.0] - 2026-01-12
+
+### Added
+
+- Status Colorizer now supports alternative status names (aliases) per status.
+- Row Highlighter now supports alternative keywords (aliases) per rule.
+
 ## [4.4.7] - 2025-09-02
 
 ### Fixed
