@@ -13,7 +13,13 @@
   "settingsTableColor": { "message": "Color" },
   "settingsTableEnabled": { "message": "Enabled" },
   "inputStatusPlaceholder": { "message": "Enter status name" },
+  "inputStatusAliasPlaceholder": { "message": "Alternative status name" },
   "inputKeywordPlaceholder": { "message": "Enter word or phrase" },
+  "inputKeywordAliasPlaceholder": { "message": "Alternative keyword" },
+  "keywordAliasAddLabel": { "message": "Add alias" },
+  "keywordAliasRemoveLabel": { "message": "Remove alias" },
+  "statusAliasAddLabel": { "message": "Add alias" },
+  "statusAliasRemoveLabel": { "message": "Remove alias" },
   "addRowButton": { "message": "Add Status" },
   "addKeywordButton": { "message": "Add Word" },
   "saveButton": { "message": "Save Changes" },
@@ -37,7 +43,7 @@
   "validationErrorTitle": { "message": "Validation Issue" },
   "validationErrorOk": { "message": "OK" },
   "errorStatusEmpty": { "message": "Row $ROW$ error: Status name can't be empty.", "placeholders": { "row": { "content": "$1" }}},
-  "errorDuplicateStatus": { "message": "Row $ROW$ error: Duplicate status name \"$STATUS_NAME$\". Status names must be unique.", "placeholders": { "row": { "content": "$1" }, "status_name": { "content": "$2" }}},
+  "errorDuplicateStatus": { "message": "Row $ROW$ error: Duplicate status or alias name \"$STATUS_NAME$\". Names must be unique.", "placeholders": { "row": { "content": "$1" }, "status_name": { "content": "$2" }}},
   "errorInvalidBgColor": { "message": "Row $ROW$ error: Invalid background color \"$COLOR$\". Use #rrggbb format.", "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" }}},
   "errorInvalidTextColor": { "message": "Row $ROW$ error: Invalid text color \"$COLOR$\". Use #rrggbb format.", "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" }}},
   "errorInvalidPrimaryColor": { "message": "Row $ROW$ error: A valid primary color \"$COLOR$\" is required for animations. Use #rrggbb format.", "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" }}},
@@ -45,7 +51,7 @@
   "errorInternalRow": { "message": "Internal error while processing row $ROW$. Please check the console.", "placeholders": { "row": { "content": "$1" }}},
   "errorSavingSettings": { "message": "Error saving settings: $ERROR$", "placeholders": { "error": { "content": "$1" }}},
   "errorKeywordEmpty": { "message": "Row $ROW$ error: Keyword can't be empty.", "placeholders": { "row": { "content": "$1" }}},
-  "errorDuplicateKeyword": { "message": "Row $ROW$ error: Duplicate keyword \"$KEYWORD$\".", "placeholders": { "row": { "content": "$1" }, "keyword": { "content": "$2" }}},
+  "errorDuplicateKeyword": { "message": "Row $ROW$ error: Duplicate keyword or alias \"$KEYWORD$\".", "placeholders": { "row": { "content": "$1" }, "keyword": { "content": "$2" }}},
   "errorInvalidColor": { "message": "Row $ROW$ error: Invalid color \"$COLOR$\". Use #rrggbb format.", "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" }}},
   "popupTitle": { "message": "My ToolBox" },
   "popupDescription": { "message": "Customize from the settings page." },
@@ -73,4 +79,3 @@
   "menuLabel": { "message": "Menu" },
   "versionText": { "message": "Version $VERSION$", "placeholders": { "version": { "content": "$1" } } }
 }
-
