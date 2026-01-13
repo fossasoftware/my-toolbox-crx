@@ -11,6 +11,9 @@
   word-wrap: break-word;
   background-color: var(--background-light);
 }
+.table-with-add .status-colorizer-table {
+  margin-bottom: 0;
+}
 .status-colorizer-table tbody tr {
   transform-origin: center center;
 }

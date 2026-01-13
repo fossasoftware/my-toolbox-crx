@@ -136,6 +136,75 @@ export function getLoadedDefaultSettings() {
   return loadedDefaultSettings;
 }
 
+function updateTableAddButtonWidths() {
+  const buttons = document.querySelectorAll(".table-add-button");
+  if (buttons.length === 0) return;
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+  if (!context) return;
+
+  buttons.forEach((button) => {
+    const label = button.querySelector(".btn-label");
+    if (!label) return;
+    const icon = button.querySelector("svg, img");
+    const buttonStyles = getComputedStyle(button);
+    const padding =
+      parseFloat(buttonStyles.getPropertyValue("--table-add-padding")) || 10;
+    const gap =
+      parseFloat(buttonStyles.getPropertyValue("--table-add-gap")) || 6;
+    const iconWidth = icon
+      ? parseFloat(getComputedStyle(icon).width) || 0
+      : 0;
+
+    const labelStyles = getComputedStyle(label);
+    context.font = `${labelStyles.fontStyle} ${labelStyles.fontWeight} ${labelStyles.fontSize} ${labelStyles.fontFamily}`;
+    const text = (label.textContent || "").trim();
+    const labelWidth = text ? context.measureText(text).width : 0;
+    const effectiveGap = iconWidth > 0 && labelWidth > 0 ? gap : 0;
+    const expandedWidth = Math.ceil(
+      labelWidth + iconWidth + effectiveGap + padding * 2
+    );
+    if (expandedWidth > 0) {
+      button.style.setProperty(
+        "--table-add-expanded-width",
+        `${expandedWidth}px`
+      );
+    }
+  });
+}
+
+function initializeTableEmptyStates() {
+  const tables = document.querySelectorAll(".table-with-add table");
+  if (tables.length === 0) return;
+
+  const updateState = (table) => {
+    const wrapper = table.closest(".table-with-add");
+    if (!wrapper) return;
+    const tbody = table.tBodies[0];
+    const hasRows = tbody ? tbody.children.length > 0 : false;
+    wrapper.classList.toggle("is-empty", !hasRows);
+    const thead = table.querySelector("thead");
+    if (thead) {
+      wrapper.style.setProperty(
+        "--table-add-header-height",
+        `${thead.getBoundingClientRect().height}px`
+      );
+    }
+  };
+
+  tables.forEach((table) => {
+    const tbody = table.tBodies[0];
+    updateState(table);
+    if (!tbody) return;
+    const observer = new MutationObserver(() => updateState(table));
+    observer.observe(tbody, { childList: true });
+  });
+
+  window.addEventListener("resize", () => {
+    tables.forEach((table) => updateState(table));
+  });
+}
+
 function applyTranslations() {
   if (!currentMessages) return;
   document.querySelectorAll("[data-i18n]").forEach((element) => {
@@ -229,17 +298,27 @@ function applyTranslations() {
   if (rhExportBtn) rhExportBtn.title = getText("exportButton");
 
   const addRowBtn = document.getElementById("addRow");
-  if (addRowBtn) addRowBtn.title = getText("addRowButton");
+  if (addRowBtn) {
+    const label = getText("addRowButton");
+    addRowBtn.setAttribute("aria-label", label);
+    addRowBtn.removeAttribute("title");
+  }
   const saveSettingsBtn = document.getElementById("saveSettings");
   if (saveSettingsBtn) saveSettingsBtn.title = getText("saveButton");
   const clearAllBtn = document.getElementById("clearAll");
   if (clearAllBtn) clearAllBtn.title = getText("resetButton");
   const rowAddBtn = document.getElementById("rowHighlightAdd");
-  if (rowAddBtn) rowAddBtn.title = getText("addKeywordButton");
+  if (rowAddBtn) {
+    const label = getText("addKeywordButton");
+    rowAddBtn.setAttribute("aria-label", label);
+    rowAddBtn.removeAttribute("title");
+  }
   const rowSaveBtn = document.getElementById("rowHighlightSave");
   if (rowSaveBtn) rowSaveBtn.title = getText("saveButton");
   const rowResetBtn = document.getElementById("rowHighlightReset");
   if (rowResetBtn) rowResetBtn.title = getText("resetButton");
+
+  updateTableAddButtonWidths();
 }
 
 async function setLanguage(lang) {
@@ -401,5 +480,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   initializeStatusColorizer();
   initializeRowHighlighter();
   initializeNotepad();
+  initializeTableEmptyStates();
 
 });

@@ -40,24 +40,26 @@
     <div class="tab-content">
       <div id="statusColorizerTab" class="tab-pane active">
       <h2 data-i18n="statusColorizerTitle"></h2>
-      <table class="status-colorizer-table" id="statusTable">
-        <thead>
-          <tr>
-            <th scope="col" data-i18n="settingsTableStatus"></th>
-            <th scope="col" data-i18n="settingsTableBackground"></th>
-            <th scope="col" data-i18n="settingsTableText"></th>
-            <th scope="col" data-i18n="settingsTableAnimation"></th>
-            <th scope="col" data-i18n="settingsTablePrimaryColor"></th>
-            <th scope="col" data-i18n="settingsTableSecondaryColor"></th>
-            <th scope="col" data-i18n="settingsTableRemoveRow"></th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="table-with-add">
+        <table class="status-colorizer-table" id="statusTable">
+          <thead>
+            <tr>
+              <th scope="col" data-i18n="settingsTableStatus"></th>
+              <th scope="col" data-i18n="settingsTableBackground"></th>
+              <th scope="col" data-i18n="settingsTableText"></th>
+              <th scope="col" data-i18n="settingsTableAnimation"></th>
+              <th scope="col" data-i18n="settingsTablePrimaryColor"></th>
+              <th scope="col" data-i18n="settingsTableSecondaryColor"></th>
+              <th scope="col" data-i18n="settingsTableRemoveRow"></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <button id="addRow" class="button table-add-button"><span class="btn-label" data-i18n="addRowButton"></span></button>
+      </div>
 
       <div class="button-container">
         <div class="button-group-left">
-            <button id="addRow" class="button button-primary icon-button"><img src="../img/add.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="addRowButton"></span></button>
             <button id="saveSettings" class="button button-primary icon-button"><img src="../img/save.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="saveButton"></span></button>
             <button id="clearAll" class="button button-danger icon-button"><img src="../img/reset.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="resetButton"></span></button>
             <button id="resetStatusSettings" class="button button-secondary" data-i18n="defaultButton"></button>
@@ -93,21 +95,23 @@
 
     <div id="rowHighlighterTab" class="tab-pane">
       <h2 data-i18n="rowHighlighterTitle"></h2>
-      <table class="highlighter-table" id="rowHighlightTable">
-        <thead>
-          <tr>
-            <th scope="col" data-i18n="settingsTableKeyword"></th>
-            <th scope="col" data-i18n="settingsTableColor"></th>
-            <th scope="col" data-i18n="settingsTableEnabled"></th>
-            <th scope="col" data-i18n="settingsTableRemoveRow"></th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="table-with-add">
+        <table class="highlighter-table" id="rowHighlightTable">
+          <thead>
+            <tr>
+              <th scope="col" data-i18n="settingsTableKeyword"></th>
+              <th scope="col" data-i18n="settingsTableColor"></th>
+              <th scope="col" data-i18n="settingsTableEnabled"></th>
+              <th scope="col" data-i18n="settingsTableRemoveRow"></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <button id="rowHighlightAdd" class="button table-add-button"><span class="btn-label" data-i18n="addKeywordButton"></span></button>
+      </div>
 
       <div class="button-container">
         <div class="button-group-left">
-            <button id="rowHighlightAdd" class="button button-primary icon-button"><img src="../img/add.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="addKeywordButton"></span></button>
             <button id="rowHighlightSave" class="button button-primary icon-button"><img src="../img/save.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="saveButton"></span></button>
             <button id="rowHighlightReset" class="button button-danger icon-button"><img src="../img/reset.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="resetButton"></span></button>
         </div>

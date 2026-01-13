@@ -5,6 +5,18 @@ All notable changes to the "My ToolBox" Chrome extension will be documented in t
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (starting from this documented version).
 
+## [4.5.3] - 2026-01-13
+
+### Changed
+
+- Reworked the Add Row control into an inline pill that expands on hover and adapts to empty table states.
+- Updated the Add Row label to show a dedicated "ADD ROW" text label in both languages.
+- Adjusted toast sizing/positioning for less overlap with table content.
+
+### Fixed
+
+- Corrected the Add Row button border alignment and hover visibility.
+
 ## [4.5.2] - 2026-01-13
 
 ### Added
