@@ -6,6 +6,10 @@ let currentMessages = {};
 let currentLang = "en";
 const supportedLangs = ["en", "uk"];
 let loadedDefaultSettings = [];
+let toastTimeout;
+let toastHideTimeout;
+const TOAST_HIDE_DURATION = 240;
+const TOAST_VISIBLE_DURATION = 2600;
 
 function updateVersionText() {
   const manifest = chrome.runtime.getManifest();
@@ -85,10 +89,17 @@ export function showToast(messageKey = "toastSaved", substitutions = null) {
   const toast = document.getElementById("toast");
   if (!toast) return;
   toast.textContent = getText(messageKey, substitutions);
+  clearTimeout(toastTimeout);
+  clearTimeout(toastHideTimeout);
+  toast.classList.remove("hide");
   toast.classList.add("show");
-  setTimeout(() => {
-    toast.classList.remove("show");
-  }, 3000);
+  toastTimeout = setTimeout(() => {
+    toast.classList.add("hide");
+    toastHideTimeout = setTimeout(() => {
+      toast.classList.remove("show");
+      toast.classList.remove("hide");
+    }, TOAST_HIDE_DURATION);
+  }, TOAST_VISIBLE_DURATION);
 }
 export function showValidationErrorModal(messageKey, substitutions = null) {
   const modal = document.getElementById("validationErrorModal");
@@ -295,6 +306,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     menuToggle.addEventListener("click", () => {
       if (sideMenu.classList.contains("open")) {
         sideMenu.classList.add("animating-close");
+        menuToggle.classList.remove("active");
         if (pageContainer) {
           pageContainer.classList.remove("shifted");
         }
@@ -308,6 +320,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         );
       } else {
         sideMenu.classList.add("open", "animating-open");
+        menuToggle.classList.add("active");
         if (pageContainer) {
           pageContainer.classList.add("shifted");
         }
