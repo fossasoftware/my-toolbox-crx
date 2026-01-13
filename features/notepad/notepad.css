@@ -1,12 +1,11 @@
 .notepad-textarea {
   width: 100%;
-  min-height: 350px;
   padding: var(--spacing-md);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-table);
   line-height: 1.5;
-  resize: vertical;
-  margin-bottom: var(--spacing-lg);
+  resize: none;
+  margin-bottom: 0;
   font-family: var(--font-body);
   font-size: 13px;
   vertical-align: top;
@@ -19,7 +18,6 @@
 
 .notepad-preview {
   width: 100%;
-  min-height: 350px;
   padding: var(--spacing-md);
   border: 1px solid var(--border-color-table);
   border-radius: var(--border-radius-table);
@@ -27,7 +25,7 @@
   line-height: 1.6;
   font-family: var(--font-body);
   font-size: var(--font-size-base);
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: 0;
 }
 
 .notepad-preview h1,
@@ -121,16 +119,152 @@
   display: none;
 }
 
+#notepadTab.active {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - var(--spacing-xl) - var(--spacing-xl));
+}
+
+.notepad-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.notepad-autosave {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--dark-text);
+}
+
+.notepad-toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  display: inline-block;
+}
+
+.notepad-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.notepad-toggle-slider {
+  position: absolute;
+  inset: 0;
+  background-color: var(--background-medium);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 220ms var(--md-ease),
+    border-color 220ms var(--md-ease),
+    box-shadow 220ms var(--md-ease);
+}
+
+.notepad-toggle-slider::before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 2px;
+  top: 50%;
+  background-color: var(--background-light);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  transform: translateY(-50%);
+  transition: transform 220ms var(--md-ease),
+    border-color 220ms var(--md-ease),
+    background-color 220ms var(--md-ease);
+}
+
+.notepad-toggle input:checked + .notepad-toggle-slider {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 6px rgba(227, 6, 19, 0.12);
+}
+
+.notepad-toggle input:checked + .notepad-toggle-slider::before {
+  transform: translate(20px, -50%);
+  border-color: var(--primary-color);
+  animation: notepad-toggle-on 260ms var(--md-ease);
+}
+
+.notepad-toggle input:not(:checked) + .notepad-toggle-slider::before {
+  animation: notepad-toggle-off 260ms var(--md-ease);
+}
+
+.notepad-toggle input:focus-visible + .notepad-toggle-slider {
+  box-shadow: 0 0 0 3px rgba(227, 6, 19, 0.2);
+}
+
+@keyframes notepad-toggle-on {
+  0% {
+    transform: translate(0, -50%);
+  }
+  70% {
+    transform: translate(22px, -50%);
+  }
+  100% {
+    transform: translate(20px, -50%);
+  }
+}
+
+@keyframes notepad-toggle-off {
+  0% {
+    transform: translate(20px, -50%);
+  }
+  70% {
+    transform: translate(-2px, -50%);
+  }
+  100% {
+    transform: translate(0, -50%);
+  }
+}
+
+.notepad-save-button {
+  max-width: none;
+  padding: 0 12px;
+}
+
+.notepad-save-button:hover {
+  max-width: none;
+}
+
+.notepad-save-button .btn-label {
+  max-width: none;
+  opacity: 1;
+  margin-left: 6px;
+  pointer-events: none;
+}
+
+.notepad-save-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.notepad-save-button:disabled:hover {
+  max-width: none;
+}
+
 .notepad-wrapper {
   display: flex;
   gap: var(--spacing-md);
   align-items: stretch;
-  height: calc(100vh - 100px);
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .notepad-textarea,
 .notepad-preview {
-  width: 50%;
-  height: 100%;
+  flex: 1 1 0;
   overflow-y: auto;
+  min-height: 0;
 }

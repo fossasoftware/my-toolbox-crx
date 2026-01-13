@@ -1,7 +1,46 @@
-import { getText, showToast } from "../../options/options-main.js";
+import { showToast } from "../../options/options-main.js";
 
 let notepadSaveTimeout;
+let autosaveEnabled = true;
+let autosaveToggle;
+let saveButton;
 const NOTEPAD_SAVE_DELAY = 750;
+const NOTEPAD_AUTOSAVE_KEY = "notepadAutosaveEnabled";
+
+function setAutosaveState(enabled) {
+  autosaveEnabled = enabled;
+  if (autosaveToggle) {
+    autosaveToggle.checked = enabled;
+  }
+  if (saveButton) {
+    saveButton.disabled = enabled;
+    saveButton.setAttribute("aria-disabled", enabled ? "true" : "false");
+  }
+  if (!enabled) {
+    clearTimeout(notepadSaveTimeout);
+  }
+}
+
+function loadAutosavePreference() {
+  chrome.storage.sync.get(NOTEPAD_AUTOSAVE_KEY, (data) => {
+    if (chrome.runtime.lastError) {
+      console.error("Notepad: Error loading autosave preference:", chrome.runtime.lastError);
+      showToast("toastErrorLoading");
+      return;
+    }
+    const enabled = data[NOTEPAD_AUTOSAVE_KEY];
+    setAutosaveState(enabled !== false);
+  });
+}
+
+function saveAutosavePreference(enabled) {
+  chrome.storage.sync.set({ [NOTEPAD_AUTOSAVE_KEY]: enabled }, () => {
+    if (chrome.runtime.lastError) {
+      console.error("Notepad: Error saving autosave preference:", chrome.runtime.lastError);
+      showToast("toastErrorSaving");
+    }
+  });
+}
 
 function loadNotepadContent() {
   const notepadArea = document.getElementById('notepadArea');
@@ -18,7 +57,7 @@ function loadNotepadContent() {
   }
 }
 
-function saveNotepadContent() {
+function saveNotepadContent({ showSuccessToast = true } = {}) {
   const notepadArea = document.getElementById('notepadArea');
   if (notepadArea) {
     const content = notepadArea.value;
@@ -26,7 +65,7 @@ function saveNotepadContent() {
       if (chrome.runtime.lastError) {
         console.error('Notepad: Error saving content:', chrome.runtime.lastError);
         showToast('toastErrorSaving');
-      } else {
+      } else if (showSuccessToast) {
         showToast('notepadStatusSaved');
       }
     });
@@ -35,8 +74,9 @@ function saveNotepadContent() {
 
 function debouncedSaveNotepad() {
   clearTimeout(notepadSaveTimeout);
-  showToast('notepadStatusSaving');
-  notepadSaveTimeout = setTimeout(saveNotepadContent, NOTEPAD_SAVE_DELAY);
+  notepadSaveTimeout = setTimeout(() => {
+    saveNotepadContent({ showSuccessToast: false });
+  }, NOTEPAD_SAVE_DELAY);
 }
 
 function renderMarkdownPreview() {
@@ -91,11 +131,38 @@ export function initializeNotepad() {
     return;
   }
 
+  autosaveToggle = document.getElementById('notepadAutosaveToggle');
+  saveButton = document.getElementById('notepadSaveButton');
+
+  if (autosaveToggle) {
+    autosaveToggle.addEventListener('change', () => {
+      const enabled = autosaveToggle.checked;
+      setAutosaveState(enabled);
+      saveAutosavePreference(enabled);
+      if (enabled) {
+        debouncedSaveNotepad();
+      }
+    });
+  } else {
+    console.error("Notepad: Missing autosave toggle");
+  }
+
+  if (saveButton) {
+    saveButton.addEventListener('click', () => {
+      saveNotepadContent();
+    });
+  } else {
+    console.error("Notepad: Missing save button");
+  }
+
   notepadArea.addEventListener('input', () => {
     renderMarkdownPreview();
-    debouncedSaveNotepad();
+    if (autosaveEnabled) {
+      debouncedSaveNotepad();
+    }
   });
 
+  loadAutosavePreference();
   waitForMarkdownAndThenInit();
   bindSyncedScroll();
 }

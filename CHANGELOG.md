@@ -5,6 +5,23 @@ All notable changes to the "My ToolBox" Chrome extension will be documented in t
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (starting from this documented version).
 
+## [4.5.2] - 2026-01-13
+
+### Added
+
+- Notepad autosave toggle with a manual save option.
+- Animated toast transitions and smooth language switcher movement.
+
+### Changed
+
+- Notepad editor/preview now stretch to the window height and controls sit below the panels.
+- Autosave no longer shows toasts, manual saves show confirmation and the save button is disabled when autosave is enabled.
+
+### Fixed
+
+- Centered the autosave toggle knob and removed manual textarea resizing.
+- Resolved minor gaps in the language switcher highlight alignment.
+
 ## [4.5.1] - 2026-01-12
 
 ### Fixed
