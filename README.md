@@ -1,6 +1,6 @@
 # My ToolBox
 
-[![GitHub release](https://img.shields.io/github/v/release/fossasoftware/my-toolbox-crx?display_name=tag&sort=semver)](https://github.com/fossasoftware/my-toolbox-crx/releases)
+[![Release](https://img.shields.io/badge/release-4.5.2-blue)](https://github.com/fossasoftware/my-toolbox-crx/releases)
 
 **Chrome Extension**
 
