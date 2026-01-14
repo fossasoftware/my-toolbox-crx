@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="../features/status-colorizer/status-colorizer.css">
   <link rel="stylesheet" href="../features/row-highlighter/row-highlighter.css">
   <link rel="stylesheet" href="../features/notepad/notepad.css">
+  <link rel="stylesheet" href="../features/settings/settings.css">
 </head>
 <body>
 
@@ -28,6 +29,7 @@
       <button class="tab-link active" data-tab="statusColorizerTab" data-i18n="optionsTabStatusColorizer"></button>
       <button class="tab-link" data-tab="rowHighlighterTab" data-i18n="optionsTabRowHighlighter"></button>
       <button class="tab-link" data-tab="notepadTab" data-i18n="optionsTabNotepad"></button>
+      <button class="tab-link" data-tab="settingsTab" data-i18n="optionsTabSettings"></button>
     </div>
     <div class="footer">
       <p data-i18n="footerText"></p>
@@ -38,126 +40,11 @@
   <div class="page-container">
 
     <div class="tab-content">
-      <div id="statusColorizerTab" class="tab-pane active">
-      <h2 data-i18n="statusColorizerTitle"></h2>
-      <div class="table-with-add">
-        <table class="status-colorizer-table" id="statusTable">
-          <thead>
-            <tr>
-              <th scope="col" data-i18n="settingsTableStatus"></th>
-              <th scope="col" data-i18n="settingsTableBackground"></th>
-              <th scope="col" data-i18n="settingsTableText"></th>
-              <th scope="col" data-i18n="settingsTableAnimation"></th>
-              <th scope="col" data-i18n="settingsTablePrimaryColor"></th>
-              <th scope="col" data-i18n="settingsTableSecondaryColor"></th>
-              <th scope="col" data-i18n="settingsTableRemoveRow"></th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-        <button id="addRow" class="button table-add-button"><span class="btn-label" data-i18n="addRowButton"></span></button>
-      </div>
-
-      <div class="button-container">
-        <div class="button-group-left">
-            <button id="saveSettings" class="button button-primary icon-button"><img src="../img/save.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="saveButton"></span></button>
-            <button id="clearAll" class="button button-danger icon-button"><img src="../img/reset.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="resetButton"></span></button>
-            <button id="resetStatusSettings" class="button button-secondary" data-i18n="defaultButton"></button>
-        </div>
-        <div class="button-group-right">
-            <input type="file" id="importFile" accept=".json" style="display: none;">
-            <button id="importSettingsBtn" class="button button-secondary icon-button"><img src="../img/export.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="importButton"></span></button>
-            <button id="exportSettingsBtn" class="button button-secondary icon-button"><img src="../img/import.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="exportButton"></span></button>
-        </div>
-      </div>
-
-      <div id="confirmModal" class="modal-overlay">
-        <div class="modal-box">
-          <h5 data-i18n="confirmResetTableTitle"></h5>
-          <p data-i18n="confirmResetTableText"></p>
-          <div class="modal-actions">
-            <button id="confirmDelete" class="button button-danger" data-i18n="confirmResetTableYes"></button>
-            <button id="cancelDelete" class="button button-secondary" data-i18n="confirmResetTableCancel"></button>
-          </div>
-        </div>
-      </div>
-      <div id="resetConfirmModal" class="modal-overlay">
-         <div class="modal-box">
-           <h5 data-i18n="confirmDefaultTitle"></h5>
-           <p data-i18n="confirmDefaultText"></p>
-           <div class="modal-actions">
-             <button id="confirmReset" class="button button-primary" data-i18n="confirmDefaultYes"></button>
-             <button id="cancelReset" class="button button-secondary" data-i18n="confirmDefaultCancel"></button>
-           </div>
-         </div>
-       </div>
-      </div>
-
-    <div id="rowHighlighterTab" class="tab-pane">
-      <h2 data-i18n="rowHighlighterTitle"></h2>
-      <div class="table-with-add">
-        <table class="highlighter-table" id="rowHighlightTable">
-          <thead>
-            <tr>
-              <th scope="col" data-i18n="settingsTableKeyword"></th>
-              <th scope="col" data-i18n="settingsTableColor"></th>
-              <th scope="col" data-i18n="settingsTableEnabled"></th>
-              <th scope="col" data-i18n="settingsTableRemoveRow"></th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-        <button id="rowHighlightAdd" class="button table-add-button"><span class="btn-label" data-i18n="addKeywordButton"></span></button>
-      </div>
-
-      <div class="button-container">
-        <div class="button-group-left">
-            <button id="rowHighlightSave" class="button button-primary icon-button"><img src="../img/save.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="saveButton"></span></button>
-            <button id="rowHighlightReset" class="button button-danger icon-button"><img src="../img/reset.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="resetButton"></span></button>
-        </div>
-        <div class="button-group-right">
-            <input type="file" id="rowHighlightImportFile" accept=".json" style="display: none;">
-            <button id="rowHighlightImport" class="button button-secondary icon-button"><img src="../img/export.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="importButton"></span></button>
-            <button id="rowHighlightExport" class="button button-secondary icon-button"><img src="../img/import.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="exportButton"></span></button>
-        </div>
-      </div>
-      <div id="rowHighlightResetModal" class="modal-overlay">
-        <div class="modal-box">
-          <h5 data-i18n="confirmResetTableTitle"></h5>
-          <p data-i18n="confirmResetTableText"></p>
-          <div class="modal-actions">
-            <button id="rowHighlightConfirmReset" class="button button-danger" data-i18n="confirmResetTableYes"></button>
-            <button id="rowHighlightCancelReset" class="button button-secondary" data-i18n="confirmResetTableCancel"></button>
-          </div>
-        </div>
-      </div>
+      <div id="statusColorizerTabContainer"></div>
+      <div id="rowHighlighterTabContainer"></div>
+      <div id="notepadTabContainer"></div>
+      <div id="settingsTabContainer"></div>
     </div>
-
-    <div id="notepadTab" class="tab-pane">
-
-      <h2 data-i18n="notepadTitle"></h2>
-      <div class="notepad-wrapper">
-        <textarea id="notepadArea" class="notepad-textarea" data-i18n-placeholder="notepadPlaceholder"></textarea>
-        <div id="notepadPreview" class="notepad-preview"></div>
-      </div>
-      <div class="notepad-controls">
-        <label class="notepad-autosave">
-          <span class="notepad-autosave-label" data-i18n="notepadAutosaveLabel"></span>
-          <span class="notepad-toggle">
-            <input id="notepadAutosaveToggle" type="checkbox" checked>
-            <span class="notepad-toggle-slider" aria-hidden="true"></span>
-          </span>
-        </label>
-        <button id="notepadSaveButton" class="button button-primary icon-button notepad-save-button">
-          <img src="../img/save.svg" alt="" aria-hidden="true" />
-          <span class="btn-label" data-i18n="saveButton"></span>
-        </button>
-      </div>
-      <div id="notepadStatus" class="notepad-status"></div>
-      
-    </div>
-
-  </div>
 
   <div id="toast" class="toast"></div>
 

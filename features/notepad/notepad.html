@@ -1,0 +1,23 @@
+<div id="notepadTab" class="tab-pane">
+
+  <h2 data-i18n="notepadTitle"></h2>
+  <div class="notepad-wrapper">
+    <textarea id="notepadArea" class="notepad-textarea" data-i18n-placeholder="notepadPlaceholder"></textarea>
+    <div id="notepadPreview" class="notepad-preview"></div>
+  </div>
+  <div class="notepad-controls">
+    <label class="notepad-autosave">
+      <span class="notepad-autosave-label" data-i18n="notepadAutosaveLabel"></span>
+      <span class="notepad-toggle">
+        <input id="notepadAutosaveToggle" type="checkbox" checked>
+        <span class="notepad-toggle-slider" aria-hidden="true"></span>
+      </span>
+    </label>
+    <button id="notepadSaveButton" class="button button-primary icon-button notepad-save-button">
+      <img src="../img/save.svg" alt="" aria-hidden="true" />
+      <span class="btn-label" data-i18n="saveButton"></span>
+    </button>
+  </div>
+  <div id="notepadStatus" class="notepad-status"></div>
+  
+</div>

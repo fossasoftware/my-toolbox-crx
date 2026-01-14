@@ -1,12 +1,12 @@
 # My ToolBox
 
-[![Release](https://img.shields.io/badge/release-4.5.2-blue)](https://github.com/fossasoftware/my-toolbox-crx/releases)
+[![Release](https://img.shields.io/badge/release-4.7.1-blue)](https://github.com/fossasoftware/my-toolbox-crx/releases)
 
 **Chrome Extension**
 
 **My ToolBox** is a Chrome extension for Jira Cloud that adds status coloring, row highlighting, and a built-in notepad to speed up daily work.
 
-**Version:** 4.5.2
+**Version:** 4.7.1
 **Author:** Vitalii Kopach
 
 ## What you can do
@@ -47,6 +47,7 @@
 
 - Status Colorizer works on Jira Cloud pages under `*://*.atlassian.net/*`.
 - When **Animation** is enabled, the background input is disabled; text color still applies.
+- Preset import/export and defaults are managed from the **Settings** tab.
 - Settings are stored in `chrome.storage.sync` for cross-device sync.
 - Markdown preview uses `marked` + `DOMPurify`.
 

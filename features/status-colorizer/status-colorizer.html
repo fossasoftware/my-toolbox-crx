@@ -1,0 +1,40 @@
+<div id="statusColorizerTab" class="tab-pane active">
+  <h2 data-i18n="statusColorizerTitle"></h2>
+  <div class="table-with-add">
+    <table class="status-colorizer-table" id="statusTable">
+      <thead>
+        <tr>
+          <th scope="col"><span class="table-header-label" data-i18n="settingsTableStatus"></span></th>
+          <th scope="col"><span class="table-header-label" data-i18n="settingsTableBackground"></span></th>
+          <th scope="col"><span class="table-header-label" data-i18n="settingsTableText"></span></th>
+          <th scope="col"><span class="table-header-label" data-i18n="settingsTableAnimation"></span></th>
+          <th scope="col"><span class="table-header-label" data-i18n="settingsTablePrimaryColor"></span></th>
+          <th scope="col"><span class="table-header-label" data-i18n="settingsTableSecondaryColor"></span></th>
+          <th scope="col"><span class="table-header-label" data-i18n="settingsTableRemoveRow"></span></th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <button id="addRow" class="button table-add-button"><span class="btn-label" data-i18n="addRowButton"></span></button>
+  </div>
+
+  <div class="button-container">
+    <div class="button-group-left">
+      <button id="clearAll" class="button button-secondary icon-button"><img src="../img/reset.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="resetButton"></span></button>
+    </div>
+    <div class="button-group-right">
+      <button id="saveSettings" class="button button-primary icon-button"><img src="../img/save.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="saveButton"></span></button>
+    </div>
+  </div>
+
+  <div id="confirmModal" class="modal-overlay">
+    <div class="modal-box">
+      <h5 data-i18n="confirmResetTableTitle"></h5>
+      <p data-i18n="confirmResetTableText"></p>
+      <div class="modal-actions">
+        <button id="confirmDelete" class="button button-danger" data-i18n="confirmResetTableYes"></button>
+        <button id="cancelDelete" class="button button-secondary" data-i18n="confirmResetTableCancel"></button>
+      </div>
+    </div>
+  </div>
+</div>

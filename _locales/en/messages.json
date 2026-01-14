@@ -1,82 +1,140 @@
 {
   "appName": { "message": "My ToolBox" },
-  "appDescription": { "message": "Add clarity to Jira Cloud boards. Color-code statuses, animations, save presets, and note ideas in the built-in editor." },
+  "appDescription": { "message": "Make Jira Cloud easier to scan: color-code statuses, highlight rows, save presets, and keep notes in the built-in editor." },
   "optionsTitle": { "message": "My ToolBox" },
+
   "settingsTableStatus": { "message": "Status" },
   "settingsTableBackground": { "message": "Background" },
   "settingsTableText": { "message": "Text" },
   "settingsTableAnimation": { "message": "Animation" },
-  "settingsTablePrimaryColor": { "message": "Primary Color" },
-  "settingsTableSecondaryColor": { "message": "Secondary Color" },
+  "settingsTablePrimaryColor": { "message": "Primary color" },
+  "settingsTableSecondaryColor": { "message": "Secondary color" },
   "settingsTableRemoveRow": { "message": "Delete" },
   "settingsTableKeyword": { "message": "Keyword" },
   "settingsTableColor": { "message": "Color" },
-  "settingsTableEnabled": { "message": "Enabled" },
-  "inputStatusPlaceholder": { "message": "Enter status name" },
-  "inputStatusAliasPlaceholder": { "message": "Alternative status name" },
-  "inputKeywordPlaceholder": { "message": "Enter word or phrase" },
-  "inputKeywordAliasPlaceholder": { "message": "Alternative keyword" },
+  "settingsTableEnabled": { "message": "Active" },
+
+  "inputStatusPlaceholder": { "message": "Status name" },
+  "inputStatusAliasPlaceholder": { "message": "Add an alias" },
+  "inputKeywordPlaceholder": { "message": "Word or phrase" },
+  "inputKeywordAliasPlaceholder": { "message": "Add an alias" },
+
   "keywordAliasAddLabel": { "message": "Add alias" },
   "keywordAliasRemoveLabel": { "message": "Remove alias" },
   "statusAliasAddLabel": { "message": "Add alias" },
   "statusAliasRemoveLabel": { "message": "Remove alias" },
-  "addRowButton": { "message": "ADD ROW" },
-  "addKeywordButton": { "message": "ADD ROW" },
-  "saveButton": { "message": "Save Changes" },
-  "defaultButton": { "message": "Defaults" },
+
+  "addRowButton": { "message": "Add row" },
+  "addKeywordButton": { "message": "Add row" },
+
+  "saveButton": { "message": "Save changes" },
+  "defaultButton": { "message": "Restore defaults" },
   "resetButton": { "message": "Reset" },
+
   "footerText": { "message": "Made by SC" },
-  "toastSaved": { "message": "Your changes have been saved!" },
-  "toastResetDefault": { "message": "Settings have been restored to default." },
-  "toastResetTable": { "message": "Table has been cleared." },
-  "toastErrorGeneric": { "message": "Something went wrong." },
-  "toastErrorLoading": { "message": "Couldn't load settings." },
-  "toastErrorSaving": { "message": "Couldn't save settings." },
-  "confirmResetTableTitle": { "message": "Confirm Table Reset" },
-  "confirmResetTableText": { "message": "Are you sure you want to reset the table and delete all rows? This action can't be undone." },
-  "confirmResetTableYes": { "message": "Yes, reset table" },
+
+  "toastSaved": { "message": "Changes saved." },
+  "toastResetDefault": { "message": "Defaults restored." },
+  "toastResetTable": { "message": "Table cleared." },
+  "toastErrorGeneric": { "message": "Something went wrong. Please try again." },
+  "toastErrorLoading": { "message": "Couldn’t load settings." },
+  "toastErrorSaving": { "message": "Couldn’t save settings." },
+
+  "confirmResetTableTitle": { "message": "Clear the table?" },
+  "confirmResetTableText": { "message": "Clear the table and delete all rows? This can’t be undone." },
+  "confirmResetTableYes": { "message": "Yes, clear" },
   "confirmResetTableCancel": { "message": "Cancel" },
-  "confirmDefaultTitle": { "message": "Reset to Default Settings" },
-  "confirmDefaultText": { "message": "Are you sure you want to restore all settings to their default values?" },
-  "confirmDefaultYes": { "message": "Yes, reset" },
+
+  "confirmDefaultTitle": { "message": "Restore defaults?" },
+  "confirmDefaultText": { "message": "Restore all settings to their default values?" },
+  "confirmDefaultYes": { "message": "Yes, restore" },
   "confirmDefaultCancel": { "message": "Cancel" },
-  "validationErrorTitle": { "message": "Validation Issue" },
+
+  "validationErrorTitle": { "message": "Check your input" },
   "validationErrorOk": { "message": "OK" },
-  "errorStatusEmpty": { "message": "Row $ROW$ error: Status name can't be empty.", "placeholders": { "row": { "content": "$1" }}},
-  "errorDuplicateStatus": { "message": "Row $ROW$ error: Duplicate status or alias name \"$STATUS_NAME$\". Names must be unique.", "placeholders": { "row": { "content": "$1" }, "status_name": { "content": "$2" }}},
-  "errorInvalidBgColor": { "message": "Row $ROW$ error: Invalid background color \"$COLOR$\". Use #rrggbb format.", "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" }}},
-  "errorInvalidTextColor": { "message": "Row $ROW$ error: Invalid text color \"$COLOR$\". Use #rrggbb format.", "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" }}},
-  "errorInvalidPrimaryColor": { "message": "Row $ROW$ error: A valid primary color \"$COLOR$\" is required for animations. Use #rrggbb format.", "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" }}},
-  "errorInvalidSecondaryColor": { "message": "Row $ROW$ error: A valid secondary color \"$COLOR$\" is required for animations. Use #rrggbb format.", "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" }}},
-  "errorInternalRow": { "message": "Internal error while processing row $ROW$. Please check the console.", "placeholders": { "row": { "content": "$1" }}},
-  "errorSavingSettings": { "message": "Error saving settings: $ERROR$", "placeholders": { "error": { "content": "$1" }}},
-  "errorKeywordEmpty": { "message": "Row $ROW$ error: Keyword can't be empty.", "placeholders": { "row": { "content": "$1" }}},
-  "errorDuplicateKeyword": { "message": "Row $ROW$ error: Duplicate keyword or alias \"$KEYWORD$\".", "placeholders": { "row": { "content": "$1" }, "keyword": { "content": "$2" }}},
-  "errorInvalidColor": { "message": "Row $ROW$ error: Invalid color \"$COLOR$\". Use #rrggbb format.", "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" }}},
+
+  "errorStatusEmpty": {
+    "message": "Row $ROW$ error: Status name can’t be empty.",
+    "placeholders": { "row": { "content": "$1" } }
+  },
+  "errorDuplicateStatus": {
+    "message": "Row $ROW$ error: Status or alias \"$STATUS_NAME$\" already exists. Values must be unique.",
+    "placeholders": { "row": { "content": "$1" }, "status_name": { "content": "$2" } }
+  },
+  "errorInvalidBgColor": {
+    "message": "Row $ROW$ error: Invalid background color \"$COLOR$\". Use #rrggbb.",
+    "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } }
+  },
+  "errorInvalidTextColor": {
+    "message": "Row $ROW$ error: Invalid text color \"$COLOR$\". Use #rrggbb.",
+    "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } }
+  },
+  "errorInvalidPrimaryColor": {
+    "message": "Row $ROW$ error: Primary color \"$COLOR$\" is required for animations. Use #rrggbb.",
+    "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } }
+  },
+  "errorInvalidSecondaryColor": {
+    "message": "Row $ROW$ error: Secondary color \"$COLOR$\" is required for animations. Use #rrggbb.",
+    "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } }
+  },
+  "errorInternalRow": {
+    "message": "Internal error while processing row $ROW$. Please check the console.",
+    "placeholders": { "row": { "content": "$1" } }
+  },
+  "errorSavingSettings": {
+    "message": "Save failed: $ERROR$",
+    "placeholders": { "error": { "content": "$1" } }
+  },
+  "errorKeywordEmpty": {
+    "message": "Row $ROW$ error: Keyword can’t be empty.",
+    "placeholders": { "row": { "content": "$1" } }
+  },
+  "errorDuplicateKeyword": {
+    "message": "Row $ROW$ error: Keyword or alias \"$KEYWORD$\" already exists.",
+    "placeholders": { "row": { "content": "$1" }, "keyword": { "content": "$2" } }
+  },
+  "errorInvalidColor": {
+    "message": "Row $ROW$ error: Invalid color \"$COLOR$\". Use #rrggbb.",
+    "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } }
+  },
+
   "popupTitle": { "message": "My ToolBox" },
-  "popupDescription": { "message": "Customize from the settings page." },
-  "popupOpenOptionsButton": { "message": "Open Settings" },
+  "popupDescription": { "message": "Open Settings to customize the extension." },
+  "popupOpenOptionsButton": { "message": "Open settings" },
+
   "languageLabel": { "message": "Language" },
-  "optionsTabStatusColorizer": { "message": "Status Colorizer" },
+
+  "optionsTabStatusColorizer": { "message": "Status colorizer" },
   "optionsTabNotepad": { "message": "Notepad" },
-  "optionsTabRowHighlighter": { "message": "Row Highlighter" },
-  "statusColorizerTitle": { "message": "Status Colorizer" },
-  "rowHighlighterTitle": { "message": "Row Highlighter" },
-  "notepadTitle": { "message": "My Notes" },
+  "optionsTabRowHighlighter": { "message": "Row highlighter" },
+  "optionsTabSettings": { "message": "Preferences" },
+
+  "statusColorizerTitle": { "message": "Status colorizer" },
+  "rowHighlighterTitle": { "message": "Row highlighter" },
+
+  "notepadTitle": { "message": "Notes" },
   "notepadAutosaveLabel": { "message": "Autosave" },
-  "notepadPlaceholder": { "message": "Type your notes here..." },
+  "notepadPlaceholder": { "message": "Write a note..." },
   "notepadStatusSaving": { "message": "Saving..." },
   "notepadStatusSaved": { "message": "Saved" },
-  "exportButton": { "message": "Export Preset" },
-  "importButton": { "message": "Import Preset" },
-  "toastExportSuccess": { "message": "Settings exported successfully!" },
-  "toastImportSuccess": { "message": "Settings imported successfully! Reloading table..." },
-  "toastImportErrorFileRead": { "message": "Error reading file." },
-  "toastImportErrorJsonParse": { "message": "Error parsing file. Make sure it's a valid JSON." },
-  "toastImportErrorValidation": { "message": "Import failed. Invalid settings format in file." },
-  "toastImportErrorSave": { "message": "Error saving imported settings." },
-  "toggleStatusColorizerLabel": { "message": "Status Colorizer" },
-  "toggleRowHighlighterLabel": { "message": "Row Highlighter" },
+
+  "exportButton": { "message": "Export" },
+  "importButton": { "message": "Import" },
+
+  "toastExportSuccess": { "message": "Export completed." },
+  "toastImportSuccess": { "message": "Import completed. Reloading table..." },
+  "toastImportErrorFileRead": { "message": "Couldn’t read the file." },
+  "toastImportErrorJsonParse": { "message": "Invalid file. Make sure it’s valid JSON." },
+  "toastImportErrorValidation": { "message": "Import failed: invalid settings format." },
+  "toastImportErrorSave": { "message": "Couldn’t save imported settings." },
+
+  "toggleStatusColorizerLabel": { "message": "Statuses" },
+  "toggleRowHighlighterLabel": { "message": "Rows" },
+
   "menuLabel": { "message": "Menu" },
-  "versionText": { "message": "Version $VERSION$", "placeholders": { "version": { "content": "$1" } } }
+
+  "versionText": {
+    "message": "Version: $VERSION$",
+    "placeholders": { "version": { "content": "$1" } }
+  }
 }
