@@ -298,8 +298,6 @@ a:hover {
   outline: none;
 }
 
-.tab-content {
-}
 .tab-pane {
   display: none;
   animation: fadeInPane 0.4s ease-in-out;

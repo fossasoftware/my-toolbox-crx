@@ -167,10 +167,6 @@ export function initializeNotepad() {
   bindSyncedScroll();
 }
 
-function syncScroll(source, target) {
-  target.scrollTop = source.scrollTop;
-}
-
 function syncScrollByPercentage(source, target) {
   const percent = source.scrollTop / (source.scrollHeight - source.clientHeight);
   const targetScroll = percent * (target.scrollHeight - target.clientHeight);
