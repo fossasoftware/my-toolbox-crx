@@ -134,7 +134,7 @@
 .status-aliases {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
+  gap: var(--spacing-sm);
 }
 .status-alias-add {
   position: absolute;

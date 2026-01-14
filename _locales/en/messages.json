@@ -128,8 +128,8 @@
   "toastImportErrorValidation": { "message": "Import failed: invalid settings format." },
   "toastImportErrorSave": { "message": "Couldn’t save imported settings." },
 
-  "toggleStatusColorizerLabel": { "message": "Statuses" },
-  "toggleRowHighlighterLabel": { "message": "Rows" },
+  "toggleStatusColorizerLabel": { "message": "Status colorizer" },
+  "toggleRowHighlighterLabel": { "message": "Row highlighter" },
 
   "menuLabel": { "message": "Menu" },
 
