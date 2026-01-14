@@ -1,7 +1,8 @@
 {
   "appName": { "message": "Мій Тулбокс" },
-  "appDescription": { "message": "Додайте ясності дошкам Jira Cloud. Розфарбовуйте статуси, додавайте анімації, зберігайте пресети і робіть нотатки у вбудованому редакторі." },
+  "appDescription": { "message": "Візуально впорядкуйте Jira Cloud: розфарбовуйте статуси, підсвічуйте рядки, зберігайте пресети та ведіть нотатки у вбудованому редакторі." },
   "optionsTitle": { "message": "Мій Тулбокс" },
+
   "settingsTableStatus": { "message": "Статус" },
   "settingsTableBackground": { "message": "Фон" },
   "settingsTableText": { "message": "Текст" },
@@ -11,72 +12,125 @@
   "settingsTableRemoveRow": { "message": "Видалити" },
   "settingsTableKeyword": { "message": "Ключове слово" },
   "settingsTableColor": { "message": "Колір" },
-  "settingsTableEnabled": { "message": "Увімкнено" },
+  "settingsTableEnabled": { "message": "Активно" },
+
   "inputStatusPlaceholder": { "message": "Назва статусу" },
   "inputStatusAliasPlaceholder": { "message": "Альтернативна назва статусу" },
   "inputKeywordPlaceholder": { "message": "Введіть слово або фразу" },
   "inputKeywordAliasPlaceholder": { "message": "Альтернативне ключове слово" },
   "keywordAliasAddLabel": { "message": "Додати альтернативне слово" },
-  "keywordAliasRemoveLabel": { "message": "Видалити альтернативне слово" },
+  "keywordAliasRemoveLabel": { "message": "Прибрати альтернативне слово" },
   "statusAliasAddLabel": { "message": "Додати альтернативну назву" },
-  "statusAliasRemoveLabel": { "message": "Видалити альтернативну назву" },
-  "addRowButton": { "message": "ДОДАТИ РЯДОК" },
-  "addKeywordButton": { "message": "ДОДАТИ РЯДОК" },
+  "statusAliasRemoveLabel": { "message": "прибрати альтернативну назву" },
+  "addRowButton": { "message": "Додати рядок" },
+  "addKeywordButton": { "message": "Додати рядок" },
   "saveButton": { "message": "Зберегти" },
   "defaultButton": { "message": "За замовчуванням" },
   "resetButton": { "message": "Скинути" },
-  "footerText": { "message": "Створено СЦ" },
-  "toastSaved": { "message": "Налаштування успішно збережено!" },
-  "toastResetDefault": { "message": "Налаштування скинуто до типових!" },
-  "toastResetTable": { "message": "Таблицю успішно скинуто!" },
-  "toastErrorGeneric": { "message": "Сталася помилка." },
-  "toastErrorLoading": { "message": "Не вдалося завантажити налаштування!" },
+
+  "footerText": { "message": "Зроблено СЦ" },
+
+  "toastSaved": { "message": "Зміни збережено." },
+  "toastResetDefault": { "message": "Повернуто типові налаштування." },
+  "toastResetTable": { "message": "Таблицю очищено." },
+  "toastErrorGeneric": { "message": "Сталася помилка. Спробуйте ще раз." },
+  "toastErrorLoading": { "message": "Не вдалося завантажити налаштування." },
   "toastErrorSaving": { "message": "Не вдалося зберегти налаштування." },
-  "confirmResetTableTitle": { "message": "Підтвердження скидання таблиці" },
-  "confirmResetTableText": { "message": "Ви впевнені, що хочете скинути таблицю (видалити всі рядки)? Цю дію не можна скасувати." },
-  "confirmResetTableYes": { "message": "Так, скинути" },
+
+  "confirmResetTableTitle": { "message": "Очистити таблицю?" },
+  "confirmResetTableText": { "message": "Очистити таблицю та видалити всі рядки? Цю дію неможливо скасувати." },
+  "confirmResetTableYes": { "message": "Так, очистити" },
   "confirmResetTableCancel": { "message": "Скасувати" },
-  "confirmDefaultTitle": { "message": "Підтвердження скидання до типових" },
-  "confirmDefaultText": { "message": "Ви впевнені, що хочете скинути всі налаштування до типових?" },
-  "confirmDefaultYes": { "message": "Так, скинути" },
+
+  "confirmDefaultTitle": { "message": "Повернути типові налаштування?" },
+  "confirmDefaultText": { "message": "Повернути всі налаштування до типових значень?" },
+  "confirmDefaultYes": { "message": "Так, повернути" },
   "confirmDefaultCancel": { "message": "Скасувати" },
-  "validationErrorTitle": { "message": "Помилка валідації" },
-  "validationErrorOk": { "message": "OK" },
-  "errorStatusEmpty": { "message": "Помилка в рядку $ROW$: Назва статусу не може бути порожньою.", "placeholders": { "row": { "content": "$1" } }},
-  "errorDuplicateStatus": { "message": "Помилка в рядку $ROW$: Повторювана назва статусу або альтернативна назва \"$STATUS_NAME$\". Назви мають бути унікальними.", "placeholders": { "row": { "content": "$1" }, "status_name": { "content": "$2" }}},
-  "errorInvalidBgColor": { "message": "Помилка в рядку $ROW$: Некоректний колір фону \"$COLOR$\". Використовуйте формат #rrggbb.", "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" }}},
-  "errorInvalidTextColor": { "message": "Помилка в рядку $ROW$: Некоректний колір тексту \"$COLOR$\". Використовуйте формат #rrggbb.", "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" }}},
-  "errorInvalidPrimaryColor": { "message": "Помилка в рядку $ROW$: Основний колір \"$COLOR$\" для анімації є обов’язковим і має бути у форматі #rrggbb.", "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" }}},
-  "errorInvalidSecondaryColor": { "message": "Помилка в рядку $ROW$: Вторинний колір \"$COLOR$\" для анімації є обов’язковим і має бути у форматі #rrggbb.", "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" }}},
-  "errorInternalRow": { "message": "Внутрішня помилка при обробці рядка $ROW$. Перевірте консоль.", "placeholders": { "row": { "content": "$1" }}},
-  "errorSavingSettings": { "message": "Помилка збереження: $ERROR$", "placeholders": { "error": { "content": "$1" }}},
-  "errorKeywordEmpty": { "message": "Помилка в рядку $ROW$: Ключове слово не може бути порожнім.", "placeholders": { "row": { "content": "$1" }}},
-  "errorDuplicateKeyword": { "message": "Помилка в рядку $ROW$: Ключове слово або альтернативне слово \"$KEYWORD$\" вже існує.", "placeholders": { "row": { "content": "$1" }, "keyword": { "content": "$2" }}},
-  "errorInvalidColor": { "message": "Помилка в рядку $ROW$: Некоректний колір \"$COLOR$\". Використовуйте формат #rrggbb.", "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" }}},
+
+  "validationErrorTitle": { "message": "Перевірте введені дані" },
+  "validationErrorOk": { "message": "Гаразд" },
+
+  "errorStatusEmpty": {
+    "message": "Помилка в рядку $ROW$: статус не може бути порожнім.",
+    "placeholders": { "row": { "content": "$1" } }
+  },
+  "errorDuplicateStatus": {
+    "message": "Помилка в рядку $ROW$: статус або альтернатива \"$STATUS_NAME$\" вже існує. Значення мають бути унікальними.",
+    "placeholders": { "row": { "content": "$1" }, "status_name": { "content": "$2" } }
+  },
+  "errorInvalidBgColor": {
+    "message": "Помилка в рядку $ROW$: некоректний фон \"$COLOR$\". Використовуйте формат #rrggbb.",
+    "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } }
+  },
+  "errorInvalidTextColor": {
+    "message": "Помилка в рядку $ROW$: некоректний колір тексту \"$COLOR$\". Використовуйте формат #rrggbb.",
+    "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } }
+  },
+  "errorInvalidPrimaryColor": {
+    "message": "Помилка в рядку $ROW$: для анімації потрібен основний колір \"$COLOR$\" у форматі #rrggbb.",
+    "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } }
+  },
+  "errorInvalidSecondaryColor": {
+    "message": "Помилка в рядку $ROW$: для анімації потрібен додатковий колір \"$COLOR$\" у форматі #rrggbb.",
+    "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } }
+  },
+  "errorInternalRow": {
+    "message": "Внутрішня помилка в рядку $ROW$. Перевірте консоль.",
+    "placeholders": { "row": { "content": "$1" } }
+  },
+  "errorSavingSettings": {
+    "message": "Помилка збереження: $ERROR$",
+    "placeholders": { "error": { "content": "$1" } }
+  },
+  "errorKeywordEmpty": {
+    "message": "Помилка в рядку $ROW$: ключове слово не може бути порожнім.",
+    "placeholders": { "row": { "content": "$1" } }
+  },
+  "errorDuplicateKeyword": {
+    "message": "Помилка в рядку $ROW$: ключове слово або альтернатива \"$KEYWORD$\" вже існує.",
+    "placeholders": { "row": { "content": "$1" }, "keyword": { "content": "$2" } }
+  },
+  "errorInvalidColor": {
+    "message": "Помилка в рядку $ROW$: некоректний колір \"$COLOR$\". Використовуйте формат #rrggbb.",
+    "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } }
+  },
+
   "popupTitle": { "message": "Мій Тулбокс" },
-  "popupDescription": { "message": "Налаштування доступні на сторінці параметрів." },
+  "popupDescription": { "message": "Відкрийте налаштування, щоб змінити параметри розширення." },
   "popupOpenOptionsButton": { "message": "Відкрити налаштування" },
+
   "languageLabel": { "message": "Мова" },
-  "optionsTabStatusColorizer": { "message": "Колоризатор Статусів" },
-  "optionsTabRowHighlighter": { "message": "Підсвічування Рядків" },
+  "optionsTabStatusColorizer": { "message": "Колоризатор статусів" },
+  "optionsTabRowHighlighter": { "message": "Підсвічування рядків" },
   "optionsTabNotepad": { "message": "Нотатник" },
-  "statusColorizerTitle": { "message": "Колоризатор Статусів" },
-  "rowHighlighterTitle": { "message": "Підсвічування Рядків" },
-  "notepadTitle": { "message": "Мої Нотатки" },
+  "optionsTabSettings": { "message": "Налаштування" },
+
+  "statusColorizerTitle": { "message": "Колоризатор статусів" },
+  "rowHighlighterTitle": { "message": "Підсвічування рядків" },
+
+  "notepadTitle": { "message": "Мої нотатки" },
   "notepadAutosaveLabel": { "message": "Автозбереження" },
   "notepadPlaceholder": { "message": "Друкуйте нотатки тут..." },
-  "notepadStatusSaving": { "message": "Збереження..." },
+  "notepadStatusSaving": { "message": "Зберігаємо..." },
   "notepadStatusSaved": { "message": "Збережено" },
-  "exportButton": { "message": "Експорт Налаштувань" },
-  "importButton": { "message": "Імпорт Налаштувань" },
-  "toastExportSuccess": { "message": "Налаштування успішно експортовано!" },
-  "toastImportSuccess": { "message": "Налаштування успішно імпортовано! Оновлення таблиці..." },
-  "toastImportErrorFileRead": { "message": "Помилка читання файлу." },
-  "toastImportErrorJsonParse": { "message": "Помилка розбору файлу. Переконайтеся, що це валідний JSON." },
-  "toastImportErrorValidation": { "message": "Помилка імпорту. Невірний формат налаштувань у файлі." },
-  "toastImportErrorSave": { "message": "Помилка збереження імпортованих налаштувань." },
+
+  "exportButton": { "message": "Експорт" },
+  "importButton": { "message": "Імпорт" },
+
+  "toastExportSuccess": { "message": "Експорт виконано успішно." },
+  "toastImportSuccess": { "message": "Імпорт виконано. Оновлюємо таблицю..." },
+  "toastImportErrorFileRead": { "message": "Не вдалося прочитати файл." },
+  "toastImportErrorJsonParse": { "message": "Помилка валідації JSON." },
+  "toastImportErrorValidation": { "message": "Помилка імпорту: неправильний формат налаштувань." },
+  "toastImportErrorSave": { "message": "Не вдалося зберегти імпортовані налаштування." },
+
   "toggleStatusColorizerLabel": { "message": "Колоризатор статусів" },
   "toggleRowHighlighterLabel": { "message": "Підсвічування рядків" },
+
   "menuLabel": { "message": "Меню" },
-  "versionText": { "message": "Версія $VERSION$", "placeholders": { "version": { "content": "$1" } } }
+
+  "versionText": {
+    "message": "Версія: $VERSION$",
+    "placeholders": { "version": { "content": "$1" } }
+  }
 }

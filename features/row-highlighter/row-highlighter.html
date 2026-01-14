@@ -1,0 +1,36 @@
+<div id="rowHighlighterTab" class="tab-pane">
+  <h2 data-i18n="rowHighlighterTitle"></h2>
+  <div class="table-with-add">
+    <table class="highlighter-table" id="rowHighlightTable">
+      <thead>
+        <tr>
+          <th scope="col"><span class="table-header-label" data-i18n="settingsTableKeyword"></span></th>
+          <th scope="col"><span class="table-header-label" data-i18n="settingsTableColor"></span></th>
+          <th scope="col"><span class="table-header-label" data-i18n="settingsTableEnabled"></span></th>
+          <th scope="col"><span class="table-header-label" data-i18n="settingsTableRemoveRow"></span></th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <button id="rowHighlightAdd" class="button table-add-button"><span class="btn-label" data-i18n="addKeywordButton"></span></button>
+  </div>
+
+  <div class="button-container">
+    <div class="button-group-left">
+      <button id="rowHighlightReset" class="button button-secondary icon-button"><img src="../img/reset.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="resetButton"></span></button>
+    </div>
+    <div class="button-group-right">
+      <button id="rowHighlightSave" class="button button-primary icon-button"><img src="../img/save.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="saveButton"></span></button>
+    </div>
+  </div>
+  <div id="rowHighlightResetModal" class="modal-overlay">
+    <div class="modal-box">
+      <h5 data-i18n="confirmResetTableTitle"></h5>
+      <p data-i18n="confirmResetTableText"></p>
+      <div class="modal-actions">
+        <button id="rowHighlightConfirmReset" class="button button-danger" data-i18n="confirmResetTableYes"></button>
+        <button id="rowHighlightCancelReset" class="button button-secondary" data-i18n="confirmResetTableCancel"></button>
+      </div>
+    </div>
+  </div>
+</div>

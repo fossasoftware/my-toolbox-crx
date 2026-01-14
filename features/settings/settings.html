@@ -1,0 +1,37 @@
+<div id="settingsTab" class="tab-pane">
+  <h2 data-i18n="optionsTabSettings"></h2>
+
+  <div class="settings-section">
+    <h3 class="settings-section-title" data-i18n="statusColorizerTitle"></h3>
+    <div class="button-container settings-actions">
+      <div class="button-group-left">
+        <button id="resetStatusSettings" class="button button-secondary" data-i18n="defaultButton"></button>
+        <input type="file" id="importFile" accept=".json" style="display: none;">
+        <button id="importSettingsBtn" class="button button-secondary icon-button"><img src="../img/export.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="importButton"></span></button>
+        <button id="exportSettingsBtn" class="button button-secondary icon-button"><img src="../img/import.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="exportButton"></span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <h3 class="settings-section-title" data-i18n="rowHighlighterTitle"></h3>
+    <div class="button-container settings-actions">
+      <div class="button-group-left">
+        <input type="file" id="rowHighlightImportFile" accept=".json" style="display: none;">
+        <button id="rowHighlightImport" class="button button-secondary icon-button"><img src="../img/export.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="importButton"></span></button>
+        <button id="rowHighlightExport" class="button button-secondary icon-button"><img src="../img/import.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="exportButton"></span></button>
+      </div>
+    </div>
+  </div>
+
+  <div id="resetConfirmModal" class="modal-overlay">
+    <div class="modal-box">
+      <h5 data-i18n="confirmDefaultTitle"></h5>
+      <p data-i18n="confirmDefaultText"></p>
+      <div class="modal-actions">
+        <button id="confirmReset" class="button button-primary" data-i18n="confirmDefaultYes"></button>
+        <button id="cancelReset" class="button button-secondary" data-i18n="confirmDefaultCancel"></button>
+      </div>
+    </div>
+  </div>
+</div>

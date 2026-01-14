@@ -7,7 +7,7 @@ function normalizeKeyword(keyword) {
   return typeof keyword === "string" ? keyword.trim().toLowerCase() : "";
 }
 
-function createAliasRow(aliasValue = "") {
+function createAliasRow(aliasValue = "", onRemove = null) {
   const aliasRow = document.createElement("div");
   aliasRow.className = "keyword-alias-row";
 
@@ -27,6 +27,9 @@ function createAliasRow(aliasValue = "") {
   removeAliasBtn.innerHTML = removeIconSvg;
   removeAliasBtn.addEventListener("click", () => {
     aliasRow.remove();
+    if (typeof onRemove === "function") {
+      onRemove();
+    }
   });
   aliasRow.appendChild(removeAliasBtn);
 
@@ -38,10 +41,19 @@ function updateButtonVisibility() {
   const saveBtn = document.getElementById("rowHighlightSave");
   const resetBtn = document.getElementById("rowHighlightReset");
   const exportBtn = document.getElementById("rowHighlightExport");
-  const shouldShow = tbody && tbody.children.length > 0;
-  if (saveBtn) saveBtn.style.display = shouldShow ? "" : "none";
-  if (resetBtn) resetBtn.style.display = shouldShow ? "" : "none";
-  if (exportBtn) exportBtn.style.display = shouldShow ? "" : "none";
+  const hasRows = tbody && tbody.children.length > 0;
+  if (saveBtn) {
+    saveBtn.style.display = "";
+    saveBtn.disabled = !hasRows;
+  }
+  if (resetBtn) {
+    resetBtn.style.display = "";
+    resetBtn.disabled = !hasRows;
+  }
+  if (exportBtn) {
+    exportBtn.style.display = "";
+    exportBtn.disabled = !hasRows;
+  }
 }
 
 function restoreHighlightSettings() {
@@ -101,9 +113,17 @@ function addRow(keyword = "", color = "#ffffff", enabled = true, aliases = []) {
   const aliasContainer = document.createElement("div");
   aliasContainer.className = "keyword-aliases";
 
+  const updateAliasSpacing = () => {
+    keywordGroup.classList.toggle(
+      "has-aliases",
+      aliasContainer.children.length > 0
+    );
+  };
+
   const appendAlias = (aliasValue = "") => {
-    const aliasRow = createAliasRow(aliasValue);
+    const aliasRow = createAliasRow(aliasValue, updateAliasSpacing);
     aliasContainer.appendChild(aliasRow);
+    updateAliasSpacing();
     return aliasRow;
   };
 
@@ -121,6 +141,7 @@ function addRow(keyword = "", color = "#ffffff", enabled = true, aliases = []) {
       appendAlias(trimmedAlias);
     });
   }
+  updateAliasSpacing();
 
   keywordPrimary.appendChild(inputKeyword);
   keywordPrimary.appendChild(addAliasBtn);
@@ -324,7 +345,10 @@ function mergeKeywordEntry(target, source) {
 }
 
 function mergeImportedHighlightSettings(data) {
-  if (!Array.isArray(data)) return null;
+  if (!Array.isArray(data)) {
+    console.error("Import validation failed: Data is not an array.");
+    return null;
+  }
   const colorRegex = /^#[0-9a-f]{6}$/i;
   const merged = [];
   const indexByName = new Map();
@@ -340,23 +364,59 @@ function mergeImportedHighlightSettings(data) {
   };
 
   for (const item of data) {
-    if (typeof item !== "object" || !item) return null;
-    if (typeof item.keyword !== "string" || item.keyword.trim() === "") return null;
+    if (typeof item !== "object" || !item) {
+      console.error("Import validation failed: Item is not an object.", item);
+      return null;
+    }
+    if (typeof item.keyword !== "string" || item.keyword.trim() === "") {
+      console.error(
+        `Import validation failed: Invalid keyword "${item.keyword}".`,
+        item
+      );
+      return null;
+    }
     const keyword = item.keyword.trim();
-    if (typeof item.color !== "string" || !colorRegex.test(item.color)) return null;
-    if ("enabled" in item && typeof item.enabled !== "boolean") return null;
+    if (typeof item.color !== "string" || !colorRegex.test(item.color)) {
+      console.error(
+        `Import validation failed: Invalid color "${item.color}".`,
+        item
+      );
+      return null;
+    }
+    if ("enabled" in item && typeof item.enabled !== "boolean") {
+      console.error(
+        `Import validation failed: Invalid enabled value "${item.enabled}".`,
+        item
+      );
+      return null;
+    }
 
     const aliasSources = [];
     if ("aliases" in item) {
-      if (!Array.isArray(item.aliases)) return null;
+      if (!Array.isArray(item.aliases)) {
+        console.error(
+          "Import validation failed: aliases must be an array of strings.",
+          item
+        );
+        return null;
+      }
       aliasSources.push(...item.aliases);
     }
     if ("keywordAliases" in item) {
-      if (!Array.isArray(item.keywordAliases)) return null;
+      if (!Array.isArray(item.keywordAliases)) {
+        console.error(
+          "Import validation failed: keywordAliases must be an array of strings.",
+          item
+        );
+        return null;
+      }
       aliasSources.push(...item.keywordAliases);
     }
     for (const alias of aliasSources) {
-      if (typeof alias !== "string") return null;
+      if (typeof alias !== "string") {
+        console.error(`Import validation failed: Invalid alias "${alias}".`, item);
+        return null;
+      }
     }
     const aliases = sanitizeKeywordAliases(keyword, aliasSources);
 

@@ -14,7 +14,7 @@ function normalizeStatusName(statusName) {
   return typeof statusName === "string" ? statusName.trim().toLowerCase() : "";
 }
 
-function createAliasRow(aliasValue = "") {
+function createAliasRow(aliasValue = "", onRemove = null) {
   const aliasRow = document.createElement("div");
   aliasRow.className = "status-alias-row";
 
@@ -34,6 +34,9 @@ function createAliasRow(aliasValue = "") {
   removeAliasBtn.innerHTML = removeIconSvg;
   removeAliasBtn.addEventListener("click", () => {
     aliasRow.remove();
+    if (typeof onRemove === "function") {
+      onRemove();
+    }
   });
   aliasRow.appendChild(removeAliasBtn);
 
@@ -45,17 +48,26 @@ function updateButtonVisibility() {
   const saveBtn = document.getElementById("saveSettings");
   const resetBtn = document.getElementById("clearAll");
   const exportBtn = document.getElementById("exportSettingsBtn");
-  if (!tbody || !saveBtn || !resetBtn || !exportBtn) {
+  if (!tbody || !saveBtn || !resetBtn) {
     console.error(
       "Status Colorizer: Cannot update button visibility - Elements not found."
     );
     return;
   }
   const rowCount = tbody.children.length;
-  const shouldShow = rowCount > 0;
-  saveBtn.style.display = shouldShow ? "" : "none";
-  resetBtn.style.display = shouldShow ? "" : "none";
-  exportBtn.style.display = shouldShow ? "" : "none";
+  const hasRows = rowCount > 0;
+  saveBtn.style.display = "";
+  resetBtn.style.display = "";
+  saveBtn.disabled = !hasRows;
+  resetBtn.disabled = !hasRows;
+  if (exportBtn) {
+    exportBtn.style.display = "";
+    exportBtn.disabled = !hasRows;
+  } else {
+    console.error(
+      "Status Colorizer: Missing Export Settings button for state update."
+    );
+  }
 }
 
 function restoreStatusSettings() {
@@ -160,9 +172,17 @@ function addRow(
   let aliasContainer = document.createElement("div");
   aliasContainer.className = "status-aliases";
 
+  const updateAliasSpacing = () => {
+    statusGroup.classList.toggle(
+      "has-aliases",
+      aliasContainer.children.length > 0
+    );
+  };
+
   const appendAlias = (aliasValue = "") => {
-    const aliasRow = createAliasRow(aliasValue);
+    const aliasRow = createAliasRow(aliasValue, updateAliasSpacing);
     aliasContainer.appendChild(aliasRow);
+    updateAliasSpacing();
     return aliasRow;
   };
 
@@ -182,6 +202,7 @@ function addRow(
       appendAlias(trimmedAlias);
     });
   }
+  updateAliasSpacing();
 
   statusPrimary.appendChild(inputStatus);
   statusPrimary.appendChild(addAliasBtn);

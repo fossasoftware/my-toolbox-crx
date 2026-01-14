@@ -5,6 +5,32 @@ All notable changes to the "My ToolBox" Chrome extension will be documented in t
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (starting from this documented version).
 
+## [4.7.1] - 2026-01-14
+
+### Changed
+
+- Moved save/reset button layout to match the notepad layout and reduced table action spacing.
+- Removed hover-expand behavior for save/reset actions in the Colorizer and Highlighter tabs.
+
+### Fixed
+
+- Keep save/reset/export buttons visible and disable them when there are no rows.
+- Stabilized the Add Row pill placement when tables are empty or fonts load late.
+- Prevent table header text collisions on narrow widths by clamping with word wrapping.
+- Aligned alias controls by placing add/remove buttons inside the inputs.
+- Added import validation console errors for Row Highlighter to match Status Colorizer.
+
+## [4.7.0] - 2026-01-14
+
+### Added
+
+- New Settings tab for defaults and preset import/export actions.
+
+### Changed
+
+- Options tab markup now lives in feature-specific HTML files under `features/*`.
+- Import/export actions moved out of individual feature tabs into Settings.
+
 ## [4.5.3] - 2026-01-13
 
 ### Changed

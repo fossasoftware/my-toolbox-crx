@@ -1,6 +1,10 @@
 import { initializeStatusColorizer } from "../features/status-colorizer/status-colorizer.js";
+import { initializeStatusColorizerTab } from "../features/status-colorizer/status-colorizer-tab.js";
 import { initializeRowHighlighter } from "../features/row-highlighter/row-highlighter.js";
+import { initializeRowHighlighterTab } from "../features/row-highlighter/row-highlighter-tab.js";
 import { initializeNotepad } from "../features/notepad/notepad.js";
+import { initializeNotepadTab } from "../features/notepad/notepad-tab.js";
+import { initializeSettingsTab } from "../features/settings/settings-tab.js";
 
 let currentMessages = {};
 let currentLang = "en";
@@ -173,35 +177,41 @@ function updateTableAddButtonWidths() {
   });
 }
 
+function updateTableEmptyState(table) {
+  const wrapper = table.closest(".table-with-add");
+  if (!wrapper) return;
+  const tbody = table.tBodies[0];
+  const hasRows = tbody ? tbody.children.length > 0 : false;
+  wrapper.classList.toggle("is-empty", !hasRows);
+  const thead = table.querySelector("thead");
+  if (thead) {
+    wrapper.style.setProperty(
+      "--table-add-header-height",
+      `${thead.getBoundingClientRect().height}px`
+    );
+  }
+}
+
+function refreshTableEmptyStates(container = document) {
+  const tables = container.querySelectorAll(".table-with-add table");
+  if (tables.length === 0) return;
+  tables.forEach((table) => updateTableEmptyState(table));
+}
+
 function initializeTableEmptyStates() {
   const tables = document.querySelectorAll(".table-with-add table");
   if (tables.length === 0) return;
 
-  const updateState = (table) => {
-    const wrapper = table.closest(".table-with-add");
-    if (!wrapper) return;
-    const tbody = table.tBodies[0];
-    const hasRows = tbody ? tbody.children.length > 0 : false;
-    wrapper.classList.toggle("is-empty", !hasRows);
-    const thead = table.querySelector("thead");
-    if (thead) {
-      wrapper.style.setProperty(
-        "--table-add-header-height",
-        `${thead.getBoundingClientRect().height}px`
-      );
-    }
-  };
-
   tables.forEach((table) => {
     const tbody = table.tBodies[0];
-    updateState(table);
+    updateTableEmptyState(table);
     if (!tbody) return;
-    const observer = new MutationObserver(() => updateState(table));
+    const observer = new MutationObserver(() => updateTableEmptyState(table));
     observer.observe(tbody, { childList: true });
   });
 
   window.addEventListener("resize", () => {
-    tables.forEach((table) => updateState(table));
+    refreshTableEmptyStates();
   });
 }
 
@@ -288,37 +298,21 @@ function applyTranslations() {
     notepadArea.placeholder = getText("notepadPlaceholder");
   }
 
-  const importBtn = document.getElementById("importSettingsBtn");
-  if (importBtn) importBtn.title = getText("importButton");
-  const exportBtn = document.getElementById("exportSettingsBtn");
-  if (exportBtn) exportBtn.title = getText("exportButton");
-  const rhImportBtn = document.getElementById("rowHighlightImport");
-  if (rhImportBtn) rhImportBtn.title = getText("importButton");
-  const rhExportBtn = document.getElementById("rowHighlightExport");
-  if (rhExportBtn) rhExportBtn.title = getText("exportButton");
-
   const addRowBtn = document.getElementById("addRow");
   if (addRowBtn) {
     const label = getText("addRowButton");
     addRowBtn.setAttribute("aria-label", label);
     addRowBtn.removeAttribute("title");
   }
-  const saveSettingsBtn = document.getElementById("saveSettings");
-  if (saveSettingsBtn) saveSettingsBtn.title = getText("saveButton");
-  const clearAllBtn = document.getElementById("clearAll");
-  if (clearAllBtn) clearAllBtn.title = getText("resetButton");
   const rowAddBtn = document.getElementById("rowHighlightAdd");
   if (rowAddBtn) {
     const label = getText("addKeywordButton");
     rowAddBtn.setAttribute("aria-label", label);
     rowAddBtn.removeAttribute("title");
   }
-  const rowSaveBtn = document.getElementById("rowHighlightSave");
-  if (rowSaveBtn) rowSaveBtn.title = getText("saveButton");
-  const rowResetBtn = document.getElementById("rowHighlightReset");
-  if (rowResetBtn) rowResetBtn.title = getText("resetButton");
 
   updateTableAddButtonWidths();
+  refreshTableEmptyStates();
 }
 
 async function setLanguage(lang) {
@@ -351,12 +345,20 @@ document.addEventListener("DOMContentLoaded", async () => {
   const menuToggle = document.getElementById("menuToggle");
   const sideMenu = document.getElementById("sideMenu");
   const pageContainer = document.querySelector(".page-container");
+  const validationErrorModal = document.getElementById("validationErrorModal");
+  const validationErrorOkBtn = document.getElementById("validationErrorOkBtn");
+
+  await Promise.all([
+    initializeStatusColorizerTab(),
+    initializeRowHighlighterTab(),
+    initializeNotepadTab(),
+    initializeSettingsTab(),
+  ]);
+
   const confirmResetTableModal = document.getElementById("confirmModal");
   const cancelResetTableBtn = document.getElementById("cancelDelete");
   const confirmDefaultModal = document.getElementById("resetConfirmModal");
   const cancelDefaultBtn = document.getElementById("cancelReset");
-  const validationErrorModal = document.getElementById("validationErrorModal");
-  const validationErrorOkBtn = document.getElementById("validationErrorOkBtn");
   const tabLinks = document.querySelectorAll(".tab-link");
   const tabPanes = document.querySelectorAll(".tab-pane");
 
@@ -458,6 +460,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       const targetPane = document.getElementById(targetTabId);
       if (targetPane) {
         targetPane.classList.add("active");
+        requestAnimationFrame(() => {
+          refreshTableEmptyStates(targetPane);
+        });
       } else {
         console.error(`Tab pane with ID ${targetTabId} not found!`);
       }
@@ -481,5 +486,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   initializeRowHighlighter();
   initializeNotepad();
   initializeTableEmptyStates();
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => {
+      refreshTableEmptyStates();
+    });
+  }
 
 });
