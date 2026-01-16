@@ -5,9 +5,9 @@
   "default_locale": "en",
   "version": "4.8.2",
   "icons": {
-    "128": "icons/sc-toolbox-128px.png",
-    "48": "icons/sc-toolbox-48px.png",
-    "16": "icons/sc-toolbox-16px.png"
+    "128": "favicon/my-toolbox-128px.png",
+    "48": "favicon/my-toolbox-48px.png",
+    "16": "favicon/my-toolbox-16px.png"
   },
   "permissions": [
     "storage"
@@ -15,8 +15,8 @@
   "action": {
     "default_popup": "popup/popup.html",
     "default_icon": {
-      "16": "icons/sc-toolbox-16px.png",
-      "48": "icons/sc-toolbox-48px.png"
+      "16": "favicon/my-toolbox-16px.png",
+      "48": "favicon/my-toolbox-48px.png"
      }
   },
   "options_ui": {

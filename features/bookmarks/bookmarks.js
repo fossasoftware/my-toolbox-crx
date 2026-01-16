@@ -18,12 +18,12 @@ const BOOKMARK_PINNED_TITLE_DISPLAY_OPTIONS = new Set([
   "hidden",
   "hover",
 ]);
-const removeIconSvg =
-  '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
-const editIconSvg =
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free v6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1 0 32c0 8.8 7.2 16 16 16l32 0zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>';
-const pinIconSvg =
-  '<svg class="bookmark-pin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Pro v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2026 Fonticons, Inc.--><path d="M160 96C160 78.3 174.3 64 192 64L448 64C465.7 64 480 78.3 480 96C480 113.7 465.7 128 448 128L418.5 128L428.8 262.1C465.9 283.3 494.6 318.5 507 361.8L510.8 375.2C513.6 384.9 511.6 395.2 505.6 403.3C499.6 411.4 490 416 480 416L160 416C150 416 140.5 411.3 134.5 403.3C128.5 395.3 126.5 384.9 129.3 375.2L133 361.8C145.4 318.5 174 283.3 211.2 262.1L221.5 128L192 128C174.3 128 160 113.7 160 96zM288 464L352 464L352 576C352 593.7 337.7 608 320 608C302.3 608 288 593.7 288 576L288 464z"/></svg>';
+const createIconElement = (className, extraClass = "") => {
+  const icon = document.createElement("span");
+  icon.className = `bookmark-icon ${className}${extraClass ? ` ${extraClass}` : ""}`;
+  icon.setAttribute("aria-hidden", "true");
+  return icon;
+};
 
 let bookmarksCache = [];
 let bookmarkIconsCache = {};
@@ -402,7 +402,7 @@ function createDeleteIconButton() {
   button.type = "button";
   button.className = "bookmark-delete-button";
   button.dataset.action = "delete";
-  button.innerHTML = removeIconSvg;
+  button.appendChild(createIconElement("bookmark-icon-delete"));
   return button;
 }
 
@@ -412,7 +412,7 @@ function createEditIconButton() {
   button.className =
     "bookmark-item-action bookmark-item-action-icon bookmark-item-action-pin";
   button.dataset.action = "edit";
-  button.innerHTML = editIconSvg;
+  button.appendChild(createIconElement("bookmark-icon-edit"));
   return button;
 }
 
@@ -424,7 +424,9 @@ function createPinIconButton(isActive) {
     button.classList.add("is-active");
   }
   button.dataset.action = "toggle-pin";
-  button.innerHTML = pinIconSvg;
+  button.appendChild(
+    createIconElement("bookmark-icon-pin", "bookmark-pin-icon")
+  );
   return button;
 }
 
@@ -469,8 +471,7 @@ function createDragHandle() {
   button.type = "button";
   button.className = "bookmark-drag-handle";
   button.draggable = false;
-  button.innerHTML =
-    '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="5" r="1.5"></circle><circle cx="15" cy="5" r="1.5"></circle><circle cx="9" cy="12" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><circle cx="9" cy="19" r="1.5"></circle><circle cx="15" cy="19" r="1.5"></circle></svg>';
+  button.appendChild(createIconElement("bookmark-icon-drag"));
   return button;
 }
 

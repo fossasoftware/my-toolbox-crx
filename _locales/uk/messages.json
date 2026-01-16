@@ -28,7 +28,6 @@
   "defaultButton": { "message": "За замовчуванням" },
   "resetButton": { "message": "Скинути" },
 
-  "footerText": { "message": "Зроблено СЦ" },
 
   "toastSaved": { "message": "Зміни збережено." },
   "toastBookmarkDeleted": { "message": "Закладку видалено." },

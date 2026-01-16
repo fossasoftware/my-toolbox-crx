@@ -31,7 +31,6 @@
   "defaultButton": { "message": "Restore defaults" },
   "resetButton": { "message": "Reset" },
 
-  "footerText": { "message": "Made by SC" },
 
   "toastSaved": { "message": "Changes saved." },
   "toastBookmarkDeleted": { "message": "Bookmark deleted." },

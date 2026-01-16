@@ -443,7 +443,7 @@ function handleExport() {
     const downloader = document.createElement("a");
     downloader.href = url;
     const timestamp = new Date().toISOString().slice(0, 10);
-    downloader.download = `sc-toolbox-status-colorizer-settings-${timestamp}.json`;
+    downloader.download = `my-toolbox-status-colorizer-settings-${timestamp}.json`;
     document.body.appendChild(downloader);
     downloader.click();
     document.body.removeChild(downloader);

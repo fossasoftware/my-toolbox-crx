@@ -314,7 +314,7 @@ function handleExport() {
     const link = document.createElement("a");
     const timestamp = new Date().toISOString().slice(0, 10);
     link.href = url;
-    link.download = `sc-toolbox-row-highlight-${timestamp}.json`;
+    link.download = `my-toolbox-row-highlight-${timestamp}.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
