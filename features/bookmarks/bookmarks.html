@@ -1,0 +1,38 @@
+<div id="bookmarksTab" class="tab-pane">
+  <div class="bookmarks-tab-header">
+    <h2 data-i18n="bookmarksTitle"></h2>
+  </div>
+  <div class="bookmarks-list-wrapper">
+    <ul id="bookmarksList" class="bookmarks-list"></ul>
+  </div>
+
+  <div id="bookmarkModal" class="modal-overlay">
+    <div class="modal-box bookmark-modal">
+      <h5 id="bookmarkModalTitle" data-i18n="bookmarkModalTitle"></h5>
+      <form id="bookmarkForm" class="bookmark-form" novalidate>
+        <div class="bookmark-field is-required">
+          <label for="bookmarkName" data-i18n="bookmarkNameLabel"></label>
+          <input id="bookmarkName" type="text" class="bookmark-input" autocomplete="off" required />
+        </div>
+        <div class="bookmark-field is-required">
+          <label for="bookmarkUrl" data-i18n="bookmarkUrlLabel"></label>
+          <input id="bookmarkUrl" type="text" class="bookmark-input" autocomplete="off" required />
+        </div>
+      <div class="bookmark-field">
+        <label for="bookmarkIconFile" data-i18n="bookmarkIconLabel"></label>
+        <div class="bookmark-file-input">
+          <input id="bookmarkIconFile" type="file" class="bookmark-input-file" accept="image/png" />
+          <span id="bookmarkIconFileName" class="bookmark-file-name" data-i18n="bookmarkIconFilePlaceholder"></span>
+          <label for="bookmarkIconFile" class="bookmark-file-button" data-i18n="bookmarkIconChooseButton"></label>
+        </div>
+        <p class="bookmark-icon-hint" data-i18n="bookmarkIconStorageHint"></p>
+      </div>
+      <div class="modal-actions bookmark-actions">
+        <button type="button" id="bookmarkCancel" class="button button-secondary" data-i18n="bookmarkCancelButton"></button>
+        <button type="submit" id="bookmarkSave" class="button button-primary" data-i18n="bookmarkSaveButton"></button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>

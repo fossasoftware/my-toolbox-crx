@@ -8,11 +8,17 @@
   <link rel="stylesheet" href="../features/row-highlighter/row-highlighter.css">
   <link rel="stylesheet" href="../features/notepad/notepad.css">
   <link rel="stylesheet" href="../features/settings/settings.css">
+  <link rel="stylesheet" href="../features/bookmarks/bookmarks.css">
 </head>
 <body>
 
   <div id="sideRibbon" class="side-ribbon">
     <button id="menuToggle" class="menu-toggle">☰</button>
+    <div id="bookmarksPinnedContainer" class="bookmarks-pinned">
+      <h4 data-i18n="bookmarksPinnedTitle"></h4>
+      <ul id="bookmarksPinnedList" class="bookmarks-pinned-list"></ul>
+      <p id="bookmarksPinnedEmpty" class="bookmarks-pinned-empty" data-i18n="bookmarksPinnedEmpty"></p>
+    </div>
     <div class="app-vertical" data-i18n="appName"></div>
   </div>
 
@@ -26,14 +32,36 @@
       </div>
     </div>
     <div class="tab-nav">
-      <button class="tab-link active" data-tab="statusColorizerTab" data-i18n="optionsTabStatusColorizer"></button>
-      <button class="tab-link" data-tab="rowHighlighterTab" data-i18n="optionsTabRowHighlighter"></button>
+      <div class="tab-group is-open">
+        <button class="tab-group-toggle" type="button" data-i18n="optionsTabHelpers" aria-expanded="true"></button>
+        <div class="tab-group-items">
+          <button class="tab-link active" data-tab="statusColorizerTab" data-i18n="optionsTabStatusColorizer"></button>
+          <button class="tab-link" data-tab="rowHighlighterTab" data-i18n="optionsTabRowHighlighter"></button>
+        </div>
+      </div>
       <button class="tab-link" data-tab="notepadTab" data-i18n="optionsTabNotepad"></button>
+      <button class="tab-link" data-tab="bookmarksTab" data-i18n="optionsTabBookmarks"></button>
       <button class="tab-link" data-tab="settingsTab" data-i18n="optionsTabSettings"></button>
     </div>
     <div class="footer">
       <p data-i18n="footerText"></p>
       <p id="appVersion"></p>
+      <div class="footer-actions">
+        <a
+          id="chromeStoreLink"
+          class="footer-link"
+          href="https://chromewebstore.google.com/detail/my-toolbox/nppomdgnebmeeilmhbkdnidaohhblcbi"
+          target="_blank"
+          rel="noreferrer noopener"
+          data-i18n="footerStoreLink"
+        ></a>
+        <button
+          id="shareExtensionBtn"
+          class="footer-share"
+          type="button"
+          data-i18n="footerShareButton"
+        ></button>
+      </div>
     </div>
   </nav>
 
@@ -43,6 +71,7 @@
       <div id="statusColorizerTabContainer"></div>
       <div id="rowHighlighterTabContainer"></div>
       <div id="notepadTabContainer"></div>
+      <div id="bookmarksTabContainer"></div>
       <div id="settingsTabContainer"></div>
     </div>
 
@@ -57,7 +86,6 @@
       </div>
     </div>
   </div>
-
   </div>
 
   <script src="../libs/marked.min.js"></script>

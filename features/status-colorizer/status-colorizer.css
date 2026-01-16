@@ -118,6 +118,20 @@
 }
 .status-alias-row {
   position: relative;
+  opacity: 1;
+  transform: translateY(0) scaleY(1);
+  transform-origin: top;
+  transition: opacity 180ms var(--md-ease),
+    transform 180ms var(--md-ease);
+  will-change: opacity, transform;
+}
+.status-alias-row.is-entering,
+.status-alias-row.is-leaving {
+  opacity: 0;
+  transform: translateY(-6px) scaleY(0.9);
+}
+.status-alias-row.is-leaving {
+  pointer-events: none;
 }
 .status-name-primary .status-name-input,
 .status-alias-row .status-alias-input {
@@ -259,7 +273,7 @@
 #statusColorizerTab .icon-button {
   max-width: none;
   padding: 5px 15px;
-  transition: none;
+  transition: var(--transition-fast);
 }
 #statusColorizerTab .icon-button:hover {
   max-width: none;
@@ -268,7 +282,7 @@
   max-width: none;
   opacity: 1;
   margin-left: 6px;
-  transition: none;
+  transition: var(--transition-fast);
 }
 
 .button.button-delete-row {

@@ -115,6 +115,20 @@
 }
 .keyword-alias-row {
   position: relative;
+  opacity: 1;
+  transform: translateY(0) scaleY(1);
+  transform-origin: top;
+  transition: opacity 180ms var(--md-ease),
+    transform 180ms var(--md-ease);
+  will-change: opacity, transform;
+}
+.keyword-alias-row.is-entering,
+.keyword-alias-row.is-leaving {
+  opacity: 0;
+  transform: translateY(-6px) scaleY(0.9);
+}
+.keyword-alias-row.is-leaving {
+  pointer-events: none;
 }
 .keyword-primary .keyword-input,
 .keyword-alias-row .keyword-alias-input {
@@ -256,7 +270,7 @@
 #rowHighlighterTab .icon-button {
   max-width: none;
   padding: 5px 15px;
-  transition: none;
+  transition: var(--transition-fast);
 }
 #rowHighlighterTab .icon-button:hover {
   max-width: none;
@@ -265,7 +279,7 @@
   max-width: none;
   opacity: 1;
   margin-left: 6px;
-  transition: none;
+  transition: var(--transition-fast);
 }
 
 .button.button-delete-row {

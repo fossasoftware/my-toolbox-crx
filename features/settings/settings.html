@@ -1,25 +1,66 @@
 <div id="settingsTab" class="tab-pane">
   <h2 data-i18n="optionsTabSettings"></h2>
 
-  <div class="settings-section">
-    <h3 class="settings-section-title" data-i18n="statusColorizerTitle"></h3>
-    <div class="button-container settings-actions">
-      <div class="button-group-left">
-        <button id="resetStatusSettings" class="button button-secondary" data-i18n="defaultButton"></button>
-        <input type="file" id="importFile" accept=".json" style="display: none;">
-        <button id="importSettingsBtn" class="button button-secondary icon-button"><img src="../img/export.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="importButton"></span></button>
-        <button id="exportSettingsBtn" class="button button-secondary icon-button"><img src="../img/import.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="exportButton"></span></button>
+  <div class="settings-grid">
+    <div class="settings-section">
+      <h3 class="settings-section-title" data-i18n="statusColorizerTitle"></h3>
+      <div class="button-container settings-actions">
+        <div class="button-group-left">
+          <button id="resetStatusSettings" class="button button-secondary" data-i18n="defaultButton"></button>
+          <input type="file" id="importFile" accept=".json" style="display: none;">
+          <button id="importSettingsBtn" class="button button-secondary icon-button"><img src="../img/export.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="importButton"></span></button>
+          <button id="exportSettingsBtn" class="button button-secondary icon-button"><img src="../img/import.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="exportButton"></span></button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="settings-section">
-    <h3 class="settings-section-title" data-i18n="rowHighlighterTitle"></h3>
-    <div class="button-container settings-actions">
-      <div class="button-group-left">
-        <input type="file" id="rowHighlightImportFile" accept=".json" style="display: none;">
-        <button id="rowHighlightImport" class="button button-secondary icon-button"><img src="../img/export.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="importButton"></span></button>
-        <button id="rowHighlightExport" class="button button-secondary icon-button"><img src="../img/import.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="exportButton"></span></button>
+    <div class="settings-section">
+      <h3 class="settings-section-title" data-i18n="rowHighlighterTitle"></h3>
+      <div class="button-container settings-actions">
+        <div class="button-group-left">
+          <input type="file" id="rowHighlightImportFile" accept=".json" style="display: none;">
+          <button id="rowHighlightImport" class="button button-secondary icon-button"><img src="../img/export.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="importButton"></span></button>
+          <button id="rowHighlightExport" class="button button-secondary icon-button"><img src="../img/import.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="exportButton"></span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <h3 class="settings-section-title" data-i18n="bookmarksTitle"></h3>
+      <div class="settings-field">
+        <div class="settings-field-row">
+          <label for="bookmarkIconSize" data-i18n="bookmarkIconSizeLabel"></label>
+          <span id="bookmarkIconSizeValue" class="settings-field-value"></span>
+        </div>
+        <input
+          id="bookmarkIconSize"
+          class="settings-range"
+          type="range"
+          min="36"
+          max="50"
+          step="2"
+        />
+      </div>
+      <div class="settings-field">
+        <div class="settings-field-row">
+          <label for="bookmarkPinnedIconSize" data-i18n="bookmarkPinnedIconSizeLabel"></label>
+          <span id="bookmarkPinnedIconSizeValue" class="settings-field-value"></span>
+        </div>
+        <input
+          id="bookmarkPinnedIconSize"
+          class="settings-range"
+          type="range"
+          min="16"
+          max="40"
+          step="2"
+        />
+      </div>
+      <div class="settings-field">
+        <label for="bookmarkPinnedTitleDisplay" data-i18n="bookmarkPinnedTitleDisplayLabel"></label>
+        <select id="bookmarkPinnedTitleDisplay" class="settings-select">
+          <option value="hidden" data-i18n="bookmarkPinnedTitleDisplayHidden"></option>
+          <option value="hover" data-i18n="bookmarkPinnedTitleDisplayHover"></option>
+        </select>
       </div>
     </div>
   </div>

@@ -6,6 +6,14 @@
   margin-bottom: var(--spacing-xl);
   box-shadow: var(--box-shadow-sm);
 }
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--spacing-lg);
+}
+.settings-grid .settings-section {
+  margin-bottom: 0;
+}
 .settings-section:last-child {
   margin-bottom: 0;
 }
@@ -21,10 +29,56 @@
   margin-top: 0;
   margin-bottom: 0;
 }
+.settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-sm);
+}
+.settings-field-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+.settings-field label {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--secondary-text);
+}
+.settings-field-value {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  color: var(--secondary-text);
+}
+.settings-range {
+  width: 100%;
+  accent-color: var(--primary-color);
+}
+.settings-select {
+  width: 100%;
+  height: var(--input-height);
+  padding: 5px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-input);
+  background-color: var(--background-light);
+  font-family: var(--font-body);
+  font-size: 14px;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.settings-select:focus {
+  outline: none;
+  border-color: var(--dark-text);
+  background-color: #fff;
+  box-shadow: 0 0 4px 0 rgba(13, 24, 28, 0.1),
+    0 0 8px 0 rgba(13, 24, 28, 0.1);
+}
 #settingsTab .icon-button {
   max-width: none;
   padding: 5px 15px;
-  transition: none;
+  transition: var(--transition-fast);
 }
 #settingsTab .icon-button:hover {
   max-width: none;
@@ -33,5 +87,27 @@
   max-width: none;
   opacity: 1;
   margin-left: 6px;
-  transition: none;
+  transition: var(--transition-fast);
+}
+#settingsTab .settings-actions .button.button-secondary {
+  background-color: transparent;
+  border-color: var(--border-color);
+  color: var(--dark-text);
+  box-shadow: none;
+}
+#settingsTab .settings-actions .button.button-secondary:hover {
+  background-color: rgba(13, 24, 28, 0.04);
+  border-color: var(--border-color);
+}
+#settingsTab .settings-actions .button.button-secondary:active {
+  background-color: rgba(13, 24, 28, 0.08);
+  border-color: var(--border-color);
+}
+#settingsTab .settings-actions .icon-button img {
+  filter: invert(1) grayscale(1);
+  opacity: 0.7;
+  transition: var(--transition-fast);
+}
+#settingsTab .settings-actions .icon-button:hover img {
+  opacity: 1;
 }

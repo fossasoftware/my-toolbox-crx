@@ -14,9 +14,12 @@ function normalizeStatusName(statusName) {
   return typeof statusName === "string" ? statusName.trim().toLowerCase() : "";
 }
 
-function createAliasRow(aliasValue = "", onRemove = null) {
+function createAliasRow(aliasValue = "", onRemove = null, options = {}) {
   const aliasRow = document.createElement("div");
   aliasRow.className = "status-alias-row";
+  if (options.animate) {
+    aliasRow.classList.add("is-entering");
+  }
 
   const aliasInput = document.createElement("input");
   aliasInput.type = "text";
@@ -33,14 +36,27 @@ function createAliasRow(aliasValue = "", onRemove = null) {
   removeAliasBtn.title = removeAliasLabel;
   removeAliasBtn.innerHTML = removeIconSvg;
   removeAliasBtn.addEventListener("click", () => {
-    aliasRow.remove();
-    if (typeof onRemove === "function") {
-      onRemove();
-    }
+    animateAliasRemoval(aliasRow, onRemove);
   });
   aliasRow.appendChild(removeAliasBtn);
 
   return aliasRow;
+}
+
+function animateAliasRemoval(aliasRow, onRemove) {
+  if (!aliasRow) return;
+  aliasRow.classList.add("is-leaving");
+  let removed = false;
+  const finalize = () => {
+    if (removed) return;
+    removed = true;
+    aliasRow.remove();
+    if (typeof onRemove === "function") {
+      onRemove();
+    }
+  };
+  aliasRow.addEventListener("transitionend", finalize, { once: true });
+  setTimeout(finalize, 200);
 }
 
 function updateButtonVisibility() {
@@ -179,15 +195,22 @@ function addRow(
     );
   };
 
-  const appendAlias = (aliasValue = "") => {
-    const aliasRow = createAliasRow(aliasValue, updateAliasSpacing);
+  const appendAlias = (aliasValue = "", animate = false) => {
+    const aliasRow = createAliasRow(aliasValue, updateAliasSpacing, {
+      animate,
+    });
     aliasContainer.appendChild(aliasRow);
     updateAliasSpacing();
+    if (animate) {
+      requestAnimationFrame(() => {
+        aliasRow.classList.remove("is-entering");
+      });
+    }
     return aliasRow;
   };
 
   addAliasBtn.addEventListener("click", () => {
-    const aliasRow = appendAlias("");
+    const aliasRow = appendAlias("", true);
     const aliasInput = aliasRow.querySelector(".status-alias-input");
     if (aliasInput) {
       aliasInput.focus();
