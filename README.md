@@ -1,12 +1,12 @@
 # My ToolBox
 
-[![Release](https://img.shields.io/badge/release-4.8.2-blue)](https://github.com/fossasoftware/my-toolbox-crx/releases)
+[![Release](https://img.shields.io/badge/release-4.8.3-blue)](https://github.com/fossasoftware/my-toolbox-crx/releases)
 
 **Chrome Extension**
 
 **My ToolBox** is a Chrome extension for Jira Cloud that adds status coloring, row highlighting, bookmarks, and a built-in notepad to speed up daily work.
 
-**Version:** 4.8.2
+**Version:** 4.8.3
 **Author:** Vitalii Kopach
 
 ## What you can do
