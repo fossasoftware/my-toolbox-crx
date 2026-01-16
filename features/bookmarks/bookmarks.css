@@ -191,7 +191,7 @@
 .bookmark-drag-handle:active {
   cursor: grabbing;
 }
-.bookmark-drag-handle .bookmark-icon {
+.bookmark-drag-handle .bookmark-action-icon {
   width: 14px;
   height: 14px;
 }
@@ -223,7 +223,7 @@
   color: var(--danger-color);
   background-color: rgba(227, 6, 19, 0.08);
 }
-.bookmark-delete-button .bookmark-icon {
+.bookmark-delete-button .bookmark-action-icon {
   width: 14px;
   height: 14px;
 }
@@ -254,11 +254,11 @@
   border-radius: 50%;
   line-height: 1;
 }
-.bookmark-item-action-icon .bookmark-icon {
+.bookmark-item-action-icon .bookmark-action-icon {
   width: 14px;
   height: 14px;
 }
-.bookmark-icon {
+.bookmark-action-icon {
   display: block;
   background-color: currentColor;
   mask-repeat: no-repeat;
@@ -268,19 +268,19 @@
   -webkit-mask-position: center;
   -webkit-mask-size: contain;
 }
-.bookmark-icon-delete {
+.bookmark-action-icon-delete {
   mask-image: url("../../img/icons/bookmark-delete.svg");
   -webkit-mask-image: url("../../img/icons/bookmark-delete.svg");
 }
-.bookmark-icon-edit {
+.bookmark-action-icon-edit {
   mask-image: url("../../img/icons/bookmark-edit.svg");
   -webkit-mask-image: url("../../img/icons/bookmark-edit.svg");
 }
-.bookmark-icon-pin {
+.bookmark-action-icon-pin {
   mask-image: url("../../img/icons/bookmark-pin.svg");
   -webkit-mask-image: url("../../img/icons/bookmark-pin.svg");
 }
-.bookmark-icon-drag {
+.bookmark-action-icon-drag {
   mask-image: url("../../img/icons/bookmark-drag.svg");
   -webkit-mask-image: url("../../img/icons/bookmark-drag.svg");
 }

@@ -20,7 +20,9 @@ const BOOKMARK_PINNED_TITLE_DISPLAY_OPTIONS = new Set([
 ]);
 const createIconElement = (className, extraClass = "") => {
   const icon = document.createElement("span");
-  icon.className = `bookmark-icon ${className}${extraClass ? ` ${extraClass}` : ""}`;
+  icon.className = `bookmark-action-icon ${className}${
+    extraClass ? ` ${extraClass}` : ""
+  }`;
   icon.setAttribute("aria-hidden", "true");
   return icon;
 };
@@ -402,7 +404,7 @@ function createDeleteIconButton() {
   button.type = "button";
   button.className = "bookmark-delete-button";
   button.dataset.action = "delete";
-  button.appendChild(createIconElement("bookmark-icon-delete"));
+  button.appendChild(createIconElement("bookmark-action-icon-delete"));
   return button;
 }
 
@@ -412,7 +414,7 @@ function createEditIconButton() {
   button.className =
     "bookmark-item-action bookmark-item-action-icon bookmark-item-action-pin";
   button.dataset.action = "edit";
-  button.appendChild(createIconElement("bookmark-icon-edit"));
+  button.appendChild(createIconElement("bookmark-action-icon-edit"));
   return button;
 }
 
@@ -425,7 +427,7 @@ function createPinIconButton(isActive) {
   }
   button.dataset.action = "toggle-pin";
   button.appendChild(
-    createIconElement("bookmark-icon-pin", "bookmark-pin-icon")
+    createIconElement("bookmark-action-icon-pin", "bookmark-pin-icon")
   );
   return button;
 }
@@ -471,7 +473,7 @@ function createDragHandle() {
   button.type = "button";
   button.className = "bookmark-drag-handle";
   button.draggable = false;
-  button.appendChild(createIconElement("bookmark-icon-drag"));
+  button.appendChild(createIconElement("bookmark-action-icon-drag"));
   return button;
 }
 
