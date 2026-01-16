@@ -7,9 +7,12 @@ function normalizeKeyword(keyword) {
   return typeof keyword === "string" ? keyword.trim().toLowerCase() : "";
 }
 
-function createAliasRow(aliasValue = "", onRemove = null) {
+function createAliasRow(aliasValue = "", onRemove = null, options = {}) {
   const aliasRow = document.createElement("div");
   aliasRow.className = "keyword-alias-row";
+  if (options.animate) {
+    aliasRow.classList.add("is-entering");
+  }
 
   const aliasInput = document.createElement("input");
   aliasInput.type = "text";
@@ -26,14 +29,27 @@ function createAliasRow(aliasValue = "", onRemove = null) {
   removeAliasBtn.title = removeAliasLabel;
   removeAliasBtn.innerHTML = removeIconSvg;
   removeAliasBtn.addEventListener("click", () => {
-    aliasRow.remove();
-    if (typeof onRemove === "function") {
-      onRemove();
-    }
+    animateAliasRemoval(aliasRow, onRemove);
   });
   aliasRow.appendChild(removeAliasBtn);
 
   return aliasRow;
+}
+
+function animateAliasRemoval(aliasRow, onRemove) {
+  if (!aliasRow) return;
+  aliasRow.classList.add("is-leaving");
+  let removed = false;
+  const finalize = () => {
+    if (removed) return;
+    removed = true;
+    aliasRow.remove();
+    if (typeof onRemove === "function") {
+      onRemove();
+    }
+  };
+  aliasRow.addEventListener("transitionend", finalize, { once: true });
+  setTimeout(finalize, 200);
 }
 
 function updateButtonVisibility() {
@@ -120,15 +136,22 @@ function addRow(keyword = "", color = "#ffffff", enabled = true, aliases = []) {
     );
   };
 
-  const appendAlias = (aliasValue = "") => {
-    const aliasRow = createAliasRow(aliasValue, updateAliasSpacing);
+  const appendAlias = (aliasValue = "", animate = false) => {
+    const aliasRow = createAliasRow(aliasValue, updateAliasSpacing, {
+      animate,
+    });
     aliasContainer.appendChild(aliasRow);
     updateAliasSpacing();
+    if (animate) {
+      requestAnimationFrame(() => {
+        aliasRow.classList.remove("is-entering");
+      });
+    }
     return aliasRow;
   };
 
   addAliasBtn.addEventListener("click", () => {
-    const aliasRow = appendAlias("");
+    const aliasRow = appendAlias("", true);
     const aliasInput = aliasRow.querySelector(".keyword-alias-input");
     if (aliasInput) aliasInput.focus();
   });
@@ -291,7 +314,7 @@ function handleExport() {
     const link = document.createElement("a");
     const timestamp = new Date().toISOString().slice(0, 10);
     link.href = url;
-    link.download = `sc-toolbox-row-highlight-${timestamp}.json`;
+    link.download = `my-toolbox-row-highlight-${timestamp}.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

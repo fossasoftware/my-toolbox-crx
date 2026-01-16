@@ -5,6 +5,57 @@ All notable changes to the "My ToolBox" Chrome extension will be documented in t
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (starting from this documented version).
 
+## [4.8.2] - 2026-01-14
+
+### Added
+
+- Added bookmark settings for icon size and pinned label visibility.
+- Marked required fields in the bookmark editor.
+- Added a “Helpers” group in the side menu for Status Colorizer and Row Highlighter.
+- Added Chrome Web Store and Share actions to the side menu footer.
+
+### Changed
+
+- Reworked bookmark drag-and-drop with smoother tile reflow.
+- Updated Settings layout to a tiled grid.
+- Adjusted bookmark icon size ranges (36–50px, pinned 16–40px).
+- Pinned labels now show only on hover or stay hidden.
+- Side menu tabs now span the full width with a consistent hover indicator.
+- Settings import/export/reset buttons blend with the Settings cards.
+- Removed hover tooltips from bookmark links.
+
+### Fixed
+
+- Pinned labels no longer clip inside the side ribbon scroll area.
+
+## [4.8.1] - 2026-01-14
+
+### Changed
+
+- Refined the Bookmarks layout with rectangular tiles, larger icons, and the add tile anchored at the end of the grid.
+- Added pin/edit icon actions and a dedicated drag handle for bookmark ordering.
+- Added undo support for bookmark deletion via a toast action button.
+- Smoothed UI transitions across tabs, pinned bookmarks, and modal overlays.
+
+### Fixed
+
+- Prevented the bookmark icon file field highlight from flickering after file picker use.
+- Prevented empty pinned bookmark icons from clipping on hover.
+- Prevented bookmark icons from shifting when pinning or unpinning.
+- Disabled hover styling while dragging bookmarks.
+
+## [4.8.0] - 2026-01-14
+
+### Added
+
+- New Bookmarks tab with create, edit, delete, and pin actions.
+- Pinned bookmarks render under the burger button in the collapsed side ribbon.
+- Optional PNG icon uploads for bookmarks; icons are stored locally while titles, URLs, and pin state sync.
+
+### Changed
+
+- Added Bookmarks to the side menu navigation.
+
 ## [4.7.1] - 2026-01-14
 
 ### Changed

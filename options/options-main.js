@@ -5,6 +5,8 @@ import { initializeRowHighlighterTab } from "../features/row-highlighter/row-hig
 import { initializeNotepad } from "../features/notepad/notepad.js";
 import { initializeNotepadTab } from "../features/notepad/notepad-tab.js";
 import { initializeSettingsTab } from "../features/settings/settings-tab.js";
+import { initializeBookmarks } from "../features/bookmarks/bookmarks.js";
+import { initializeBookmarksTab } from "../features/bookmarks/bookmarks-tab.js";
 
 let currentMessages = {};
 let currentLang = "en";
@@ -12,6 +14,13 @@ const supportedLangs = ["en", "uk"];
 let loadedDefaultSettings = [];
 let toastTimeout;
 let toastHideTimeout;
+let toastClickHandler;
+let toastActionHandler;
+let toastHoverEnterHandler;
+let toastHoverLeaveHandler;
+let toastOnHide;
+let toastStartTime = 0;
+let toastRemaining = 0;
 const TOAST_HIDE_DURATION = 240;
 const TOAST_VISIBLE_DURATION = 2600;
 
@@ -89,21 +98,136 @@ export function getText(key, substitutions = null) {
   }
   return message;
 }
-export function showToast(messageKey = "toastSaved", substitutions = null) {
+export function showToast(
+  messageKey = "toastSaved",
+  substitutions = null,
+  options = null
+) {
   const toast = document.getElementById("toast");
   if (!toast) return;
-  toast.textContent = getText(messageKey, substitutions);
+  if (toastOnHide) {
+    toastOnHide();
+    toastOnHide = null;
+  }
+  if (toastClickHandler) {
+    toast.removeEventListener("click", toastClickHandler);
+    toastClickHandler = null;
+  }
+  if (toastActionHandler) {
+    const actionButton = toast.querySelector(".toast-action");
+    if (actionButton) {
+      actionButton.removeEventListener("click", toastActionHandler);
+    }
+    toastActionHandler = null;
+  }
+  if (toastHoverEnterHandler) {
+    toast.removeEventListener("mouseenter", toastHoverEnterHandler);
+    toast.removeEventListener("mouseleave", toastHoverLeaveHandler);
+    toastHoverEnterHandler = null;
+    toastHoverLeaveHandler = null;
+  }
+  const messageText = getText(messageKey, substitutions);
+  const actionLabelKey = options?.actionLabelKey;
+  const actionLabel = options?.actionLabel;
+  const onAction = options?.onAction;
+  toastOnHide = typeof options?.onHide === "function" ? options.onHide : null;
+  if (onAction && (actionLabelKey || actionLabel)) {
+    toast.textContent = "";
+    const body = document.createElement("div");
+    body.className = "toast-body";
+    const message = document.createElement("span");
+    message.className = "toast-message";
+    message.textContent = messageText;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "toast-action";
+    const label = actionLabelKey ? getText(actionLabelKey) : actionLabel;
+    button.textContent = label;
+    button.setAttribute("aria-label", label);
+    toastActionHandler = (event) => {
+      event.preventDefault();
+      const handler = onAction;
+      if (toastActionHandler) {
+        button.removeEventListener("click", toastActionHandler);
+        toastActionHandler = null;
+      }
+      handler();
+    };
+    button.addEventListener("click", toastActionHandler);
+    body.appendChild(message);
+    body.appendChild(button);
+    toast.appendChild(body);
+  } else {
+    toast.textContent = messageText;
+  }
+  if (options && typeof options.onClick === "function" && !onAction) {
+    toastClickHandler = (event) => {
+      event.preventDefault();
+      const handler = options.onClick;
+      toast.removeEventListener("click", toastClickHandler);
+      toastClickHandler = null;
+      handler();
+    };
+    toast.addEventListener("click", toastClickHandler);
+  }
   clearTimeout(toastTimeout);
   clearTimeout(toastHideTimeout);
   toast.classList.remove("hide");
   toast.classList.add("show");
-  toastTimeout = setTimeout(() => {
-    toast.classList.add("hide");
-    toastHideTimeout = setTimeout(() => {
-      toast.classList.remove("show");
-      toast.classList.remove("hide");
-    }, TOAST_HIDE_DURATION);
-  }, TOAST_VISIBLE_DURATION);
+  const duration =
+    options && Number.isFinite(options.duration)
+      ? options.duration
+      : TOAST_VISIBLE_DURATION;
+  const startHideTimer = (delay) => {
+    toastRemaining = delay;
+    toastStartTime = Date.now();
+    toastTimeout = setTimeout(() => {
+      toast.classList.add("hide");
+      toastHideTimeout = setTimeout(() => {
+        toast.classList.remove("show");
+        toast.classList.remove("hide");
+        if (toastClickHandler) {
+          toast.removeEventListener("click", toastClickHandler);
+          toastClickHandler = null;
+        }
+        if (toastActionHandler) {
+          const actionButton = toast.querySelector(".toast-action");
+          if (actionButton) {
+            actionButton.removeEventListener("click", toastActionHandler);
+          }
+          toastActionHandler = null;
+        }
+        if (toastHoverEnterHandler) {
+          toast.removeEventListener("mouseenter", toastHoverEnterHandler);
+          toast.removeEventListener("mouseleave", toastHoverLeaveHandler);
+          toastHoverEnterHandler = null;
+          toastHoverLeaveHandler = null;
+        }
+        if (toastOnHide) {
+          toastOnHide();
+          toastOnHide = null;
+        }
+      }, TOAST_HIDE_DURATION);
+    }, delay);
+  };
+  startHideTimer(duration);
+  if (options?.pauseOnHover) {
+    toastHoverEnterHandler = () => {
+      if (!toastTimeout || toast.classList.contains("hide")) return;
+      const elapsed = Date.now() - toastStartTime;
+      toastRemaining = Math.max(0, toastRemaining - elapsed);
+      clearTimeout(toastTimeout);
+      toastTimeout = null;
+    };
+    toastHoverLeaveHandler = () => {
+      if (toast.classList.contains("hide")) return;
+      if (toastRemaining > 0) {
+        startHideTimer(toastRemaining);
+      }
+    };
+    toast.addEventListener("mouseenter", toastHoverEnterHandler);
+    toast.addEventListener("mouseleave", toastHoverLeaveHandler);
+  }
 }
 export function showValidationErrorModal(messageKey, substitutions = null) {
   const modal = document.getElementById("validationErrorModal");
@@ -310,6 +434,19 @@ function applyTranslations() {
     rowAddBtn.setAttribute("aria-label", label);
     rowAddBtn.removeAttribute("title");
   }
+  const bookmarkAddButton = document.getElementById("bookmarkAddButton");
+  if (bookmarkAddButton) {
+    const label = getText("bookmarkAddLabel");
+    bookmarkAddButton.setAttribute("aria-label", label);
+    bookmarkAddButton.title = label;
+  }
+  document
+    .querySelectorAll(".bookmark-drag-handle, .bookmark-item-action-icon")
+    .forEach((button) => {
+      const labelKey = button.dataset.labelKey;
+      if (!labelKey) return;
+      button.setAttribute("aria-label", getText(labelKey));
+    });
 
   updateTableAddButtonWidths();
   refreshTableEmptyStates();
@@ -352,6 +489,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     initializeStatusColorizerTab(),
     initializeRowHighlighterTab(),
     initializeNotepadTab(),
+    initializeBookmarksTab(),
     initializeSettingsTab(),
   ]);
 
@@ -361,6 +499,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const cancelDefaultBtn = document.getElementById("cancelReset");
   const tabLinks = document.querySelectorAll(".tab-link");
   const tabPanes = document.querySelectorAll(".tab-pane");
+  const tabGroups = document.querySelectorAll(".tab-group");
+  const shareExtensionBtn = document.getElementById("shareExtensionBtn");
 
   const langPref = await new Promise((resolve) => {
     chrome.storage.sync.get("userLanguage", (data) => {
@@ -449,6 +589,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   } else {
     console.error("Missing Validation Error OK button or modal");
   }
+  if (shareExtensionBtn) {
+    const shareUrl =
+      "https://chromewebstore.google.com/detail/my-toolbox/nppomdgnebmeeilmhbkdnidaohhblcbi";
+    shareExtensionBtn.addEventListener("click", async () => {
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: getText("appName"),
+            url: shareUrl,
+          });
+          return;
+        } catch (error) {
+          if (error?.name === "AbortError") {
+            return;
+          }
+        }
+      }
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        showToast("toastShareCopied");
+      } catch (error) {
+        console.error("Share copy failed:", error);
+        showToast("toastErrorGeneric");
+      }
+    });
+  }
 
   tabLinks.forEach((link) => {
     link.addEventListener("click", (event) => {
@@ -457,6 +623,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       tabLinks.forEach((l) => l.classList.remove("active"));
       tabPanes.forEach((p) => p.classList.remove("active"));
       link.classList.add("active");
+      const linkGroup = link.closest(".tab-group");
+      if (linkGroup) {
+        linkGroup.classList.add("is-open");
+        const toggle = linkGroup.querySelector(".tab-group-toggle");
+        if (toggle) {
+          toggle.setAttribute("aria-expanded", "true");
+        }
+      }
       const targetPane = document.getElementById(targetTabId);
       if (targetPane) {
         targetPane.classList.add("active");
@@ -466,6 +640,25 @@ document.addEventListener("DOMContentLoaded", async () => {
       } else {
         console.error(`Tab pane with ID ${targetTabId} not found!`);
       }
+    });
+  });
+
+  tabGroups.forEach((group) => {
+    const toggle = group.querySelector(".tab-group-toggle");
+    if (!toggle) return;
+    const hasActive = group.querySelector(".tab-link.active");
+    if (hasActive) {
+      group.classList.add("is-open");
+      toggle.setAttribute("aria-expanded", "true");
+    } else {
+      toggle.setAttribute(
+        "aria-expanded",
+        group.classList.contains("is-open") ? "true" : "false"
+      );
+    }
+    toggle.addEventListener("click", () => {
+      const isOpen = group.classList.toggle("is-open");
+      toggle.setAttribute("aria-expanded", String(isOpen));
     });
   });
 
@@ -485,6 +678,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initializeStatusColorizer();
   initializeRowHighlighter();
   initializeNotepad();
+  initializeBookmarks();
   initializeTableEmptyStates();
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(() => {

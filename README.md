@@ -1,12 +1,12 @@
 # My ToolBox
 
-[![Release](https://img.shields.io/badge/release-4.7.1-blue)](https://github.com/fossasoftware/my-toolbox-crx/releases)
+[![Release](https://img.shields.io/badge/release-4.8.2-blue)](https://github.com/fossasoftware/my-toolbox-crx/releases)
 
 **Chrome Extension**
 
-**My ToolBox** is a Chrome extension for Jira Cloud that adds status coloring, row highlighting, and a built-in notepad to speed up daily work.
+**My ToolBox** is a Chrome extension for Jira Cloud that adds status coloring, row highlighting, bookmarks, and a built-in notepad to speed up daily work.
 
-**Version:** 4.7.1
+**Version:** 4.8.2
 **Author:** Vitalii Kopach
 
 ## What you can do
@@ -24,15 +24,23 @@
 - **Notepad**
   - Markdown editor with live preview.
   - Auto-save with sync across devices.
+- **Bookmarks**
+  - Save bookmarks with title and URL.
+  - Optional PNG icon upload; missing icons render as a circular initial badge.
+  - Pin favorites to the side ribbon for quick access.
+  - Drag a handle to reorder bookmarks with smooth animations.
+  - Edit or delete bookmarks with undo support.
+  - Adjust icon size in Settings.
+  - Configure pinned label visibility (hidden or on hover) in Settings.
 - **Localization**
   - English and Ukrainian UI.
 
 ## Quick start
 
 1. Open the extension popup and click **Open Settings**.
-2. Add a rule in **Status Colorizer** or **Row Highlighter**.
-3. Click **Save Changes**.
-4. Refresh Jira to apply updates.
+2. Choose a tab (Helpers → Status Colorizer/Row Highlighter, Notepad, or Bookmarks).
+3. Save changes or add bookmarks.
+4. Refresh Jira to apply updates for content scripts.
 
 ## Installation
 
@@ -48,7 +56,9 @@
 - Status Colorizer works on Jira Cloud pages under `*://*.atlassian.net/*`.
 - When **Animation** is enabled, the background input is disabled; text color still applies.
 - Preset import/export and defaults are managed from the **Settings** tab.
-- Settings are stored in `chrome.storage.sync` for cross-device sync.
+- Use the side menu footer to open or share the Chrome Web Store listing.
+- Settings and bookmarks (title, URL, pinned) are stored in `chrome.storage.sync`.
+- Bookmark icons are stored locally in `chrome.storage.local` and do not sync.
 - Markdown preview uses `marked` + `DOMPurify`.
 
 ## FAQ
@@ -64,3 +74,6 @@ A: Duplicates are merged into a single rule, and additional names become aliases
 
 **Q: Does the extension work outside Jira Cloud?**
 A: No. It targets `*://*.atlassian.net/*`.
+
+**Q: Do bookmarks sync across devices?**
+A: Titles, URLs, and pinned state sync. Bookmark icons stay local.
