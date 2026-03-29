@@ -7,10 +7,11 @@
   <link rel="stylesheet" href="../features/status-colorizer/status-colorizer.css">
   <link rel="stylesheet" href="../features/row-highlighter/row-highlighter.css">
   <link rel="stylesheet" href="../features/notepad/notepad.css">
+  <link rel="stylesheet" href="../features/board/board.css">
   <link rel="stylesheet" href="../features/settings/settings.css">
   <link rel="stylesheet" href="../features/bookmarks/bookmarks.css">
 </head>
-<body>
+<body class="is-booting">
 
   <div id="sideRibbon" class="side-ribbon">
     <button id="menuToggle" class="menu-toggle">☰</button>
@@ -35,11 +36,12 @@
       <div class="tab-group is-open">
         <button class="tab-group-toggle" type="button" data-i18n="optionsTabHelpers" aria-expanded="true"></button>
         <div class="tab-group-items">
-          <button class="tab-link active" data-tab="statusColorizerTab" data-i18n="optionsTabStatusColorizer"></button>
+          <button class="tab-link" data-tab="statusColorizerTab" data-i18n="optionsTabStatusColorizer"></button>
           <button class="tab-link" data-tab="rowHighlighterTab" data-i18n="optionsTabRowHighlighter"></button>
         </div>
       </div>
       <button class="tab-link" data-tab="notepadTab" data-i18n="optionsTabNotepad"></button>
+      <button class="tab-link" data-tab="boardTab" data-i18n="optionsTabBoard"></button>
       <button class="tab-link" data-tab="bookmarksTab" data-i18n="optionsTabBookmarks"></button>
       <button class="tab-link" data-tab="settingsTab" data-i18n="optionsTabSettings"></button>
     </div>
@@ -70,6 +72,7 @@
       <div id="statusColorizerTabContainer"></div>
       <div id="rowHighlighterTabContainer"></div>
       <div id="notepadTabContainer"></div>
+      <div id="boardTabContainer"></div>
       <div id="bookmarksTabContainer"></div>
       <div id="settingsTabContainer"></div>
     </div>

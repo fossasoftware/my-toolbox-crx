@@ -1,89 +1,89 @@
-let currentMessages = {};
-let currentLang = "en";
-const supportedLangs = ["en", "uk"];
-async function loadMessages(lang) {
-  if (!supportedLangs.includes(lang)) {
-    lang = "en";
-  }
-  try {
-    const url = chrome.runtime.getURL(`../_locales/${lang}/messages.json`);
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const messages = await response.json();
-    currentMessages = messages;
-    return messages;
-  } catch (error) {
-    console.error(
-      `Could not load popup messages for language "${lang}":`,
-      error
-    );
-    if (lang !== "en") {
-      return await loadMessages("en");
-    } else {
-      return {};
-    }
-  }
-}
-function getText(key, substitutions = null) {
-  const messageObj = currentMessages[key];
-  if (!messageObj || !messageObj.message) {
-    return key;
-  }
-  let message = messageObj.message;
-  if (substitutions) {
-    const subs = Array.isArray(substitutions) ? substitutions : [substitutions];
-    subs.forEach((sub, index) => {
-      const regex = new RegExp(`\\$${index + 1}`, "g");
-      message = message.replace(regex, sub);
-    });
-  }
-  return message;
-}
+import {
+  applyTextTranslations,
+  getDefaultLanguage,
+  getText,
+  loadMessages,
+} from "../core/i18n.js";
+import { getSyncStorage, setSyncStorage } from "../core/storage.js";
+
 function applyPopupTranslations() {
-  if (!currentMessages || Object.keys(currentMessages).length === 0) {
-    return;
-  }
   document.title = getText("appName");
-  document.querySelectorAll("[data-i18n]").forEach((element) => {
-    const key = element.dataset.i18n;
-    element.textContent = getText(key);
-  });
+  applyTextTranslations();
 }
+
 async function initializePopup() {
-  const langPref = await new Promise((resolve) => {
-    chrome.storage.sync.get("userLanguage", (data) => {
-      resolve(data.userLanguage || "en");
-    });
-  });
-  currentLang = langPref;
-  await loadMessages(currentLang);
+  const prefsResult = await getSyncStorage([
+    "userLanguage",
+    "statusColorizerEnabled",
+    "rowHighlighterEnabled",
+  ]);
+  if (!prefsResult.ok) {
+    console.error("Could not load popup preferences:", prefsResult.error);
+  }
+
+  const storedPrefs = prefsResult.data || {};
+  const langPref = storedPrefs.userLanguage || getDefaultLanguage();
+  const statusColorizerEnabled = Object.prototype.hasOwnProperty.call(
+    storedPrefs,
+    "statusColorizerEnabled"
+  )
+    ? storedPrefs.statusColorizerEnabled
+    : true;
+  const rowHighlighterEnabled = Object.prototype.hasOwnProperty.call(
+    storedPrefs,
+    "rowHighlighterEnabled"
+  )
+    ? storedPrefs.rowHighlighterEnabled
+    : true;
+
+  await loadMessages(langPref);
   applyPopupTranslations();
-  const statusColorizerToggle = document.getElementById("statusColorizerTogglePopup");
-  const rowHighlighterToggle = document.getElementById("rowHighlighterTogglePopup");
-  chrome.storage.sync.get(["statusColorizerEnabled", "rowHighlighterEnabled"], (data) => {
-    if (statusColorizerToggle) {
-      statusColorizerToggle.checked = data.hasOwnProperty("statusColorizerEnabled") ? data.statusColorizerEnabled : true;
-      statusColorizerToggle.addEventListener("change", () => {
-        chrome.storage.sync.set({ statusColorizerEnabled: statusColorizerToggle.checked });
+
+  const statusColorizerToggle = document.getElementById(
+    "statusColorizerTogglePopup"
+  );
+  const rowHighlighterToggle = document.getElementById(
+    "rowHighlighterTogglePopup"
+  );
+
+  if (statusColorizerToggle) {
+    statusColorizerToggle.checked = statusColorizerEnabled;
+    statusColorizerToggle.addEventListener("change", async () => {
+      const result = await setSyncStorage({
+        statusColorizerEnabled: statusColorizerToggle.checked,
       });
-    }
-    if (rowHighlighterToggle) {
-      rowHighlighterToggle.checked = data.hasOwnProperty("rowHighlighterEnabled") ? data.rowHighlighterEnabled : true;
-      rowHighlighterToggle.addEventListener("change", () => {
-        chrome.storage.sync.set({ rowHighlighterEnabled: rowHighlighterToggle.checked });
+      if (!result.ok) {
+        console.error(
+          "Error saving status colorizer toggle preference:",
+          result.error
+        );
+      }
+    });
+  }
+
+  if (rowHighlighterToggle) {
+    rowHighlighterToggle.checked = rowHighlighterEnabled;
+    rowHighlighterToggle.addEventListener("change", async () => {
+      const result = await setSyncStorage({
+        rowHighlighterEnabled: rowHighlighterToggle.checked,
       });
-    }
-  });
+      if (!result.ok) {
+        console.error(
+          "Error saving row highlighter toggle preference:",
+          result.error
+        );
+      }
+    });
+  }
+
   const optionsBtn = document.getElementById("openOptionsBtn");
   if (optionsBtn) {
     optionsBtn.addEventListener("click", () => {
-      chrome.runtime.openOptionsPage((err) => {
-        if (chrome.runtime.lastError || err) {
+      chrome.runtime.openOptionsPage((error) => {
+        if (chrome.runtime.lastError || error) {
           console.error(
             "Error opening options page:",
-            chrome.runtime.lastError || err
+            chrome.runtime.lastError || error
           );
         }
       });
@@ -91,6 +91,10 @@ async function initializePopup() {
   } else {
     console.error("Options button (#openOptionsBtn) not found in popup.html");
   }
-}
-document.addEventListener("DOMContentLoaded", initializePopup);
 
+  requestAnimationFrame(() => {
+    document.body.classList.remove("is-booting");
+  });
+}
+
+document.addEventListener("DOMContentLoaded", initializePopup);

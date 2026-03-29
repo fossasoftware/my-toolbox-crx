@@ -8,8 +8,8 @@
         <div class="button-group-left">
           <button id="resetStatusSettings" class="button button-secondary" data-i18n="defaultButton"></button>
           <input type="file" id="importFile" accept=".json" style="display: none;">
-          <button id="importSettingsBtn" class="button button-secondary icon-button"><img src="../img/icons/settings-import.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="importButton"></span></button>
-          <button id="exportSettingsBtn" class="button button-secondary icon-button"><img src="../img/icons/settings-export.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="exportButton"></span></button>
+          <button id="importSettingsBtn" class="button button-secondary icon-button"><img src="../img/icons/import.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="importButton"></span></button>
+          <button id="exportSettingsBtn" class="button button-secondary icon-button"><img src="../img/icons/export.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="exportButton"></span></button>
         </div>
       </div>
     </div>
@@ -19,8 +19,30 @@
       <div class="button-container settings-actions">
         <div class="button-group-left">
           <input type="file" id="rowHighlightImportFile" accept=".json" style="display: none;">
-          <button id="rowHighlightImport" class="button button-secondary icon-button"><img src="../img/icons/settings-import.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="importButton"></span></button>
-          <button id="rowHighlightExport" class="button button-secondary icon-button"><img src="../img/icons/settings-export.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="exportButton"></span></button>
+          <button id="rowHighlightImport" class="button button-secondary icon-button"><img src="../img/icons/import.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="importButton"></span></button>
+          <button id="rowHighlightExport" class="button button-secondary icon-button"><img src="../img/icons/export.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="exportButton"></span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <h3 class="settings-section-title" data-i18n="notepadTitle"></h3>
+      <div class="button-container settings-actions">
+        <div class="button-group-left">
+          <input type="file" id="notepadImportFile" accept=".json" style="display: none;">
+          <button id="notepadImportBtn" class="button button-secondary icon-button"><img src="../img/icons/import.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="importButton"></span></button>
+          <button id="notepadExportBtn" class="button button-secondary icon-button"><img src="../img/icons/export.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="exportButton"></span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <h3 class="settings-section-title" data-i18n="boardTitle"></h3>
+      <div class="button-container settings-actions">
+        <div class="button-group-left">
+          <input type="file" id="boardImportFile" accept=".json" style="display: none;">
+          <button id="boardImportBtn" class="button button-secondary icon-button"><img src="../img/icons/import.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="importButton"></span></button>
+          <button id="boardBackupBtn" class="button button-secondary icon-button"><img src="../img/icons/export.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="exportButton"></span></button>
         </div>
       </div>
     </div>
@@ -61,6 +83,13 @@
           <option value="hidden" data-i18n="bookmarkPinnedTitleDisplayHidden"></option>
           <option value="hover" data-i18n="bookmarkPinnedTitleDisplayHover"></option>
         </select>
+      </div>
+      <div class="button-container settings-actions settings-actions-below">
+        <div class="button-group-left">
+          <input type="file" id="bookmarksImportFile" accept=".json" style="display: none;">
+          <button id="bookmarksImportBtn" class="button button-secondary icon-button"><img src="../img/icons/import.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="importButton"></span></button>
+          <button id="bookmarksExportBtn" class="button button-secondary icon-button"><img src="../img/icons/export.svg" alt="" aria-hidden="true" /><span class="btn-label" data-i18n="exportButton"></span></button>
+        </div>
       </div>
     </div>
   </div>

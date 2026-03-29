@@ -5,12 +5,12 @@
     <title data-i18n="appName"></title>
     <link rel="stylesheet" href="./popup.css" />
   </head>
-  <body>
+  <body class="is-booting">
     <h3 data-i18n="popupTitle"></h3>
     <p data-i18n="popupDescription"></p>
     <label class="feature-toggle switch"><span data-i18n="toggleStatusColorizerLabel"></span><input type="checkbox" id="statusColorizerTogglePopup" /><span class="slider"></span></label>
     <label class="feature-toggle switch"><span data-i18n="toggleRowHighlighterLabel"></span><input type="checkbox" id="rowHighlighterTogglePopup" /><span class="slider"></span></label>
     <button id="openOptionsBtn" class="button button-primary" data-i18n="popupOpenOptionsButton"></button>
-    <script src="./popup.js"></script>
+    <script type="module" src="./popup.js"></script>
   </body>
 </html>

@@ -1,51 +1,221 @@
+(function runStatusColorizerWorker(global) {
 let statusColorSettings = [];
 const insertedRibbonClasses = new Set();
 let statusColorizerEnabled = true;
+let refreshStatusesRaf = 0;
+const ruleWorkerRuntime = global.MyToolboxRuleWorkerRuntime;
+const STATUS_TOUCH_ATTR = "data-my-toolbox-status-touched";
+const STATUS_STYLE_ATTR = "data-my-toolbox-status-style";
+const STATUS_STYLE_MISSING = "__my_toolbox_status_style_missing__";
+const STATUS_RIBBON_ATTR = "data-my-toolbox-status-ribbon-class";
 
-function loadStatusColorizerEnabled(callback) {
-  chrome.storage.sync.get("statusColorizerEnabled", (data) => {
-    statusColorizerEnabled = data.hasOwnProperty("statusColorizerEnabled") ? data.statusColorizerEnabled : true;
-    if (callback) callback();
+function loadWorkerBooleanPreference(key, callback, defaultValue = true) {
+  if (ruleWorkerRuntime?.loadBooleanPreference) {
+    ruleWorkerRuntime.loadBooleanPreference(key, {
+      defaultValue,
+      logPrefix: "Status Colorizer",
+      onLoaded: callback,
+    });
+    return;
+  }
+
+  chrome.storage.sync.get(key, (data) => {
+    const value = Object.prototype.hasOwnProperty.call(data, key)
+      ? data[key]
+      : defaultValue;
+    callback?.(value);
   });
 }
 
-function loadStatusColorSettings(callback) {
-  chrome.storage.sync.get("statusColorSettings", (data) => {
+function loadWorkerArraySetting(
+  key,
+  callback,
+  { defaultResourcePath = "", mapItem } = {}
+) {
+  if (ruleWorkerRuntime?.loadArraySetting) {
+    ruleWorkerRuntime.loadArraySetting(key, {
+      defaultResourcePath,
+      logPrefix: "Status Colorizer",
+      mapItem,
+      onLoaded: callback,
+    });
+    return;
+  }
+
+  chrome.storage.sync.get(key, (data) => {
     if (chrome.runtime.lastError) {
       console.error("Status Colorizer: Error loading settings", chrome.runtime.lastError);
-      statusColorSettings = [];
-      if (callback) callback();
+      callback?.([]);
       return;
     }
 
-    if (!data.hasOwnProperty("statusColorSettings")) {
-      const defaultsUrl = chrome.runtime.getURL("data/defaultSettings.json");
-      fetch(defaultsUrl)
-        .then((response) => (response.ok ? response.json() : []))
-        .then((defaults) => {
-          if (Array.isArray(defaults)) {
-            statusColorSettings = defaults;
-            chrome.storage.sync.set({ statusColorSettings: defaults });
-          } else {
-            statusColorSettings = [];
+    if (!Object.prototype.hasOwnProperty.call(data, key) && defaultResourcePath) {
+      fetch(chrome.runtime.getURL(defaultResourcePath))
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
           }
+          return response.json();
+        })
+        .then((defaults) => {
+          const items = Array.isArray(defaults)
+            ? typeof mapItem === "function"
+              ? defaults.map((item) => mapItem(item))
+              : defaults
+            : [];
+          chrome.storage.sync.set({ [key]: items });
+          callback?.(items);
         })
         .catch((error) => {
           console.error("Status Colorizer: Failed to load default settings", error);
-          statusColorSettings = [];
-        })
-        .finally(() => {
-          if (callback) callback();
+          callback?.([]);
         });
       return;
     }
 
-    statusColorSettings = Array.isArray(data.statusColorSettings)
-      ? data.statusColorSettings
-      : [];
-
-    if (callback) callback();
+    const items = Array.isArray(data[key]) ? data[key] : [];
+    callback?.(
+      typeof mapItem === "function" ? items.map((item) => mapItem(item)) : items
+    );
   });
+}
+
+function observeWorkerBodyMutations(callback) {
+  if (ruleWorkerRuntime?.observeBodyMutations) {
+    ruleWorkerRuntime.observeBodyMutations(callback);
+    return;
+  }
+
+  const observer = new MutationObserver(() => {
+    callback();
+  });
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
+}
+
+function runWorkerOnWindowLoad(callback) {
+  if (ruleWorkerRuntime?.runOnWindowLoad) {
+    ruleWorkerRuntime.runOnWindowLoad(callback);
+    return;
+  }
+
+  if (document.readyState === "complete") {
+    callback();
+    return;
+  }
+
+  window.addEventListener("load", callback, { once: true });
+}
+
+function observeWorkerStorageChanges(callback) {
+  if (ruleWorkerRuntime?.observeSyncStorageChanges) {
+    ruleWorkerRuntime.observeSyncStorageChanges(callback);
+    return;
+  }
+
+  chrome.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName !== "sync") {
+      return;
+    }
+
+    callback?.(changes);
+  });
+}
+
+function loadStatusColorizerEnabled(callback) {
+  loadWorkerBooleanPreference("statusColorizerEnabled", (enabled) => {
+    statusColorizerEnabled = enabled;
+    callback?.();
+  });
+}
+
+function loadStatusColorSettings(callback) {
+  loadWorkerArraySetting("statusColorSettings", (settings) => {
+    statusColorSettings = settings;
+    callback?.();
+  }, {
+    defaultResourcePath: "data/defaultSettings.json",
+  });
+}
+
+function rememberElementStyle(element) {
+  if (!element || element.hasAttribute(STATUS_TOUCH_ATTR)) {
+    return;
+  }
+
+  const inlineStyle = element.getAttribute("style");
+  element.setAttribute(STATUS_TOUCH_ATTR, "1");
+  element.setAttribute(
+    STATUS_STYLE_ATTR,
+    inlineStyle == null ? STATUS_STYLE_MISSING : inlineStyle
+  );
+}
+
+function restoreElementStyle(element) {
+  if (!element || !element.hasAttribute(STATUS_TOUCH_ATTR)) {
+    return;
+  }
+
+  const ribbonClass = element.getAttribute(STATUS_RIBBON_ATTR);
+  if (ribbonClass) {
+    element.classList.remove(ribbonClass);
+  }
+
+  const originalStyle = element.getAttribute(STATUS_STYLE_ATTR);
+  if (originalStyle === STATUS_STYLE_MISSING) {
+    element.removeAttribute("style");
+  } else if (originalStyle != null) {
+    element.setAttribute("style", originalStyle);
+  }
+
+  element.removeAttribute(STATUS_TOUCH_ATTR);
+  element.removeAttribute(STATUS_STYLE_ATTR);
+  element.removeAttribute(STATUS_RIBBON_ATTR);
+}
+
+function clearTrackedStatusStyles() {
+  document
+    .querySelectorAll(`[${STATUS_TOUCH_ATTR}]`)
+    .forEach((element) => restoreElementStyle(element));
+}
+
+function setTrackedStyle(element, property, value, priority = "") {
+  if (!element) {
+    return;
+  }
+
+  rememberElementStyle(element);
+  if (value === null || value === undefined || value === "") {
+    element.style.removeProperty(property);
+    return;
+  }
+
+  element.style.setProperty(property, value, priority);
+}
+
+function setTrackedRibbonClass(element, className) {
+  if (!element) {
+    return;
+  }
+
+  rememberElementStyle(element);
+  const previousClass = element.getAttribute(STATUS_RIBBON_ATTR);
+  if (previousClass && previousClass !== className) {
+    element.classList.remove(previousClass);
+  }
+
+  if (className) {
+    element.classList.add(className);
+    element.setAttribute(STATUS_RIBBON_ATTR, className);
+    return;
+  }
+
+  if (previousClass) {
+    element.classList.remove(previousClass);
+  }
+  element.removeAttribute(STATUS_RIBBON_ATTR);
 }
 
 function addGlobalStyle(css, className) {
@@ -127,26 +297,41 @@ function paintStatuses() {
         let grandParentSpan = element.closest("span").parentNode.closest("span");
         if (grandParentSpan && element.firstChild) {
           if (!animationEnabled) {
-            element.firstChild.style.backgroundColor =
-              statusSetting.backgroundColor;
+            setTrackedStyle(
+              element.firstChild,
+              "background-color",
+              statusSetting.backgroundColor
+            );
             if (element.firstChild.firstChild && statusSetting.textColor) {
-              element.firstChild.firstChild.style.color = statusSetting.textColor;
+              setTrackedStyle(
+                element.firstChild.firstChild,
+                "color",
+                statusSetting.textColor
+              );
             }
           } else {
-            element.firstChild.style.backgroundColor = "transparent";
+            setTrackedStyle(element.firstChild, "background-color", "transparent");
             if (element.firstChild.firstChild) {
-              element.firstChild.firstChild.style.backgroundColor = "transparent";
+              setTrackedStyle(
+                element.firstChild.firstChild,
+                "background-color",
+                "transparent"
+              );
               if (statusSetting.textColor) {
-                element.firstChild.firstChild.style.color = statusSetting.textColor;
+                setTrackedStyle(
+                  element.firstChild.firstChild,
+                  "color",
+                  statusSetting.textColor
+                );
               } else {
-                element.firstChild.firstChild.style.color = "";
+                setTrackedStyle(element.firstChild.firstChild, "color", "");
               }
             }
           }
           if (animationEnabled) {
             const { css: ribbonCSS, className } = generateRibbonCSS(statusSetting);
             addGlobalStyle(ribbonCSS, className);
-            element.firstChild.classList.add(className);
+            setTrackedRibbonClass(element.firstChild, className);
             element.firstChild
               .querySelectorAll(`.${className}`)
               .forEach((inner) => {
@@ -160,18 +345,22 @@ function paintStatuses() {
         // new structure where the colored element is the span itself
         let inner = element.querySelector("span, div");
         if (!animationEnabled) {
-          element.style.backgroundColor = statusSetting.backgroundColor;
+          setTrackedStyle(
+            element,
+            "background-color",
+            statusSetting.backgroundColor
+          );
           if (inner && statusSetting.textColor) {
-            inner.style.color = statusSetting.textColor;
+            setTrackedStyle(inner, "color", statusSetting.textColor);
           }
         } else {
-          element.style.backgroundColor = "transparent";
+          setTrackedStyle(element, "background-color", "transparent");
           if (inner) {
-            inner.style.backgroundColor = "transparent";
+            setTrackedStyle(inner, "background-color", "transparent");
             if (statusSetting.textColor) {
-              inner.style.color = statusSetting.textColor;
+              setTrackedStyle(inner, "color", statusSetting.textColor);
             } else {
-              inner.style.color = "";
+              setTrackedStyle(inner, "color", "");
             }
           }
         }
@@ -180,9 +369,9 @@ function paintStatuses() {
           addGlobalStyle(ribbonCSS, className);
           const ribbonAncestor = element.parentElement?.closest(`.${className}`);
           if (ribbonAncestor) {
-            element.classList.remove(className);
+            setTrackedRibbonClass(element, "");
           } else {
-            element.classList.add(className);
+            setTrackedRibbonClass(element, className);
           }
           element.querySelectorAll(`.${className}`).forEach((innerEl) => {
             if (innerEl !== element) {
@@ -201,22 +390,22 @@ function paintStatuses() {
       let setting = findStatusSetting(statusText);
       if (setting) {
         if (!setting.animationClass) {
-          span.style.backgroundColor = setting.backgroundColor;
+          setTrackedStyle(span, "background-color", setting.backgroundColor);
           if (setting.textColor) {
-            span.style.color = setting.textColor;
+            setTrackedStyle(span, "color", setting.textColor);
           }
         } else {
-          span.style.backgroundColor = "transparent";
+          setTrackedStyle(span, "background-color", "transparent");
           if (setting.textColor) {
-            span.style.color = setting.textColor;
+            setTrackedStyle(span, "color", setting.textColor);
           } else {
-            span.style.color = "";
+            setTrackedStyle(span, "color", "");
           }
         }
         if (setting.animationClass) {
           const { css: ribbonCSS, className } = generateRibbonCSS(setting);
           addGlobalStyle(ribbonCSS, className);
-          span.classList.add(className);
+          setTrackedRibbonClass(span, className);
         }
       }
     }
@@ -229,22 +418,22 @@ function paintStatuses() {
       let setting = findStatusSetting(statusText);
       if (setting) {
         if (!setting.animationClass) {
-          span.style.backgroundColor = setting.backgroundColor;
+          setTrackedStyle(span, "background-color", setting.backgroundColor);
           if (setting.textColor) {
-            span.style.color = setting.textColor;
+            setTrackedStyle(span, "color", setting.textColor);
           }
         } else {
-          span.style.backgroundColor = "transparent";
+          setTrackedStyle(span, "background-color", "transparent");
           if (setting.textColor) {
-            span.style.color = setting.textColor;
+            setTrackedStyle(span, "color", setting.textColor);
           } else {
-            span.style.color = "";
+            setTrackedStyle(span, "color", "");
           }
         }
         if (setting.animationClass) {
           const { css: ribbonCSS, className } = generateRibbonCSS(setting);
           addGlobalStyle(ribbonCSS, className);
-          span.classList.add(className);
+          setTrackedRibbonClass(span, className);
         }
       }
     });
@@ -263,56 +452,90 @@ function paintTicketButton() {
       let statusSetting = findStatusSetting(statusText);
       if (statusSetting) {
         if (!statusSetting.animationClass) {
-          ticketButton.style.setProperty(
+          setTrackedStyle(
+            ticketButton,
             "background-color",
             statusSetting.backgroundColor,
             "important"
           );
           if (statusSetting.textColor) {
-            ticketButton.style.setProperty(
+            setTrackedStyle(
+              ticketButton,
               "color",
               statusSetting.textColor,
               "important"
             );
           }
         } else {
-          ticketButton.style.removeProperty("background-color");
+          setTrackedStyle(ticketButton, "background-color", "");
           if (statusSetting.textColor) {
-            ticketButton.style.setProperty(
+            setTrackedStyle(
+              ticketButton,
               "color",
               statusSetting.textColor,
               "important"
             );
           } else {
-            ticketButton.style.removeProperty("color");
+            setTrackedStyle(ticketButton, "color", "");
           }
         }
         if (statusSetting.animationClass) {
           const { css: ribbonCSS, className } = generateRibbonCSS(statusSetting);
           addGlobalStyle(ribbonCSS, className);
-          ticketButton.classList.add(className);
+          setTrackedRibbonClass(ticketButton, className);
         }
       }
     }
   }
 }
 
-function observeDOMChanges() {
-  const observer = new MutationObserver(() => {
-    paintStatuses();
-  });
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true,
+function refreshStatuses() {
+  clearTrackedStatusStyles();
+  if (!statusColorizerEnabled || !statusColorSettings.length) {
+    return;
+  }
+
+  paintStatuses();
+}
+
+function scheduleStatusRefresh() {
+  if (refreshStatusesRaf) {
+    return;
+  }
+
+  refreshStatusesRaf = requestAnimationFrame(() => {
+    refreshStatusesRaf = 0;
+    refreshStatuses();
   });
 }
 
-window.addEventListener("load", function () {
+function reloadStatusColorizerState(callback) {
   loadStatusColorizerEnabled(() => {
-    if (!statusColorizerEnabled) return;
-    loadStatusColorSettings(function () {
-      observeDOMChanges();
-      paintStatuses();
+    loadStatusColorSettings(() => {
+      callback?.();
     });
   });
+}
+
+function handleStorageChanges(changes) {
+  if (!changes?.statusColorizerEnabled && !changes?.statusColorSettings) {
+    return;
+  }
+
+  reloadStatusColorizerState(() => {
+    scheduleStatusRefresh();
+  });
+}
+
+function observeDOMChanges() {
+  observeWorkerBodyMutations(scheduleStatusRefresh);
+}
+
+runWorkerOnWindowLoad(function () {
+  observeDOMChanges();
+  observeWorkerStorageChanges(handleStorageChanges);
+  reloadStatusColorizerState(function () {
+    scheduleStatusRefresh();
+  });
 });
+})(globalThis);

@@ -1,131 +1,191 @@
-import { showToast } from "../../options/options-main.js";
+import { showToast } from "../../core/options-ui.js";
+import { createNotepadFormattingController } from "./notepad-formatting.js";
+import {
+  bindAutosaveControls,
+  bindFormatButtons,
+  bindGlobalSearchShortcuts,
+  bindImportExportControls,
+  bindNotepadAreaEvents,
+  bindSaveControls,
+  bindSearchControls,
+  bindViewButtons,
+} from "./notepad-bindings.js";
+import { createNotepadHistoryManager } from "./notepad-history.js";
+import {
+  bindSyncedNotepadScroll,
+  renderNotepadPreview,
+  waitForMarkdownLibraries,
+} from "./notepad-preview.js";
+import { createNotepadHistoryController } from "./notepad-history-controller.js";
+import { createNotepadPersistenceController } from "./notepad-persistence-controller.js";
+import { createNotepadSearchController } from "./notepad-search.js";
+import {
+  buildNotepadExportPayload,
+  downloadNotepadBackup,
+  loadNotepadAutosavePreference,
+  loadNotepadViewModePreference,
+  loadStoredNotepadContent,
+  normalizeNotepadViewMode,
+  readNotepadImportFile,
+  saveNotepadAutosavePreference,
+  saveNotepadViewModePreference,
+  saveStoredNotepadContent,
+} from "./notepad-storage.js";
+import { createNotepadViewModeController } from "./notepad-view-mode.js";
 
-let notepadSaveTimeout;
-let autosaveEnabled = true;
 let autosaveToggle;
 let saveButton;
-const NOTEPAD_SAVE_DELAY = 750;
-const NOTEPAD_AUTOSAVE_KEY = "notepadAutosaveEnabled";
+let undoButton;
+let redoButton;
+let formatButtons = [];
+let viewButtons = [];
+let searchShell;
+let searchPanel;
+let searchInput;
+let searchPrevButton;
+let searchNextButton;
+let searchCloseButton;
+let searchCount;
+let notepadWrapper;
+let searchShortcutsBound = false;
+const NOTEPAD_HISTORY_LIMIT = 120;
+let notepadSearch;
+const notepadHistory = createNotepadHistoryManager({
+  historyLimit: NOTEPAD_HISTORY_LIMIT,
+});
+let notepadHistoryController;
+let notepadViewMode;
+const notepadPersistence = createNotepadPersistenceController({
+  autosaveDelay: 750,
+  bindSyncedNotepadScroll,
+  buildNotepadExportPayload,
+  downloadNotepadBackup,
+  getActiveSearchMatchIndex: () => notepadSearch?.getActiveSearchMatchIndex() ?? -1,
+  getAutosaveToggle: () => autosaveToggle,
+  getCurrentViewMode: () => notepadViewMode?.getCurrentViewMode() ?? "split",
+  getLastNonPreviewViewMode: () =>
+    notepadViewMode?.getLastNonPreviewViewMode() ?? "split",
+  getNotepadArea: () => document.getElementById("notepadArea"),
+  getNotepadPreview: () => document.getElementById("notepadPreview"),
+  getSaveButton: () => saveButton,
+  getSearchQuery: () => notepadSearch?.getSearchQuery() ?? "",
+  loadNotepadAutosavePreference,
+  loadNotepadViewModePreference,
+  loadStoredNotepadContent,
+  readNotepadImportFile,
+  refreshSearchState: (options) => notepadSearch?.refreshSearchState(options),
+  renderNotepadPreview,
+  resetHistory: (area) => notepadHistoryController?.resetHistory(area),
+  saveNotepadAutosavePreference,
+  saveNotepadViewModePreference,
+  saveStoredNotepadContent,
+  searchHasQuery: () => notepadSearch?.hasSearchQuery() ?? false,
+  setLastNonPreviewViewMode: (mode) =>
+    notepadViewMode?.setLastNonPreviewViewMode(mode),
+  setNotepadViewMode: (mode, options) =>
+    notepadViewMode?.setNotepadViewMode(mode, options),
+  showToast,
+  waitForMarkdownLibraries,
+});
+const notepadFormatting = createNotepadFormattingController({
+  commitNotepadValue: (...args) => notepadHistoryController?.commitNotepadValue(...args),
+  getNotepadArea: () => document.getElementById("notepadArea"),
+});
+notepadViewMode = createNotepadViewModeController({
+  getNotepadArea: () => document.getElementById("notepadArea"),
+  getNotepadPreview: () => document.getElementById("notepadPreview"),
+  getNotepadWrapper: () => notepadWrapper,
+  getViewButtons: () => viewButtons,
+  normalizeViewMode,
+  saveViewModePreference: notepadPersistence.saveViewModePreference,
+  updateFormatButtons,
+  updateHistoryButtons: () => notepadHistoryController?.updateHistoryButtons(),
+});
+notepadSearch = createNotepadSearchController({
+  getCurrentViewMode: () => getCurrentViewMode(),
+  getNotepadArea: () => document.getElementById("notepadArea"),
+  getNotepadPreview: () => document.getElementById("notepadPreview"),
+  getSearchCloseButton: () => searchCloseButton,
+  getSearchCount: () => searchCount,
+  getSearchInput: () => searchInput,
+  getSearchNextButton: () => searchNextButton,
+  getSearchPanel: () => searchPanel,
+  getSearchPrevButton: () => searchPrevButton,
+  getSearchShell: () => searchShell,
+  renderMarkdownPreview: () => notepadPersistence.renderMarkdownPreview(),
+});
+notepadHistoryController = createNotepadHistoryController({
+  debouncedSaveNotepad: () => notepadPersistence.debouncedSaveNotepad(),
+  getAutosaveEnabled: () => notepadPersistence.getAutosaveEnabled(),
+  getCurrentViewMode: () => notepadViewMode?.getCurrentViewMode() ?? "split",
+  getNotepadArea: () => document.getElementById("notepadArea"),
+  getRedoButton: () => redoButton,
+  getUndoButton: () => undoButton,
+  hasSearchQuery: () => notepadSearch?.hasSearchQuery() ?? false,
+  historyManager: notepadHistory,
+  refreshSearchState: (options) => notepadSearch?.refreshSearchState(options),
+  renderMarkdownPreview: () => notepadPersistence.renderMarkdownPreview(),
+});
 
-function setAutosaveState(enabled) {
-  autosaveEnabled = enabled;
-  if (autosaveToggle) {
-    autosaveToggle.checked = enabled;
-  }
-  if (saveButton) {
-    saveButton.disabled = enabled;
-    saveButton.setAttribute("aria-disabled", enabled ? "true" : "false");
-  }
-  if (!enabled) {
-    clearTimeout(notepadSaveTimeout);
-  }
+function applyMarkdownFormat(format) {
+  notepadFormatting.applyMarkdownFormat(format);
 }
 
-function loadAutosavePreference() {
-  chrome.storage.sync.get(NOTEPAD_AUTOSAVE_KEY, (data) => {
-    if (chrome.runtime.lastError) {
-      console.error("Notepad: Error loading autosave preference:", chrome.runtime.lastError);
-      showToast("toastErrorLoading");
-      return;
-    }
-    const enabled = data[NOTEPAD_AUTOSAVE_KEY];
-    setAutosaveState(enabled !== false);
+function normalizeViewMode(mode) {
+  return normalizeNotepadViewMode(mode);
+}
+
+function updateFormatButtons() {
+  const isPreviewOnly = getCurrentViewMode() === "preview";
+  formatButtons.forEach((button) => {
+    button.disabled = isPreviewOnly;
+    button.setAttribute("aria-disabled", button.disabled ? "true" : "false");
   });
 }
 
-function saveAutosavePreference(enabled) {
-  chrome.storage.sync.set({ [NOTEPAD_AUTOSAVE_KEY]: enabled }, () => {
-    if (chrome.runtime.lastError) {
-      console.error("Notepad: Error saving autosave preference:", chrome.runtime.lastError);
-      showToast("toastErrorSaving");
-    }
+function updateSearchControls() {
+  notepadSearch.updateSearchControls();
+}
+
+function setSearchOpen(
+  open,
+  { focusInput = false, selectInput = false, clearQueryOnClose = false } = {}
+) {
+  notepadSearch.setSearchOpen(open, {
+    focusInput,
+    selectInput,
+    clearQueryOnClose,
   });
 }
 
-function loadNotepadContent() {
-  const notepadArea = document.getElementById('notepadArea');
-  if (notepadArea) {
-    chrome.storage.sync.get('notepadContent', (data) => {
-      if (chrome.runtime.lastError) {
-        console.error("Notepad: Error loading content:", chrome.runtime.lastError);
-        showToast('toastErrorLoading');
-      } else {
-        notepadArea.value = data.notepadContent || '';
-        renderMarkdownPreview();
-      }
-    });
-  }
+function refreshSearchState({ preserveActive = false, reveal = false, keepInputFocus = false } = {}) {
+  notepadSearch.refreshSearchState({ preserveActive, reveal, keepInputFocus });
 }
 
-function saveNotepadContent({ showSuccessToast = true } = {}) {
-  const notepadArea = document.getElementById('notepadArea');
-  if (notepadArea) {
-    const content = notepadArea.value;
-    chrome.storage.sync.set({ notepadContent: content }, () => {
-      if (chrome.runtime.lastError) {
-        console.error('Notepad: Error saving content:', chrome.runtime.lastError);
-        showToast('toastErrorSaving');
-      } else if (showSuccessToast) {
-        showToast('notepadStatusSaved');
-      }
-    });
-  }
+function resolveNextViewMode(controlMode) {
+  return notepadViewMode.resolveNextViewMode(controlMode);
 }
 
-function debouncedSaveNotepad() {
-  clearTimeout(notepadSaveTimeout);
-  notepadSaveTimeout = setTimeout(() => {
-    saveNotepadContent({ showSuccessToast: false });
-  }, NOTEPAD_SAVE_DELAY);
+function setNotepadViewMode(mode, options = {}) {
+  notepadViewMode.setNotepadViewMode(mode, options);
 }
 
-function renderMarkdownPreview() {
-  const notepadArea = document.getElementById('notepadArea');
-  const notepadPreview = document.getElementById('notepadPreview');
-
-  if (!notepadArea || !notepadPreview) {
-    if (!notepadArea) console.error("Notepad: Element #notepadArea not found.");
-    if (!notepadPreview) console.error("Notepad: Element #notepadPreview not found.");
-    return;
-  }
-
-  const marked = window.marked;
-  const DOMPurify = window.DOMPurify;
-
-  if (typeof marked?.parse !== 'function' || typeof DOMPurify !== 'function') {
-    console.error("Notepad: Libraries missing or not global");
-    notepadPreview.textContent = "⚠️ Markdown support unavailable";
-    return;
-  }
-
-  try {
-    const markdownText = notepadArea.value;
-    const rawHtml = marked.parse(markdownText, { breaks: true, gfm: true });
-    const cleanHtml = DOMPurify.sanitize(rawHtml);
-    notepadPreview.innerHTML = cleanHtml;
-  } catch (error) {
-    console.error("Markdown rendering error:", error);
-    notepadPreview.textContent = "Error rendering preview.";
-  }
-}
-
-function waitForMarkdownAndThenInit(retries = 40, delay = 200) {
-  const check = () => {
-    if ((typeof window.marked === 'object' || typeof window.marked === 'function')
-      && typeof window.marked.parse === 'function'
-      && typeof window.DOMPurify === 'function') {
-      loadNotepadContent();
-    } else if (retries-- <= 0) {
-      console.error("[❌] Markdown libs did not become ready in time.");
-    } else {
-      setTimeout(check, delay);
-    }
-  };
-  check();
+function getCurrentViewMode() {
+  return notepadViewMode.getCurrentViewMode();
 }
 
 export function initializeNotepad() {
   const notepadArea = document.getElementById('notepadArea');
+  const notepadImportFileInput = document.getElementById("notepadImportFile");
+  const notepadImportButton = document.getElementById("notepadImportBtn");
+  const notepadExportButton = document.getElementById("notepadExportBtn");
+  searchShell = document.getElementById("notepadSearchShell");
+  searchPanel = document.getElementById("notepadSearchPanel");
+  searchInput = document.getElementById("notepadSearchInput");
+  searchPrevButton = document.getElementById("notepadSearchPrevButton");
+  searchNextButton = document.getElementById("notepadSearchNextButton");
+  searchCloseButton = document.getElementById("notepadSearchCloseButton");
+  searchCount = document.getElementById("notepadSearchCount");
   if (!notepadArea) {
     console.error("Notepad: Missing Notepad textarea");
     return;
@@ -133,64 +193,84 @@ export function initializeNotepad() {
 
   autosaveToggle = document.getElementById('notepadAutosaveToggle');
   saveButton = document.getElementById('notepadSaveButton');
+  undoButton = document.getElementById("notepadUndoButton");
+  redoButton = document.getElementById("notepadRedoButton");
+  notepadWrapper = document.querySelector(".notepad-wrapper");
+  formatButtons = Array.from(
+    document.querySelectorAll(".notepad-format-button")
+  );
+  viewButtons = Array.from(
+    document.querySelectorAll(".notepad-view-button")
+  );
 
-  if (autosaveToggle) {
-    autosaveToggle.addEventListener('change', () => {
-      const enabled = autosaveToggle.checked;
-      setAutosaveState(enabled);
-      saveAutosavePreference(enabled);
-      if (enabled) {
-        debouncedSaveNotepad();
-      }
-    });
-  } else {
-    console.error("Notepad: Missing autosave toggle");
-  }
-
-  if (saveButton) {
-    saveButton.addEventListener('click', () => {
-      saveNotepadContent();
-    });
-  } else {
-    console.error("Notepad: Missing save button");
-  }
-
-  notepadArea.addEventListener('input', () => {
-    renderMarkdownPreview();
-    if (autosaveEnabled) {
-      debouncedSaveNotepad();
-    }
+  bindAutosaveControls({
+    autosaveToggle,
+    debouncedSaveNotepad: () => notepadPersistence.debouncedSaveNotepad(),
+    saveAutosavePreference: (enabled) => notepadPersistence.saveAutosavePreference(enabled),
+    setAutosaveState: (enabled) => notepadPersistence.setAutosaveState(enabled),
+  });
+  bindSaveControls({
+    redoButton,
+    redoNotepad: () => notepadHistoryController?.redoNotepad(),
+    saveButton,
+    saveNotepadContent: (options) => notepadPersistence.saveNotepadContent(options),
+    undoButton,
+    undoNotepad: () => notepadHistoryController?.undoNotepad(),
+  });
+  bindFormatButtons({
+    applyMarkdownFormat,
+    formatButtons,
+  });
+  bindViewButtons({
+    resolveNextViewMode,
+    setNotepadViewMode,
+    viewButtons,
+  });
+  bindImportExportControls({
+    importButton: notepadImportButton,
+    importFileInput: notepadImportFileInput,
+    importNotepadBackup: (event) => notepadPersistence.importNotepadBackup(event),
+    exportButton: notepadExportButton,
+    exportNotepadBackup: () => notepadPersistence.exportNotepadBackup(),
+  });
+  bindSearchControls({
+    handleCloseClick: () => notepadSearch.handleCloseClick(),
+    handleInputChange: (value) => notepadSearch.handleInputChange(value),
+    handleInputKeydown: (event) => notepadSearch.handleInputKeydown(event),
+    handleNextClick: () => notepadSearch.handleNextClick(),
+    handlePrevClick: () => notepadSearch.handlePrevClick(),
+    searchCloseButton,
+    searchInput,
+    searchNextButton,
+    searchPrevButton,
+  });
+  bindNotepadAreaEvents({
+    applyMarkdownFormat,
+    autosaveEnabledRef: () => notepadPersistence.getAutosaveEnabled(),
+    debouncedSaveNotepad: () => notepadPersistence.debouncedSaveNotepad(),
+    notepadArea,
+    pushHistorySnapshot: () => notepadHistoryController?.pushHistorySnapshot(),
+    redoNotepad: () => notepadHistoryController?.redoNotepad(),
+    renderMarkdownPreview: () => notepadPersistence.renderMarkdownPreview(),
+    searchHasQuery: () => notepadSearch.hasSearchQuery(),
+    refreshSearchState,
+    undoNotepad: () => notepadHistoryController?.undoNotepad(),
+  });
+  bindGlobalSearchShortcuts({
+    handleGlobalKeydown: (event) => notepadSearch.handleGlobalKeydown(event),
+    handleGlobalMousedown: (event) => notepadSearch.handleGlobalMousedown(event),
+    isAlreadyBound: () => searchShortcutsBound,
+    markBound: () => {
+      searchShortcutsBound = true;
+    },
   });
 
-  loadAutosavePreference();
-  waitForMarkdownAndThenInit();
-  bindSyncedScroll();
-}
-
-function syncScrollByPercentage(source, target) {
-  const percent = source.scrollTop / (source.scrollHeight - source.clientHeight);
-  const targetScroll = percent * (target.scrollHeight - target.clientHeight);
-  target.scrollTop = targetScroll;
-}
-
-function bindSyncedScroll() {
-  const area = document.getElementById("notepadArea");
-  const preview = document.getElementById("notepadPreview");
-  if (!area || !preview) return;
-
-  let isSyncing = false;
-
-  area.addEventListener("scroll", () => {
-    if (isSyncing) return;
-    isSyncing = true;
-    syncScrollByPercentage(area, preview);
-    setTimeout(() => { isSyncing = false }, 10);
-  });
-
-  preview.addEventListener("scroll", () => {
-    if (isSyncing) return;
-    isSyncing = true;
-    syncScrollByPercentage(preview, area);
-    setTimeout(() => { isSyncing = false }, 10);
-  });
+  notepadHistoryController?.resetHistory(notepadArea);
+  setNotepadViewMode("split", { animate: false });
+  setSearchOpen(false);
+  updateSearchControls();
+  notepadPersistence.loadAutosavePreference();
+  notepadPersistence.loadViewModePreference();
+  notepadPersistence.waitForMarkdownAndThenInit();
+  notepadPersistence.bindSyncedScroll();
 }
