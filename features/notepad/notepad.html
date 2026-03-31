@@ -1,23 +1,96 @@
 <div id="notepadTab" class="tab-pane">
 
-  <h2 data-i18n="notepadTitle"></h2>
+  <div class="notepad-header">
+    <h2 data-i18n="notepadTitle"></h2>
+    <div class="notepad-header-actions">
+      <div id="notepadSearchShell" class="notepad-search-shell">
+        <div id="notepadSearchPanel" class="notepad-search-panel" role="search" aria-hidden="true">
+          <div class="notepad-search">
+            <input id="notepadSearchInput" class="notepad-search-input" type="text" data-i18n="notepadSearchPlaceholder" data-label-key="notepadSearchPlaceholder" />
+            <span id="notepadSearchCount" class="notepad-search-count" aria-live="polite"></span>
+            <button id="notepadSearchPrevButton" class="button button-secondary icon-button notepad-search-nav" type="button" data-label-key="notepadSearchPrev">
+              <img src="../img/icons/chevron-up.svg" alt="" aria-hidden="true" />
+            </button>
+            <button id="notepadSearchNextButton" class="button button-secondary icon-button notepad-search-nav" type="button" data-label-key="notepadSearchNext">
+              <img src="../img/icons/chevron-down.svg" alt="" aria-hidden="true" />
+            </button>
+            <button id="notepadSearchCloseButton" class="button button-secondary icon-button notepad-search-close" type="button" data-label-key="notepadSearchClose">
+              <img src="../img/icons/close.svg" alt="" aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="notepad-wrapper">
     <textarea id="notepadArea" class="notepad-textarea" data-i18n-placeholder="notepadPlaceholder"></textarea>
     <div id="notepadPreview" class="notepad-preview"></div>
   </div>
-  <div class="notepad-controls">
-    <label class="notepad-autosave">
-      <span class="notepad-autosave-label" data-i18n="notepadAutosaveLabel"></span>
-      <span class="notepad-toggle">
-        <input id="notepadAutosaveToggle" type="checkbox" checked>
-        <span class="notepad-toggle-slider" aria-hidden="true"></span>
-      </span>
-    </label>
-    <button id="notepadSaveButton" class="button button-primary icon-button notepad-save-button">
-      <img src="../img/icons/action-save.svg" alt="" aria-hidden="true" />
-      <span class="btn-label" data-i18n="saveButton"></span>
+  <div class="board-toolbar-dock notepad-toolbar-dock" aria-hidden="false">
+    <div class="board-toolbar" role="toolbar">
+      <div class="board-tool-group">
+        <label class="board-autosave" for="notepadAutosaveToggle">
+          <input id="notepadAutosaveToggle" type="checkbox" />
+          <span class="slider" aria-hidden="true"></span>
+          <span data-i18n="notepadAutosaveLabel"></span>
+        </label>
+        <button id="notepadSaveButton" class="button button-secondary icon-button board-save-button notepad-save-button" type="button">
+          <img src="../img/icons/save.svg" alt="" aria-hidden="true" />
+          <span class="btn-label" data-i18n="saveButton"></span>
+        </button>
+        <button id="notepadUndoButton" class="button button-secondary icon-button board-history-button notepad-history-button" type="button">
+          <img src="../img/icons/undo.svg" alt="" aria-hidden="true" />
+          <span class="btn-label" data-i18n="boardActionUndo"></span>
+        </button>
+        <button id="notepadRedoButton" class="button button-secondary icon-button board-history-button notepad-history-button" type="button">
+          <img src="../img/icons/redo.svg" alt="" aria-hidden="true" />
+          <span class="btn-label" data-i18n="boardActionRedo"></span>
+        </button>
+      </div>
+      <div class="board-tool-group">
+        <button class="button button-secondary icon-button board-tool-icon notepad-format-button" type="button" data-format="bold" data-label-key="notepadFormatBold">
+          <img src="../img/icons/bold.svg" alt="" aria-hidden="true" />
+        </button>
+        <button class="button button-secondary icon-button board-tool-icon notepad-format-button" type="button" data-format="italic" data-label-key="notepadFormatItalic">
+          <img src="../img/icons/italic.svg" alt="" aria-hidden="true" />
+        </button>
+        <button class="button button-secondary icon-button board-tool-icon notepad-format-button" type="button" data-format="link" data-label-key="notepadFormatLink">
+          <img src="../img/icons/link.svg" alt="" aria-hidden="true" />
+        </button>
+        <button class="button button-secondary icon-button board-tool-icon notepad-format-button" type="button" data-format="code" data-label-key="notepadFormatCode">
+          <img src="../img/icons/code.svg" alt="" aria-hidden="true" />
+        </button>
+        <button class="button button-secondary icon-button board-tool-icon notepad-format-button" type="button" data-format="list" data-label-key="notepadFormatList">
+          <img src="../img/icons/list.svg" alt="" aria-hidden="true" />
+        </button>
+        <button class="button button-secondary icon-button board-tool-icon notepad-format-button" type="button" data-format="quote" data-label-key="notepadFormatQuote">
+          <img src="../img/icons/quote.svg" alt="" aria-hidden="true" />
+        </button>
+        <button class="button button-secondary icon-button board-tool-icon notepad-format-button notepad-quick-button" type="button" data-format="checkbox" data-label-key="notepadFormatCheckbox">
+          <img src="../img/icons/checkbox.svg" alt="" aria-hidden="true" />
+        </button>
+      </div>
+      <div class="board-tool-group">
+        <button class="button button-secondary icon-button board-tool-icon notepad-format-button notepad-quick-button" type="button" data-format="heading1" data-label-key="notepadFormatHeading1">
+          <img src="../img/icons/h1.svg" alt="" aria-hidden="true" />
+        </button>
+        <button class="button button-secondary icon-button board-tool-icon notepad-format-button notepad-quick-button" type="button" data-format="heading2" data-label-key="notepadFormatHeading2">
+          <img src="../img/icons/h2.svg" alt="" aria-hidden="true" />
+        </button>
+        <button class="button button-secondary icon-button board-tool-icon notepad-format-button notepad-quick-button" type="button" data-format="heading3" data-label-key="notepadFormatHeading3">
+          <img src="../img/icons/h3.svg" alt="" aria-hidden="true" />
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="notepad-view-switch notepad-view-switch-floating" role="toolbar" data-label-key="notepadViewMode">
+    <button class="button button-secondary icon-button board-tool-icon notepad-view-button" type="button" data-view-mode="split" data-label-key="notepadViewSplit">
+      <img src="../img/icons/split.svg" alt="" aria-hidden="true" />
+    </button>
+    <button class="button button-secondary icon-button board-tool-icon notepad-view-button" type="button" data-view-mode="preview" data-label-key="notepadViewPreview">
+      <img src="../img/icons/preview.svg" alt="" aria-hidden="true" />
     </button>
   </div>
   <div id="notepadStatus" class="notepad-status"></div>
-  
+
 </div>

@@ -239,7 +239,7 @@
   text-transform: uppercase;
   letter-spacing: 0.6px;
   padding: 4px 8px;
-  border-radius: 999px;
+  border-radius: 22px;
   cursor: pointer;
   white-space: nowrap;
   transition: var(--transition-fast);
@@ -269,20 +269,20 @@
   -webkit-mask-size: contain;
 }
 .bookmark-action-icon-delete {
-  mask-image: url("../../img/icons/bookmark-delete.svg");
-  -webkit-mask-image: url("../../img/icons/bookmark-delete.svg");
+  mask-image: url("../../img/icons/delete.svg");
+  -webkit-mask-image: url("../../img/icons/delete.svg");
 }
 .bookmark-action-icon-edit {
-  mask-image: url("../../img/icons/bookmark-edit.svg");
-  -webkit-mask-image: url("../../img/icons/bookmark-edit.svg");
+  mask-image: url("../../img/icons/pencil.svg");
+  -webkit-mask-image: url("../../img/icons/pencil.svg");
 }
 .bookmark-action-icon-pin {
-  mask-image: url("../../img/icons/bookmark-pin.svg");
-  -webkit-mask-image: url("../../img/icons/bookmark-pin.svg");
+  mask-image: url("../../img/icons/pin.svg");
+  -webkit-mask-image: url("../../img/icons/pin.svg");
 }
 .bookmark-action-icon-drag {
-  mask-image: url("../../img/icons/bookmark-drag.svg");
-  -webkit-mask-image: url("../../img/icons/bookmark-drag.svg");
+  mask-image: url("../../img/icons/grip.svg");
+  -webkit-mask-image: url("../../img/icons/grip.svg");
 }
 .bookmark-pin-icon {
   transform: rotate(45deg);

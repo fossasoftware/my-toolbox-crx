@@ -159,6 +159,21 @@ body {
   font-weight: 400;
   font-style: normal;
 }
+body.is-booting .side-ribbon,
+body.is-booting .side-menu,
+body.is-booting .page-container {
+  visibility: hidden;
+}
+body.is-booting .side-ribbon,
+body.is-booting .side-menu,
+body.is-booting .page-container,
+body.is-booting .menu-toggle,
+body.is-booting .language-buttons,
+body.is-booting .lang-option,
+body.is-booting .lang-highlight {
+  transition: none !important;
+  animation: none !important;
+}
 
 .options-header {
   display: flex;
@@ -219,11 +234,15 @@ body {
   width: calc(50% + 1px);
   background-color: var(--dark-text);
   border-radius: calc(var(--border-radius-table) - 1px);
-  transition: transform 320ms var(--md-ease);
+  transition: transform 320ms var(--md-ease), opacity 160ms ease-out;
   z-index: 1;
   left: -1px;
   transform: translateX(0);
+  opacity: 0;
   will-change: transform;
+}
+.language-buttons.is-ready .lang-highlight {
+  opacity: 1;
 }
 .language-buttons.show-uk .lang-highlight {
   transform: translateX(100%);
@@ -946,12 +965,12 @@ a:hover {
   background-color: var(--background-light);
   border: var(--table-add-border-width) solid var(--primary-color);
   height: var(--table-add-height);
-  border-radius: 999px;
+  border-radius: 22px;
   transform: translate(-50%, -50%);
 }
 .table-with-add.is-empty .table-add-button::before {
   height: var(--table-add-height);
-  border-radius: 999px;
+  border-radius: 22px;
   background-color: var(--background-light);
   border: var(--table-add-border-width) solid var(--primary-color);
 }

@@ -284,6 +284,14 @@
   margin-left: 6px;
   transition: var(--transition-fast);
 }
+#statusColorizerTab .icon-button img {
+  filter: brightness(0) invert(1);
+  opacity: 0.85;
+  transition: var(--transition-fast);
+}
+#statusColorizerTab .icon-button:hover img {
+  opacity: 1;
+}
 
 .button.button-delete-row {
   background-color: transparent;

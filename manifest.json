@@ -3,7 +3,7 @@
   "name": "__MSG_appName__",
   "description": "__MSG_appDescription__",
   "default_locale": "en",
-  "version": "4.8.3",
+  "version": "5.0.1",
   "icons": {
     "128": "favicon/my-toolbox-128px.png",
     "48": "favicon/my-toolbox-48px.png",
@@ -22,6 +22,10 @@
   "options_ui": {
     "page": "options/options.html",
     "open_in_tab": true
+  },
+  "background": {
+    "service_worker": "background/service-worker.js",
+    "type": "module"
   },
   "web_accessible_resources": [
     {
@@ -44,12 +48,20 @@
   "content_scripts": [
     {
       "matches": ["*://*.atlassian.net/*"],
-      "js": ["features/status-colorizer/status-colorizer-worker.js"],
+      "js": [
+        "features/shared/rule-worker-runtime.js",
+        "features/status-colorizer/status-colorizer-logic.js",
+        "features/status-colorizer/status-colorizer-worker.js"
+      ],
       "run_at": "document_idle"
     },
     {
       "matches": ["*://*.atlassian.net/*"],
-      "js": ["features/row-highlighter/row-highlighter-worker.js"],
+      "js": [
+        "features/shared/rule-worker-runtime.js",
+        "features/row-highlighter/row-highlighter-logic.js",
+        "features/row-highlighter/row-highlighter-worker.js"
+      ],
       "run_at": "document_idle"
     }
   ],

@@ -136,6 +136,14 @@ body {
   width: 280px;
   line-height: 1.4;
 }
+body.is-booting {
+  visibility: hidden;
+}
+body.is-booting .feature-toggle .slider,
+body.is-booting .feature-toggle .slider::before {
+  transition: none !important;
+  animation: none !important;
+}
 
 h3 {
   font-family: var(--font-heading);
@@ -226,7 +234,6 @@ p {
 }
 
 .feature-toggle input:checked + .slider::before {
-  animation: toggle-on 0.25s forwards;
   transform: translateX(16px);
 }
 
@@ -235,20 +242,9 @@ p {
 }
 
 .feature-toggle input:not(:checked) + .slider::before {
-  animation: toggle-off 0.25s forwards;
   transform: translateX(0);
 }
 
 .feature-toggle input:not(:checked) + .slider {
   background-color: var(--border-color);
-}
-@keyframes toggle-on {
-  0% { transform: translateX(0); }
-  50% { transform: translateX(18px); }
-  100% { transform: translateX(16px); }
-}
-@keyframes toggle-off {
-  0% { transform: translateX(16px); }
-  50% { transform: translateX(-2px); }
-  100% { transform: translateX(0); }
 }
