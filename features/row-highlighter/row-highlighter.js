@@ -59,12 +59,11 @@ function handleImport(event) {
 }
 
 async function resetTable() {
-  const tbody = document.querySelector("#rowHighlightTable tbody");
-  if (tbody) tbody.innerHTML = "";
   const result = await clearRowHighlightSettings();
   if (!result.ok) {
     showToast("toastErrorSaving");
   } else {
+    renderHighlightSettings([]);
     showToast("toastResetTable");
   }
   updateButtonVisibility();

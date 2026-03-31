@@ -1,13 +1,29 @@
 (function runRowHighlighterWorker(global) {
   let highlightSettings = [];
+  let compiledHighlightMatchers = [];
   let rowHighlighterEnabled = true;
   let refreshRowsRaf = 0;
+  let viewportRefreshTimer = 0;
+  let lastHighlightRefreshAt = 0;
+  let pendingHighlightRefreshMode = null;
+  let workerStarted = false;
+  let rowSearchCache = new WeakMap();
   const ruleWorkerRuntime = global.MyToolboxRuleWorkerRuntime;
+  const rowHighlighterLogic = global.MyToolboxRowHighlighterLogic || {};
+  const {
+    compileHighlightMatchers = () => [],
+    findMatchedHighlight = () => null,
+    normalizeSearchText = (text) =>
+      typeof text === "string"
+        ? text.replace(/\s+/g, " ").trim().toLowerCase()
+        : "",
+  } = rowHighlighterLogic;
+  const ROW_HIGHLIGHT_CLASS = "my-toolbox-row-highlighted";
+  const ROW_HIGHLIGHT_COLOR_VAR = "--my-toolbox-row-highlight-color";
   const ROW_HIGHLIGHT_TOUCH_ATTR = "data-my-toolbox-row-highlighted";
-  const ROW_HIGHLIGHT_STYLE_ATTR = "data-my-toolbox-row-highlighted-style";
-  const ROW_HIGHLIGHT_STYLE_MISSING = "__my_toolbox_row_highlight_style_missing__";
+  const ROW_HIGHLIGHT_STYLE_ID = "my-toolbox-row-highlight-style";
   const ROW_SELECTORS = [
-    "div[role='row']",
+    "div[data-testid='virtual-table.table.main'] div[role='row']",
     "tr[role='row']",
     "tr.issuerow",
     "a[data-testid='issue-navigator.ui.issue-results.detail-view.card-list.card']",
@@ -15,6 +31,8 @@
     "li.activity-item",
     "a[data-test-id^='global-pages.home.ui.tab-container.tab.item-list.item-link']"
   ].join(",");
+  const VIEWPORT_REFRESH_MIN_INTERVAL_MS = 120;
+  const VIEWPORT_ROW_MARGIN_PX = 240;
 
   function loadWorkerBooleanPreference(key, callback, defaultValue = true) {
     if (ruleWorkerRuntime?.loadBooleanPreference) {
@@ -101,19 +119,254 @@
     });
   }
 
-  function normalizeKeyword(keyword) {
-    return typeof keyword === "string" ? keyword.trim().toLowerCase() : "";
+  function observeWorkerViewportActivity(callback) {
+    if (ruleWorkerRuntime?.observeViewportActivity) {
+      ruleWorkerRuntime.observeViewportActivity(callback);
+      return;
+    }
+
+    let shortTimer = 0;
+    let lateTimer = 0;
+    const heartbeat = window.setInterval(() => {
+      if (document.visibilityState === "hidden") {
+        return;
+      }
+      callback();
+    }, 1200);
+
+    const notifyViewportActivity = () => {
+      if (document.visibilityState === "hidden") {
+        return;
+      }
+      callback();
+      clearTimeout(shortTimer);
+      clearTimeout(lateTimer);
+      shortTimer = window.setTimeout(callback, 80);
+      lateTimer = window.setTimeout(callback, 260);
+    };
+
+    document.addEventListener("scroll", notifyViewportActivity, {
+      capture: true,
+      passive: true,
+    });
+    window.addEventListener("scroll", notifyViewportActivity, {
+      capture: true,
+      passive: true,
+    });
+    document.addEventListener("wheel", notifyViewportActivity, {
+      capture: true,
+      passive: true,
+    });
+    document.addEventListener("touchmove", notifyViewportActivity, {
+      capture: true,
+      passive: true,
+    });
+    document.addEventListener("mouseover", notifyViewportActivity, {
+      capture: true,
+    });
+    document.addEventListener("focusin", notifyViewportActivity, {
+      capture: true,
+    });
+    window.addEventListener("resize", notifyViewportActivity, { passive: true });
+    document.addEventListener("visibilitychange", notifyViewportActivity, {
+      passive: true,
+    });
+
+    return () => {
+      clearInterval(heartbeat);
+      clearTimeout(shortTimer);
+      clearTimeout(lateTimer);
+    };
   }
 
-  function getKeywordVariants(item) {
-    const aliases = Array.isArray(item.aliases)
-      ? item.aliases
-      : Array.isArray(item.keywordAliases)
-        ? item.keywordAliases
-        : [];
-    return [item.keyword, ...aliases]
-      .map((value) => normalizeKeyword(value))
+  function clearRowSearchCache() {
+    rowSearchCache = new WeakMap();
+  }
+
+  function getRefreshTimestamp() {
+    return typeof performance !== "undefined" && typeof performance.now === "function"
+      ? performance.now()
+      : Date.now();
+  }
+
+  function clearViewportRefreshTimer() {
+    if (!viewportRefreshTimer) {
+      return;
+    }
+
+    clearTimeout(viewportRefreshTimer);
+    viewportRefreshTimer = 0;
+  }
+
+  function ensureRowHighlightStyle() {
+    if (document.getElementById(ROW_HIGHLIGHT_STYLE_ID)) {
+      return;
+    }
+
+    const style = document.createElement("style");
+    style.id = ROW_HIGHLIGHT_STYLE_ID;
+    style.textContent = `
+      .${ROW_HIGHLIGHT_CLASS} {
+        background-color: var(${ROW_HIGHLIGHT_COLOR_VAR}) !important;
+      }
+    `;
+    (document.head || document.documentElement).appendChild(style);
+  }
+
+  function getRowCacheKey(row) {
+    return [
+      row.getAttribute("data-testid"),
+      row.getAttribute("data-test-id"),
+      row.getAttribute("data-issue-key"),
+      row.querySelector("[data-issue-key]")?.getAttribute("data-issue-key"),
+      row.querySelector("a.issue-link")?.getAttribute("href"),
+      row.querySelector("[data-testid*='cell-wrapper-row'][data-testid$='-issuekey'] a")?.getAttribute("href"),
+    ]
+      .filter(Boolean)
+      .join("|");
+  }
+
+  function collectSearchableTextParts(row, selectors) {
+    return selectors
+      .flatMap((selector) =>
+        [...row.querySelectorAll(selector)].map((element) => element.textContent || "")
+      )
+      .map((text) => normalizeSearchText(text))
       .filter(Boolean);
+  }
+
+  function collectIssueTableRowText(row) {
+    const parts = collectSearchableTextParts(row, [
+      "[data-testid*='cell-wrapper-row'][data-testid$='-issuekey']",
+      "[data-testid*='cell-wrapper-row'][data-testid$='-summary']",
+      "[data-testid*='cell-wrapper-row'][data-testid$='-status']",
+      "[data-testid='native-issue-table.common.ui.issue-cells.issue-key.issue-key-cell']",
+      "[data-testid='native-issue-table.common.ui.issue-cells.issue-summary.issue-summary-cell']",
+      "td.issuekey",
+      "td.summary",
+      "td.status",
+      ".issue-link",
+    ]);
+    return parts.length > 0 ? parts.join(" ") : "";
+  }
+
+  function collectIssueNavigatorCardText(row) {
+    const parts = collectSearchableTextParts(row, [
+      "[data-testid='inline-card-resolved-view']",
+      "[data-testid='inline-card-icon-and-title']",
+      "[data-testid='inline-card-resolved-view-lozenge']",
+      "[data-testid='inline-card-resolved-view-lozenge--text']",
+      "[data-testid*='issue-key']",
+      "[data-testid*='issue-summary']",
+      "[data-testid*='status-lozenge']",
+      ".issue-link",
+    ]);
+    return parts.length > 0 ? parts.join(" ") : "";
+  }
+
+  function collectBoardCardText(row) {
+    const parts = collectSearchableTextParts(row, [
+      "[data-testid*='card'] [data-testid*='summary']",
+      "[data-testid*='card'] [data-testid*='issue-key']",
+      "[data-testid*='card'] [data-testid*='status']",
+      "[data-testid*='status-lozenge']",
+      "[data-testid*='issue-key']",
+      "[data-testid*='summary']",
+      ".issue-link",
+    ]);
+    return parts.length > 0 ? parts.join(" ") : "";
+  }
+
+  function collectActivityItemText(row) {
+    const parts = collectSearchableTextParts(row, [
+      "[data-testid='inline-card-resolved-view']",
+      "[data-testid='inline-card-icon-and-title']",
+      "[data-testid='inline-card-resolved-view-lozenge']",
+      "[data-testid='inline-card-resolved-view-lozenge--text']",
+      "[data-testid='common-components-status-lozenge.status-lozenge']",
+      "[data-testid='common-components-status-lozenge.status-lozenge--text']",
+      "a[data-testid='inline-card-resolved-view']",
+      "a[href*='/browse/']",
+    ]);
+    return parts.length > 0 ? parts.join(" ") : "";
+  }
+
+  function collectHomeItemText(row) {
+    const parts = collectSearchableTextParts(row, [
+      "[data-testid*='issue-key']",
+      "[data-testid*='issue-summary']",
+      "[data-testid*='status']",
+      "[data-testid*='status-lozenge']",
+      "strong",
+      "span",
+    ]);
+    return parts.length > 0 ? parts.join(" ") : "";
+  }
+
+  function buildSearchableRowText(row) {
+    const extractors = [
+      {
+        match: () =>
+          row.matches(
+            "div[data-testid='virtual-table.table.main'] div[role='row'], tr[role='row'], tr.issuerow, tr[data-testid='native-issue-table.ui.issue-row']"
+          ),
+        collect: collectIssueTableRowText,
+      },
+      {
+        match: () =>
+          row.matches(
+            "a[data-testid='issue-navigator.ui.issue-results.detail-view.card-list.card']"
+          ),
+        collect: collectIssueNavigatorCardText,
+      },
+      {
+        match: () =>
+          row.matches("div[data-testid='platform-board-kit.ui.card.card']"),
+        collect: collectBoardCardText,
+      },
+      {
+        match: () => row.matches("li.activity-item"),
+        collect: collectActivityItemText,
+      },
+      {
+        match: () =>
+          row.matches(
+            "a[data-test-id^='global-pages.home.ui.tab-container.tab.item-list.item-link']"
+          ),
+        collect: collectHomeItemText,
+      },
+    ];
+
+    for (const extractor of extractors) {
+      if (!extractor.match()) {
+        continue;
+      }
+      const text = extractor.collect(row);
+      if (text) {
+        return text;
+      }
+    }
+
+    return normalizeSearchText(row.textContent || "");
+  }
+
+  function getSearchableRowText(row) {
+    const cacheKey = getRowCacheKey(row);
+    if (!cacheKey) {
+      return buildSearchableRowText(row);
+    }
+
+    const cached = rowSearchCache.get(row);
+    if (cached?.key === cacheKey) {
+      return cached.text;
+    }
+
+    const text = buildSearchableRowText(row);
+    rowSearchCache.set(row, {
+      key: cacheKey,
+      text,
+    });
+    return text;
   }
 
   function loadRowHighlighterEnabled(callback) {
@@ -126,6 +379,8 @@
   function loadRowHighlightSettings(callback) {
     loadWorkerArraySetting("rowHighlightSettings", (settings) => {
       highlightSettings = settings;
+      compiledHighlightMatchers = compileHighlightMatchers(settings);
+      clearRowSearchCache();
       callback?.();
     });
   }
@@ -135,12 +390,7 @@
       return;
     }
 
-    const inlineStyle = row.getAttribute("style");
     row.setAttribute(ROW_HIGHLIGHT_TOUCH_ATTR, "1");
-    row.setAttribute(
-      ROW_HIGHLIGHT_STYLE_ATTR,
-      inlineStyle == null ? ROW_HIGHLIGHT_STYLE_MISSING : inlineStyle
-    );
   }
 
   function restoreRowStyle(row) {
@@ -148,51 +398,162 @@
       return;
     }
 
-    const originalStyle = row.getAttribute(ROW_HIGHLIGHT_STYLE_ATTR);
-    if (originalStyle === ROW_HIGHLIGHT_STYLE_MISSING) {
-      row.removeAttribute("style");
-    } else if (originalStyle != null) {
-      row.setAttribute("style", originalStyle);
+    row.classList.remove(ROW_HIGHLIGHT_CLASS);
+    row.style.removeProperty(ROW_HIGHLIGHT_COLOR_VAR);
+    row.removeAttribute(ROW_HIGHLIGHT_TOUCH_ATTR);
+  }
+
+  function isDataRow(row) {
+    if (!row) {
+      return false;
     }
 
-    row.removeAttribute(ROW_HIGHLIGHT_TOUCH_ATTR);
-    row.removeAttribute(ROW_HIGHLIGHT_STYLE_ATTR);
+    if (row.matches("tr[role='row'], tr.issuerow")) {
+      return true;
+    }
+
+    if (
+      row.matches(
+        "a[data-testid='issue-navigator.ui.issue-results.detail-view.card-list.card'], div[data-testid='platform-board-kit.ui.card.card'], li.activity-item, a[data-test-id^='global-pages.home.ui.tab-container.tab.item-list.item-link']"
+      )
+    ) {
+      return true;
+    }
+
+    return Boolean(
+      row.querySelector(
+        "[data-testid*='cell-wrapper-row'][data-testid$='-issuekey'], [data-testid*='cell-wrapper-row'][data-testid$='-status']"
+      )
+    );
   }
 
-  function clearHighlightedRows() {
-    document
-      .querySelectorAll(`[${ROW_HIGHLIGHT_TOUCH_ATTR}]`)
-      .forEach((row) => restoreRowStyle(row));
+  function getCandidateRows() {
+    return [...document.querySelectorAll(ROW_SELECTORS)].filter(isDataRow);
   }
 
-  function highlightRows() {
-    clearHighlightedRows();
-    if (!rowHighlighterEnabled || !highlightSettings.length) return;
-    const rows = document.querySelectorAll(ROW_SELECTORS);
+  function isRowNearViewport(row) {
+    if (!row?.getBoundingClientRect) {
+      return true;
+    }
+
+    const rect = row.getBoundingClientRect();
+    return (
+      rect.bottom >= -VIEWPORT_ROW_MARGIN_PX &&
+      rect.top <= window.innerHeight + VIEWPORT_ROW_MARGIN_PX &&
+      rect.right >= -VIEWPORT_ROW_MARGIN_PX &&
+      rect.left <= window.innerWidth + VIEWPORT_ROW_MARGIN_PX
+    );
+  }
+
+  function getViewportCandidateRows() {
+    return getCandidateRows().filter(isRowNearViewport);
+  }
+
+  function highlightRows(mode = "full") {
+    ensureRowHighlightStyle();
+    const trackedRows = new Set(
+      document.querySelectorAll(`[${ROW_HIGHLIGHT_TOUCH_ATTR}]`)
+    );
+
+    if (!rowHighlighterEnabled || !compiledHighlightMatchers.length) {
+      trackedRows.forEach((row) => restoreRowStyle(row));
+      return;
+    }
+
+    const rows =
+      mode === "viewport" ? getViewportCandidateRows() : getCandidateRows();
+    const currentRows = new Set(rows);
+    const matchedRows = new Set();
     rows.forEach((row) => {
-      const text = row.innerText.toLowerCase();
-      for (const item of highlightSettings) {
-        if (item.enabled === false) continue;
-        const keywords = getKeywordVariants(item);
-        if (!keywords.length) continue;
-        const matched = keywords.some((keyword) => text.includes(keyword));
-        if (!matched) continue;
-        rememberRowStyle(row);
-        row.style.setProperty("background-color", item.color, "important");
-        break;
+      const text = getSearchableRowText(row);
+      const matchedItem = findMatchedHighlight(compiledHighlightMatchers, text);
+
+      if (!matchedItem) {
+        if (trackedRows.has(row)) {
+          restoreRowStyle(row);
+        }
+        return;
+      }
+
+      matchedRows.add(row);
+      rememberRowStyle(row);
+      row.classList.add(ROW_HIGHLIGHT_CLASS);
+      row.style.setProperty(ROW_HIGHLIGHT_COLOR_VAR, matchedItem.color);
+    });
+
+    trackedRows.forEach((row) => {
+      if (!document.contains(row)) {
+        restoreRowStyle(row);
+        return;
+      }
+
+      if (mode === "viewport") {
+        if (currentRows.has(row) && !matchedRows.has(row)) {
+          restoreRowStyle(row);
+        }
+        return;
+      }
+
+      if (!matchedRows.has(row) || !currentRows.has(row)) {
+        restoreRowStyle(row);
       }
     });
   }
 
-  function scheduleHighlightRefresh() {
+  function mergeHighlightRefreshMode(mode) {
+    if (pendingHighlightRefreshMode === "full" || mode === "full") {
+      pendingHighlightRefreshMode = "full";
+      return;
+    }
+
+    pendingHighlightRefreshMode = "viewport";
+  }
+
+  function queueHighlightRefreshFrame(mode = "full") {
+    clearViewportRefreshTimer();
+    mergeHighlightRefreshMode(mode);
     if (refreshRowsRaf) {
       return;
     }
 
     refreshRowsRaf = requestAnimationFrame(() => {
       refreshRowsRaf = 0;
-      highlightRows();
+      lastHighlightRefreshAt = getRefreshTimestamp();
+      const refreshMode = pendingHighlightRefreshMode || "full";
+      pendingHighlightRefreshMode = null;
+      highlightRows(refreshMode);
     });
+  }
+
+  function scheduleViewportHighlightRefresh() {
+    if (document.visibilityState === "hidden") {
+      return;
+    }
+
+    const elapsed = getRefreshTimestamp() - lastHighlightRefreshAt;
+    if (!lastHighlightRefreshAt || elapsed >= VIEWPORT_REFRESH_MIN_INTERVAL_MS) {
+      queueHighlightRefreshFrame("viewport");
+      return;
+    }
+
+    if (refreshRowsRaf || viewportRefreshTimer) {
+      mergeHighlightRefreshMode("viewport");
+      return;
+    }
+
+    viewportRefreshTimer = window.setTimeout(() => {
+      viewportRefreshTimer = 0;
+      queueHighlightRefreshFrame("viewport");
+    }, VIEWPORT_REFRESH_MIN_INTERVAL_MS - elapsed);
+  }
+
+  function scheduleHighlightRefresh(reason = "default") {
+    if (reason === "viewport") {
+      scheduleViewportHighlightRefresh();
+      return;
+    }
+
+    queueHighlightRefreshFrame();
   }
 
   function reloadRowHighlighterState(callback) {
@@ -214,14 +575,41 @@
   }
 
   function observe() {
-    observeWorkerBodyMutations(scheduleHighlightRefresh);
+    observeWorkerBodyMutations(() => {
+      clearRowSearchCache();
+      scheduleHighlightRefresh();
+    });
+    observeWorkerViewportActivity(() => {
+      scheduleHighlightRefresh("viewport");
+    });
   }
 
-  runWorkerOnWindowLoad(() => {
+  function scheduleInitialHighlightRefreshes() {
+    scheduleHighlightRefresh();
+    requestAnimationFrame(() => {
+      scheduleHighlightRefresh();
+    });
+    window.setTimeout(() => {
+      scheduleHighlightRefresh();
+    }, 250);
+    window.setTimeout(() => {
+      scheduleHighlightRefresh();
+    }, 1200);
+  }
+
+  function startRowHighlighterWorker() {
+    if (workerStarted) {
+      return;
+    }
+    workerStarted = true;
+
     observe();
     observeWorkerStorageChanges(handleStorageChanges);
     reloadRowHighlighterState(() => {
-      scheduleHighlightRefresh();
+      scheduleInitialHighlightRefreshes();
     });
-  });
+    runWorkerOnWindowLoad(scheduleInitialHighlightRefreshes);
+  }
+
+  startRowHighlighterWorker();
 })(globalThis);

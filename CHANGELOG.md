@@ -5,6 +5,26 @@ All notable changes to the "My ToolBox" Chrome extension will be documented in t
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (starting from this documented version).
 
+## [5.0.1] - 2026-03-31
+
+This patch release focuses on post-5.0.0 stabilization, Jira helper performance, and release hardening.
+
+### Added
+
+- Added packaging and validation support for the `5.0.1` release line, including updated release metadata and documentation.
+
+### Changed
+
+- Refined Jira helper internals so Status Colorizer and Row Highlighter use compiled rule lookup helpers, narrower repaint paths, and stronger separation between runtime logic and pure matching helpers.
+- Reduced repeated repaint work in Jira helpers by throttling viewport-triggered refreshes and by limiting Row Highlighter viewport scans to rows that are visible or close to the viewport.
+- Extended unit coverage with dedicated tests for Status Colorizer and Row Highlighter helper logic.
+
+### Fixed
+
+- Fixed multiple Board regressions around viewport restore, mixed selection, note-to-shape links, delete/undo/redo history, eraser behavior, and custom pen/eraser cursor rendering.
+- Fixed Jira helper startup, live-update, virtualization, and scroll repaint issues so status colors and row highlights apply more reliably on first open and during long queue navigation.
+- Fixed the large issue-view status button so ribbon styling no longer breaks the control, while still allowing the regular status lozenges to use animated ribbons.
+
 ## [5.0.0] - 2026-03-29
 
 This major release summarizes all shipped work since the last GitHub release, `4.8.3`.
@@ -30,6 +50,20 @@ This major release summarizes all shipped work since the last GitHub release, `4
 - Fixed Notepad search dismissal, focus, and toolbar layout issues.
 - Fixed popup and Options startup flicker along with saved helper toggle restoration.
 - Fixed Jira helper repaint/update issues so status colors and row highlights refresh reliably after settings changes.
+- Fixed Jira helper startup timing so Status Colorizer and Row Highlighter apply more reliably on first page open without needing a manual off/on toggle from the popup.
+- Fixed Jira helper repaint for long or virtualized issue lists so newly rendered rows and statuses are refreshed on scroll/viewport activity instead of only on DOM mutations.
+- Optimized Jira helper repaint for Service Desk queue tables by narrowing the status/row selectors to the real virtual-table content and by updating only stale or changed elements instead of clearing all painted styles on every pass.
+- Expanded Status Colorizer so the same status rules now apply across Jira queue tables, native issue tables, classic dashboard gadgets, issue-view status buttons and transition menus, issue history/status activity blocks, inline-card status lozenges, and workflow preview diagrams.
+- Improved Row Highlighter runtime by compiling keyword matchers once per settings reload, caching searchable row text between DOM mutations, and only clearing the editor table after reset storage writes succeed.
+- Changed Row Highlighter repaint to use a dedicated highlight class and CSS variable instead of snapshotting and rewriting the full row `style` attribute, which reduces the risk of clobbering unrelated inline styles from Jira.
+- Refined Row Highlighter matching by using surface-specific searchable text extractors for issue tables, detail cards, board cards, activity items, and home feed links instead of relying on one broad text scrape for every row type.
+- Throttled Row Highlighter viewport-triggered repaint so scroll/hover/resize activity is coalesced into fewer refresh frames while keeping DOM/storage-driven updates immediate.
+- Extracted Row Highlighter keyword normalization and matcher compilation into a dedicated runtime helper file and added unit coverage for keyword normalization, alias handling, and first-match resolution.
+- Limited Row Highlighter viewport refresh work to rows that are visible or near the viewport instead of re-evaluating every candidate row on each scroll-triggered repaint.
+- Improved Status Colorizer runtime by compiling status and alias lookups once per settings reload and by restoring only the specific CSS properties it touches instead of snapshotting and rewriting the full inline `style` attribute on Jira status elements.
+- Reworked Status Colorizer repaint into separate Jira surface collectors for standard badges, issue-view status buttons, and workflow nodes so future fixes can target one surface without risking regressions in the others.
+- Throttled Status Colorizer viewport-triggered repaint so scroll/hover/resize activity is coalesced into fewer refresh frames while still keeping DOM/storage-driven updates immediate.
+- Extracted Status Colorizer lookup and ribbon helper logic into a dedicated runtime helper file and added unit coverage for normalization, alias lookup, and ribbon gradient generation.
 
 ## [4.9.15] - 2026-03-26
 

@@ -1,13 +1,56 @@
 (function runStatusColorizerWorker(global) {
 let statusColorSettings = [];
-const insertedRibbonClasses = new Set();
+let compiledStatusLookup = new Map();
 let statusColorizerEnabled = true;
 let refreshStatusesRaf = 0;
+let viewportRefreshTimer = 0;
+let lastStatusRefreshAt = 0;
+let workerStarted = false;
 const ruleWorkerRuntime = global.MyToolboxRuleWorkerRuntime;
+const statusColorizerLogic = global.MyToolboxStatusColorizerLogic || {};
+const {
+  buildStatusLookup = () => new Map(),
+  findStatusSettingFromLookup = () => null,
+  getStatusRibbonBackground = () => "",
+} = statusColorizerLogic;
 const STATUS_TOUCH_ATTR = "data-my-toolbox-status-touched";
-const STATUS_STYLE_ATTR = "data-my-toolbox-status-style";
-const STATUS_STYLE_MISSING = "__my_toolbox_status_style_missing__";
-const STATUS_RIBBON_ATTR = "data-my-toolbox-status-ribbon-class";
+const STATUS_PROPS_ATTR = "data-my-toolbox-status-props";
+const STATUS_STYLE_ID = "my-toolbox-status-colorizer-style";
+const STATUS_BASE_CLASS = "my-toolbox-status-colored";
+const STATUS_RIBBON_CLASS = "my-toolbox-status-ribbon";
+const STATUS_BUTTON_RIBBON_CLASS = "my-toolbox-status-button-ribbon";
+const STATUS_WORKFLOW_CLASS = "my-toolbox-status-workflow";
+const STATUS_VAR_BG = "--my-toolbox-status-bg";
+const STATUS_VAR_FG = "--my-toolbox-status-fg";
+const STATUS_VAR_PRIMARY = "--my-toolbox-status-primary";
+const STATUS_VAR_SECONDARY = "--my-toolbox-status-secondary";
+const STATUS_VAR_STROKE = "--my-toolbox-status-stroke";
+const ATLASSIAN_STATUS_BADGE_SELECTOR =
+  "[data-testid^='issue.fields.status.common.ui.status-lozenge.'] > span";
+const HISTORY_STATUS_BADGE_SELECTOR =
+  "[data-testid='common-components-status-lozenge.status-lozenge']";
+const INLINE_CARD_STATUS_BADGE_SELECTOR =
+  "[data-testid='inline-card-resolved-view-lozenge']";
+const CLASSIC_STATUS_BADGE_SELECTOR =
+  "td.status > span.jira-issue-status-lozenge, table.issue-table td.status span.jira-issue-status-lozenge";
+const ISSUE_STATUS_BUTTON_SELECTOR =
+  "button[data-testid='issue-field-status.ui.status-view.status-button.status-button']";
+const WORKFLOW_STATUS_NODE_SELECTOR =
+  "svg[data-testid='accessible-workflow-diagram.svg-root'] g[data-drag-type='status']";
+const STATUS_BADGE_SELECTORS = [
+  ATLASSIAN_STATUS_BADGE_SELECTOR,
+  HISTORY_STATUS_BADGE_SELECTOR,
+  INLINE_CARD_STATUS_BADGE_SELECTOR,
+  CLASSIC_STATUS_BADGE_SELECTOR,
+];
+const VIEWPORT_REFRESH_MIN_INTERVAL_MS = 120;
+let activeStatusElements = null;
+const TRACKED_STATUS_CLASSES = [
+  STATUS_BASE_CLASS,
+  STATUS_RIBBON_CLASS,
+  STATUS_BUTTON_RIBBON_CLASS,
+  STATUS_WORKFLOW_CLASS,
+];
 
 function loadWorkerBooleanPreference(key, callback, defaultValue = true) {
   if (ruleWorkerRuntime?.loadBooleanPreference) {
@@ -124,6 +167,66 @@ function observeWorkerStorageChanges(callback) {
   });
 }
 
+function observeWorkerViewportActivity(callback) {
+  if (ruleWorkerRuntime?.observeViewportActivity) {
+    ruleWorkerRuntime.observeViewportActivity(callback);
+    return;
+  }
+
+  let shortTimer = 0;
+  let lateTimer = 0;
+  const heartbeat = window.setInterval(() => {
+    if (document.visibilityState === "hidden") {
+      return;
+    }
+    callback();
+  }, 1200);
+
+  const notifyViewportActivity = () => {
+    if (document.visibilityState === "hidden") {
+      return;
+    }
+    callback();
+    clearTimeout(shortTimer);
+    clearTimeout(lateTimer);
+    shortTimer = window.setTimeout(callback, 80);
+    lateTimer = window.setTimeout(callback, 260);
+  };
+
+  document.addEventListener("scroll", notifyViewportActivity, {
+    capture: true,
+    passive: true,
+  });
+  window.addEventListener("scroll", notifyViewportActivity, {
+    capture: true,
+    passive: true,
+  });
+  document.addEventListener("wheel", notifyViewportActivity, {
+    capture: true,
+    passive: true,
+  });
+  document.addEventListener("touchmove", notifyViewportActivity, {
+    capture: true,
+    passive: true,
+  });
+  document.addEventListener("mouseover", notifyViewportActivity, {
+    capture: true,
+  });
+  document.addEventListener("focusin", notifyViewportActivity, {
+    capture: true,
+  });
+  window.addEventListener("resize", notifyViewportActivity, { passive: true });
+  document.addEventListener("visibilitychange", notifyViewportActivity, {
+    passive: true,
+  });
+
+  return () => {
+    clearInterval(heartbeat);
+    clearTimeout(shortTimer);
+    clearTimeout(lateTimer);
+  };
+}
+
 function loadStatusColorizerEnabled(callback) {
   loadWorkerBooleanPreference("statusColorizerEnabled", (enabled) => {
     statusColorizerEnabled = enabled;
@@ -134,51 +237,145 @@ function loadStatusColorizerEnabled(callback) {
 function loadStatusColorSettings(callback) {
   loadWorkerArraySetting("statusColorSettings", (settings) => {
     statusColorSettings = settings;
+    compiledStatusLookup = buildStatusLookup(settings);
     callback?.();
   }, {
     defaultResourcePath: "data/defaultSettings.json",
   });
 }
 
-function rememberElementStyle(element) {
-  if (!element || element.hasAttribute(STATUS_TOUCH_ATTR)) {
+function ensureStatusColorizerStyle() {
+  if (document.getElementById(STATUS_STYLE_ID)) {
     return;
   }
 
-  const inlineStyle = element.getAttribute("style");
-  element.setAttribute(STATUS_TOUCH_ATTR, "1");
-  element.setAttribute(
-    STATUS_STYLE_ATTR,
-    inlineStyle == null ? STATUS_STYLE_MISSING : inlineStyle
-  );
+  const style = document.createElement("style");
+  style.id = STATUS_STYLE_ID;
+  style.textContent = `
+    @keyframes my-toolbox-status-ribbon-move {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+
+    .${STATUS_BASE_CLASS} {
+      background-color: var(${STATUS_VAR_BG}, transparent) !important;
+    }
+
+    .${STATUS_RIBBON_CLASS} {
+      background-color: transparent !important;
+      background-image: repeating-linear-gradient(
+        45deg,
+        var(${STATUS_VAR_PRIMARY}, transparent),
+        var(${STATUS_VAR_PRIMARY}, transparent) 10px,
+        var(${STATUS_VAR_SECONDARY}, transparent) 10px,
+        var(${STATUS_VAR_SECONDARY}, transparent) 20px
+      ) !important;
+      background-repeat: repeat !important;
+      background-size: 200% 200% !important;
+      animation: my-toolbox-status-ribbon-move 8s linear infinite !important;
+    }
+
+    .${STATUS_WORKFLOW_CLASS} rect {
+      fill: var(${STATUS_VAR_BG}, transparent) !important;
+      stroke: var(${STATUS_VAR_STROKE}, transparent) !important;
+    }
+
+    .${STATUS_WORKFLOW_CLASS} text,
+    .${STATUS_WORKFLOW_CLASS} tspan {
+      fill: var(${STATUS_VAR_FG}, currentColor) !important;
+    }
+  `;
+  (document.head || document.documentElement).appendChild(style);
 }
 
-function restoreElementStyle(element) {
+function rememberTrackedStatusElement(element) {
+  if (!element) {
+    return;
+  }
+
+  if (activeStatusElements) {
+    activeStatusElements.add(element);
+  }
+
+  element.setAttribute(STATUS_TOUCH_ATTR, "1");
+}
+
+function readTrackedProperties(element) {
+  if (!element?.hasAttribute(STATUS_PROPS_ATTR)) {
+    return {};
+  }
+
+  try {
+    const data = JSON.parse(element.getAttribute(STATUS_PROPS_ATTR) || "{}");
+    return data && typeof data === "object" ? data : {};
+  } catch {
+    return {};
+  }
+}
+
+function writeTrackedProperties(element, properties) {
+  const entries = Object.keys(properties);
+  if (entries.length === 0) {
+    element.removeAttribute(STATUS_PROPS_ATTR);
+    return;
+  }
+
+  element.setAttribute(STATUS_PROPS_ATTR, JSON.stringify(properties));
+}
+
+function rememberTrackedProperty(element, property) {
+  if (!element || !property) {
+    return;
+  }
+
+  const trackedProperties = readTrackedProperties(element);
+  if (Object.prototype.hasOwnProperty.call(trackedProperties, property)) {
+    return;
+  }
+
+  trackedProperties[property] = {
+    value: element.style.getPropertyValue(property),
+    priority: element.style.getPropertyPriority(property),
+  };
+  writeTrackedProperties(element, trackedProperties);
+}
+
+function restoreTrackedStatusElement(element) {
   if (!element || !element.hasAttribute(STATUS_TOUCH_ATTR)) {
     return;
   }
 
-  const ribbonClass = element.getAttribute(STATUS_RIBBON_ATTR);
-  if (ribbonClass) {
-    element.classList.remove(ribbonClass);
-  }
+  const trackedProperties = readTrackedProperties(element);
+  Object.entries(trackedProperties).forEach(([property, state]) => {
+    const value = typeof state?.value === "string" ? state.value : "";
+    const priority = typeof state?.priority === "string" ? state.priority : "";
+    if (value) {
+      element.style.setProperty(property, value, priority);
+      return;
+    }
+    element.style.removeProperty(property);
+  });
 
-  const originalStyle = element.getAttribute(STATUS_STYLE_ATTR);
-  if (originalStyle === STATUS_STYLE_MISSING) {
+  TRACKED_STATUS_CLASSES.forEach((className) => {
+    element.classList.remove(className);
+  });
+  if (!element.getAttribute("style")) {
     element.removeAttribute("style");
-  } else if (originalStyle != null) {
-    element.setAttribute("style", originalStyle);
   }
 
   element.removeAttribute(STATUS_TOUCH_ATTR);
-  element.removeAttribute(STATUS_STYLE_ATTR);
-  element.removeAttribute(STATUS_RIBBON_ATTR);
+  element.removeAttribute(STATUS_PROPS_ATTR);
 }
 
-function clearTrackedStatusStyles() {
+function cleanupTrackedStatusStyles() {
+  const activeElements = activeStatusElements || new Set();
   document
     .querySelectorAll(`[${STATUS_TOUCH_ATTR}]`)
-    .forEach((element) => restoreElementStyle(element));
+    .forEach((element) => {
+      if (!activeElements.has(element) || !document.contains(element)) {
+        restoreTrackedStatusElement(element);
+      }
+    });
 }
 
 function setTrackedStyle(element, property, value, priority = "") {
@@ -186,7 +383,8 @@ function setTrackedStyle(element, property, value, priority = "") {
     return;
   }
 
-  rememberElementStyle(element);
+  rememberTrackedStatusElement(element);
+  rememberTrackedProperty(element, property);
   if (value === null || value === undefined || value === "") {
     element.style.removeProperty(property);
     return;
@@ -195,318 +393,292 @@ function setTrackedStyle(element, property, value, priority = "") {
   element.style.setProperty(property, value, priority);
 }
 
-function setTrackedRibbonClass(element, className) {
+function setTrackedClassState(element, className, enabled) {
   if (!element) {
     return;
   }
 
-  rememberElementStyle(element);
-  const previousClass = element.getAttribute(STATUS_RIBBON_ATTR);
-  if (previousClass && previousClass !== className) {
-    element.classList.remove(previousClass);
-  }
-
-  if (className) {
+  rememberTrackedStatusElement(element);
+  if (enabled) {
     element.classList.add(className);
-    element.setAttribute(STATUS_RIBBON_ATTR, className);
     return;
   }
 
-  if (previousClass) {
-    element.classList.remove(previousClass);
+  element.classList.remove(className);
+}
+
+function setTrackedStatusVariable(element, variableName, value) {
+  setTrackedStyle(element, variableName, value || "");
+}
+
+function setTrackedStatusPalette(element, statusSetting) {
+  if (!element || !statusSetting) {
+    return;
   }
-  element.removeAttribute(STATUS_RIBBON_ATTR);
+
+  setTrackedStatusVariable(element, STATUS_VAR_BG, statusSetting.backgroundColor);
+  setTrackedStatusVariable(element, STATUS_VAR_FG, statusSetting.textColor);
+  setTrackedStatusVariable(element, STATUS_VAR_PRIMARY, statusSetting.primaryColor);
+  setTrackedStatusVariable(element, STATUS_VAR_SECONDARY, statusSetting.secondaryColor);
+  setTrackedStatusVariable(
+    element,
+    STATUS_VAR_STROKE,
+    statusSetting.secondaryColor ||
+      statusSetting.backgroundColor ||
+      statusSetting.primaryColor
+  );
 }
 
-function addGlobalStyle(css, className) {
-  if (insertedRibbonClasses.has(className)) return;
-  const style = document.createElement("style");
-  style.innerHTML = css;
-  document.head.appendChild(style);
-  insertedRibbonClasses.add(className);
+function setTrackedStaticRibbonStyles(element, statusSetting) {
+  setTrackedStyle(
+    element,
+    "background-image",
+    getStatusRibbonBackground(statusSetting),
+    "important"
+  );
+  setTrackedStyle(element, "background-repeat", "repeat", "important");
+  setTrackedStyle(element, "background-size", "200% 200%", "important");
+  setTrackedStyle(element, "background-position", "0% 50%", "important");
+  setTrackedStyle(element, "animation", "none", "important");
+  setTrackedStyle(element, "transition", "none", "important");
 }
 
-function normalizeStatusName(statusName) {
-  return typeof statusName === "string" ? statusName.trim().toLowerCase() : "";
+function clearTrackedRibbonStyles(element) {
+  setTrackedStyle(element, "background-image", "");
+  setTrackedStyle(element, "background-repeat", "");
+  setTrackedStyle(element, "background-size", "");
+  setTrackedStyle(element, "background-position", "");
+  setTrackedStyle(element, "animation", "");
+  setTrackedStyle(element, "transition", "");
 }
 
 function findStatusSetting(statusText) {
-  const normalizedStatus = normalizeStatusName(statusText);
-  if (!normalizedStatus) return null;
-  return statusColorSettings.find((setting) => {
-    if (!setting) return false;
-    if (normalizeStatusName(setting.statusName) === normalizedStatus) {
-      return true;
-    }
-    const aliases = Array.isArray(setting.aliases)
-      ? setting.aliases
-      : Array.isArray(setting.statusAliases)
-        ? setting.statusAliases
-        : [];
-    return aliases.some(
-      (alias) => normalizeStatusName(alias) === normalizedStatus
-    );
-  });
+  return findStatusSettingFromLookup(compiledStatusLookup, statusText);
 }
 
-function sanitizeStatusName(statusName) {
-  return statusName.trim().toLowerCase().replace(/[^a-z0-9]+/gi, "-");
+function getRefreshTimestamp() {
+  return typeof performance !== "undefined" && typeof performance.now === "function"
+    ? performance.now()
+    : Date.now();
 }
 
-function generateRibbonCSS(statusSetting) {
-  const { statusName, primaryColor, secondaryColor } = statusSetting;
-  const className = `ribbon-${sanitizeStatusName(statusName)}`;
-  const css = `
-    @keyframes ${className} {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 200% 50%; }
-    }
-    .${className} {
-      background: repeating-linear-gradient(
-        45deg,
-        ${primaryColor},
-        ${primaryColor} 10px,
-        ${secondaryColor} 10px,
-        ${secondaryColor} 20px
-      );
-      background-size: 200% 200%;
-      animation: ${className} 8s linear infinite;
-      color: black;
-    }
-  `;
-  return { css, className };
-}
-
-function paintStatuses() {
-  let elements = document.querySelectorAll(
-    "span > div._1e0c1txw._1bsb1osq, span._1reo15vq"
-  );
-  elements.forEach((element) => {
-    if (
-      element.matches("span._1reo15vq") &&
-      element.parentElement?.closest("span._1reo15vq")
-    ) {
-      return;
-    }
-    let statusText = element.textContent.trim().toLowerCase();
-    let statusSetting = findStatusSetting(statusText);
-    if (statusSetting) {
-      const animationEnabled = statusSetting.animationClass;
-      // handle old structure where the colored element is inside a div
-      if (element.matches("div._1e0c1txw._1bsb1osq")) {
-        let grandParentSpan = element.closest("span").parentNode.closest("span");
-        if (grandParentSpan && element.firstChild) {
-          if (!animationEnabled) {
-            setTrackedStyle(
-              element.firstChild,
-              "background-color",
-              statusSetting.backgroundColor
-            );
-            if (element.firstChild.firstChild && statusSetting.textColor) {
-              setTrackedStyle(
-                element.firstChild.firstChild,
-                "color",
-                statusSetting.textColor
-              );
-            }
-          } else {
-            setTrackedStyle(element.firstChild, "background-color", "transparent");
-            if (element.firstChild.firstChild) {
-              setTrackedStyle(
-                element.firstChild.firstChild,
-                "background-color",
-                "transparent"
-              );
-              if (statusSetting.textColor) {
-                setTrackedStyle(
-                  element.firstChild.firstChild,
-                  "color",
-                  statusSetting.textColor
-                );
-              } else {
-                setTrackedStyle(element.firstChild.firstChild, "color", "");
-              }
-            }
-          }
-          if (animationEnabled) {
-            const { css: ribbonCSS, className } = generateRibbonCSS(statusSetting);
-            addGlobalStyle(ribbonCSS, className);
-            setTrackedRibbonClass(element.firstChild, className);
-            element.firstChild
-              .querySelectorAll(`.${className}`)
-              .forEach((inner) => {
-                if (inner !== element.firstChild) {
-                  inner.classList.remove(className);
-                }
-              });
-          }
-        }
-      } else {
-        // new structure where the colored element is the span itself
-        let inner = element.querySelector("span, div");
-        if (!animationEnabled) {
-          setTrackedStyle(
-            element,
-            "background-color",
-            statusSetting.backgroundColor
-          );
-          if (inner && statusSetting.textColor) {
-            setTrackedStyle(inner, "color", statusSetting.textColor);
-          }
-        } else {
-          setTrackedStyle(element, "background-color", "transparent");
-          if (inner) {
-            setTrackedStyle(inner, "background-color", "transparent");
-            if (statusSetting.textColor) {
-              setTrackedStyle(inner, "color", statusSetting.textColor);
-            } else {
-              setTrackedStyle(inner, "color", "");
-            }
-          }
-        }
-        if (animationEnabled) {
-          const { css: ribbonCSS, className } = generateRibbonCSS(statusSetting);
-          addGlobalStyle(ribbonCSS, className);
-          const ribbonAncestor = element.parentElement?.closest(`.${className}`);
-          if (ribbonAncestor) {
-            setTrackedRibbonClass(element, "");
-          } else {
-            setTrackedRibbonClass(element, className);
-          }
-          element.querySelectorAll(`.${className}`).forEach((innerEl) => {
-            if (innerEl !== element) {
-              innerEl.classList.remove(className);
-            }
-          });
-        }
-      }
-    }
-  });
-
-  document.querySelectorAll("td.status").forEach((td) => {
-    let span = td.querySelector("span");
-    if (span) {
-      let statusText = span.textContent.trim().toLowerCase();
-      let setting = findStatusSetting(statusText);
-      if (setting) {
-        if (!setting.animationClass) {
-          setTrackedStyle(span, "background-color", setting.backgroundColor);
-          if (setting.textColor) {
-            setTrackedStyle(span, "color", setting.textColor);
-          }
-        } else {
-          setTrackedStyle(span, "background-color", "transparent");
-          if (setting.textColor) {
-            setTrackedStyle(span, "color", setting.textColor);
-          } else {
-            setTrackedStyle(span, "color", "");
-          }
-        }
-        if (setting.animationClass) {
-          const { css: ribbonCSS, className } = generateRibbonCSS(setting);
-          addGlobalStyle(ribbonCSS, className);
-          setTrackedRibbonClass(span, className);
-        }
-      }
-    }
-  });
-
-  document
-    .querySelectorAll("table.issue-table td.status span")
-    .forEach((span) => {
-      let statusText = span.textContent.trim().toLowerCase();
-      let setting = findStatusSetting(statusText);
-      if (setting) {
-        if (!setting.animationClass) {
-          setTrackedStyle(span, "background-color", setting.backgroundColor);
-          if (setting.textColor) {
-            setTrackedStyle(span, "color", setting.textColor);
-          }
-        } else {
-          setTrackedStyle(span, "background-color", "transparent");
-          if (setting.textColor) {
-            setTrackedStyle(span, "color", setting.textColor);
-          } else {
-            setTrackedStyle(span, "color", "");
-          }
-        }
-        if (setting.animationClass) {
-          const { css: ribbonCSS, className } = generateRibbonCSS(setting);
-          addGlobalStyle(ribbonCSS, className);
-          setTrackedRibbonClass(span, className);
-        }
-      }
-    });
-
-  paintTicketButton();
-}
-
-function paintTicketButton() {
-  let ticketButton = document.querySelector(
-    "button[data-testid='issue-field-status.ui.status-view.status-button.status-button']"
-  );
-  if (ticketButton) {
-    let statusSpan = ticketButton.querySelector("span.css-178ag6o");
-    if (statusSpan) {
-      let statusText = statusSpan.textContent.trim().toLowerCase();
-      let statusSetting = findStatusSetting(statusText);
-      if (statusSetting) {
-        if (!statusSetting.animationClass) {
-          setTrackedStyle(
-            ticketButton,
-            "background-color",
-            statusSetting.backgroundColor,
-            "important"
-          );
-          if (statusSetting.textColor) {
-            setTrackedStyle(
-              ticketButton,
-              "color",
-              statusSetting.textColor,
-              "important"
-            );
-          }
-        } else {
-          setTrackedStyle(ticketButton, "background-color", "");
-          if (statusSetting.textColor) {
-            setTrackedStyle(
-              ticketButton,
-              "color",
-              statusSetting.textColor,
-              "important"
-            );
-          } else {
-            setTrackedStyle(ticketButton, "color", "");
-          }
-        }
-        if (statusSetting.animationClass) {
-          const { css: ribbonCSS, className } = generateRibbonCSS(statusSetting);
-          addGlobalStyle(ribbonCSS, className);
-          setTrackedRibbonClass(ticketButton, className);
-        }
-      }
-    }
-  }
-}
-
-function refreshStatuses() {
-  clearTrackedStatusStyles();
-  if (!statusColorizerEnabled || !statusColorSettings.length) {
+function clearViewportRefreshTimer() {
+  if (!viewportRefreshTimer) {
     return;
   }
 
-  paintStatuses();
+  clearTimeout(viewportRefreshTimer);
+  viewportRefreshTimer = 0;
 }
 
-function scheduleStatusRefresh() {
+function getTicketButtonStatusText(ticketButton) {
+  return (
+    ticketButton
+      ?.querySelector("span.css-178ag6o")
+      ?.textContent || ""
+  );
+}
+
+function applyStatusSettingToBadge(outerBadge, statusSetting) {
+  if (!outerBadge || !statusSetting) {
+    return;
+  }
+
+  ensureStatusColorizerStyle();
+  const innerText = outerBadge.querySelector(":scope > span, :scope > div");
+  const textTarget = innerText || outerBadge;
+  setTrackedStatusPalette(outerBadge, statusSetting);
+  setTrackedClassState(outerBadge, STATUS_BASE_CLASS, true);
+  setTrackedClassState(
+    outerBadge,
+    STATUS_RIBBON_CLASS,
+    statusSetting.animationClass === "ribbon"
+  );
+
+  if (statusSetting.animationClass === "ribbon") {
+    setTrackedStyle(outerBadge, "background-color", "transparent");
+  } else {
+    setTrackedStyle(outerBadge, "background-color", "");
+  }
+  if (innerText) {
+    setTrackedStyle(
+      innerText,
+      "background-color",
+      statusSetting.animationClass === "ribbon" ? "transparent" : ""
+    );
+  }
+  setTrackedStyle(textTarget, "color", statusSetting.textColor || "");
+}
+
+function collectUniqueElements(...selectors) {
+  const elements = new Set();
+  selectors.forEach((selector) => {
+    document.querySelectorAll(selector).forEach((element) => {
+      elements.add(element);
+    });
+  });
+  return elements;
+}
+
+function paintStatusTargets(targets, { getStatusText, applyStatusSetting }) {
+  targets.forEach((target) => {
+    const statusSetting = findStatusSetting(getStatusText(target));
+    if (!statusSetting) {
+      return;
+    }
+
+    applyStatusSetting(target, statusSetting);
+  });
+}
+
+function applyStatusSettingToWorkflowNode(statusNode, statusSetting) {
+  if (!statusNode || !statusSetting) {
+    return;
+  }
+
+  ensureStatusColorizerStyle();
+  setTrackedStatusPalette(statusNode, statusSetting);
+  setTrackedClassState(statusNode, STATUS_WORKFLOW_CLASS, true);
+}
+
+function applyStatusSettingToTicketButton(ticketButton, statusSetting) {
+  if (!ticketButton || !statusSetting) {
+    return;
+  }
+
+  ensureStatusColorizerStyle();
+  setTrackedStatusPalette(ticketButton, statusSetting);
+  if (!statusSetting.animationClass) {
+    clearTrackedRibbonStyles(ticketButton);
+    setTrackedStyle(
+      ticketButton,
+      "background-color",
+      statusSetting.backgroundColor,
+      "important"
+    );
+    if (statusSetting.textColor) {
+      setTrackedStyle(
+        ticketButton,
+        "color",
+        statusSetting.textColor,
+        "important"
+      );
+    } else {
+      setTrackedStyle(ticketButton, "color", "");
+    }
+    setTrackedClassState(ticketButton, STATUS_BUTTON_RIBBON_CLASS, false);
+    return;
+  }
+
+  setTrackedStyle(ticketButton, "background-color", "transparent", "important");
+  if (statusSetting.textColor) {
+    setTrackedStyle(
+      ticketButton,
+      "color",
+      statusSetting.textColor,
+      "important"
+    );
+  } else {
+    setTrackedStyle(ticketButton, "color", "");
+  }
+  setTrackedStaticRibbonStyles(ticketButton, statusSetting);
+  setTrackedClassState(ticketButton, STATUS_BUTTON_RIBBON_CLASS, false);
+}
+
+function collectBadgeTargets() {
+  return collectUniqueElements(...STATUS_BADGE_SELECTORS);
+}
+
+function collectTicketButtonTargets() {
+  const ticketButton = document.querySelector(ISSUE_STATUS_BUTTON_SELECTOR);
+  return ticketButton ? [ticketButton] : [];
+}
+
+function collectWorkflowTargets() {
+  return [...document.querySelectorAll(WORKFLOW_STATUS_NODE_SELECTOR)];
+}
+
+function getStatusSurfaces() {
+  return [
+    {
+      collectTargets: collectBadgeTargets,
+      getStatusText: (badge) => badge.textContent,
+      applyStatusSetting: applyStatusSettingToBadge,
+    },
+    {
+      collectTargets: collectTicketButtonTargets,
+      getStatusText: getTicketButtonStatusText,
+      applyStatusSetting: applyStatusSettingToTicketButton,
+    },
+    {
+      collectTargets: collectWorkflowTargets,
+      getStatusText: (statusNode) => statusNode.textContent,
+      applyStatusSetting: applyStatusSettingToWorkflowNode,
+    },
+  ];
+}
+
+function paintStatuses() {
+  getStatusSurfaces().forEach((surface) => {
+    paintStatusTargets(surface.collectTargets(), surface);
+  });
+}
+
+function refreshStatuses() {
+  activeStatusElements = new Set();
+  if (!statusColorizerEnabled || !compiledStatusLookup.size) {
+    cleanupTrackedStatusStyles();
+    activeStatusElements = null;
+    return;
+  }
+
+  ensureStatusColorizerStyle();
+  paintStatuses();
+  cleanupTrackedStatusStyles();
+  activeStatusElements = null;
+}
+
+function queueStatusRefreshFrame() {
+  clearViewportRefreshTimer();
   if (refreshStatusesRaf) {
     return;
   }
 
   refreshStatusesRaf = requestAnimationFrame(() => {
     refreshStatusesRaf = 0;
+    lastStatusRefreshAt = getRefreshTimestamp();
     refreshStatuses();
   });
+}
+
+function scheduleViewportStatusRefresh() {
+  if (document.visibilityState === "hidden") {
+    return;
+  }
+
+  const elapsed = getRefreshTimestamp() - lastStatusRefreshAt;
+  if (!lastStatusRefreshAt || elapsed >= VIEWPORT_REFRESH_MIN_INTERVAL_MS) {
+    queueStatusRefreshFrame();
+    return;
+  }
+
+  if (refreshStatusesRaf || viewportRefreshTimer) {
+    return;
+  }
+
+  viewportRefreshTimer = window.setTimeout(() => {
+    viewportRefreshTimer = 0;
+    queueStatusRefreshFrame();
+  }, VIEWPORT_REFRESH_MIN_INTERVAL_MS - elapsed);
+}
+
+function scheduleStatusRefresh(reason = "default") {
+  if (reason === "viewport") {
+    scheduleViewportStatusRefresh();
+    return;
+  }
+
+  queueStatusRefreshFrame();
 }
 
 function reloadStatusColorizerState(callback) {
@@ -529,13 +701,37 @@ function handleStorageChanges(changes) {
 
 function observeDOMChanges() {
   observeWorkerBodyMutations(scheduleStatusRefresh);
+  observeWorkerViewportActivity(() => {
+    scheduleStatusRefresh("viewport");
+  });
 }
 
-runWorkerOnWindowLoad(function () {
+function scheduleInitialStatusRefreshes() {
+  scheduleStatusRefresh();
+  requestAnimationFrame(() => {
+    scheduleStatusRefresh();
+  });
+  window.setTimeout(() => {
+    scheduleStatusRefresh();
+  }, 250);
+  window.setTimeout(() => {
+    scheduleStatusRefresh();
+  }, 1200);
+}
+
+function startStatusColorizerWorker() {
+  if (workerStarted) {
+    return;
+  }
+  workerStarted = true;
+
   observeDOMChanges();
   observeWorkerStorageChanges(handleStorageChanges);
   reloadStatusColorizerState(function () {
-    scheduleStatusRefresh();
+    scheduleInitialStatusRefreshes();
   });
-});
+  runWorkerOnWindowLoad(scheduleInitialStatusRefreshes);
+}
+
+startStatusColorizerWorker();
 })(globalThis);

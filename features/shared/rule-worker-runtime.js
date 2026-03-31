@@ -157,11 +157,71 @@
     });
   }
 
+  function observeViewportActivity(callback) {
+    if (typeof callback !== "function") {
+      return;
+    }
+
+    let shortTimer = 0;
+    let lateTimer = 0;
+    const heartbeat = window.setInterval(() => {
+      if (document.visibilityState === "hidden") {
+        return;
+      }
+      callback();
+    }, 1200);
+
+    const notifyViewportActivity = () => {
+      if (document.visibilityState === "hidden") {
+        return;
+      }
+      callback();
+      clearTimeout(shortTimer);
+      clearTimeout(lateTimer);
+      shortTimer = window.setTimeout(callback, 80);
+      lateTimer = window.setTimeout(callback, 260);
+    };
+
+    document.addEventListener("scroll", notifyViewportActivity, {
+      capture: true,
+      passive: true,
+    });
+    window.addEventListener("scroll", notifyViewportActivity, {
+      capture: true,
+      passive: true,
+    });
+    document.addEventListener("wheel", notifyViewportActivity, {
+      capture: true,
+      passive: true,
+    });
+    document.addEventListener("touchmove", notifyViewportActivity, {
+      capture: true,
+      passive: true,
+    });
+    document.addEventListener("mouseover", notifyViewportActivity, {
+      capture: true,
+    });
+    document.addEventListener("focusin", notifyViewportActivity, {
+      capture: true,
+    });
+    window.addEventListener("resize", notifyViewportActivity, { passive: true });
+    document.addEventListener("visibilitychange", notifyViewportActivity, {
+      passive: true,
+    });
+
+    return () => {
+      clearInterval(heartbeat);
+      clearTimeout(shortTimer);
+      clearTimeout(lateTimer);
+    };
+  }
+
   global.MyToolboxRuleWorkerRuntime = {
     loadArraySetting,
     loadBooleanPreference,
     observeSyncStorageChanges,
     observeBodyMutations,
+    observeViewportActivity,
     runOnWindowLoad,
   };
 })(globalThis);
