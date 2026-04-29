@@ -117,6 +117,15 @@
         return false;
       }
       observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: [
+          "aria-label",
+          "class",
+          "data-test-id",
+          "data-testid",
+          "title",
+        ],
+        characterData: true,
         childList: true,
         subtree: true,
       });

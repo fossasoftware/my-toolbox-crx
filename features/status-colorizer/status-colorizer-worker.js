@@ -11,13 +11,13 @@ const statusColorizerLogic = global.MyToolboxStatusColorizerLogic || {};
 const {
   buildStatusLookup = () => new Map(),
   findStatusSettingFromLookup = () => null,
-  getStatusRibbonBackground = () => "",
 } = statusColorizerLogic;
 const STATUS_TOUCH_ATTR = "data-my-toolbox-status-touched";
 const STATUS_PROPS_ATTR = "data-my-toolbox-status-props";
 const STATUS_STYLE_ID = "my-toolbox-status-colorizer-style";
 const STATUS_BASE_CLASS = "my-toolbox-status-colored";
 const STATUS_RIBBON_CLASS = "my-toolbox-status-ribbon";
+const STATUS_BUTTON_SURFACE_CLASS = "my-toolbox-status-button-surface";
 const STATUS_BUTTON_RIBBON_CLASS = "my-toolbox-status-button-ribbon";
 const STATUS_WORKFLOW_CLASS = "my-toolbox-status-workflow";
 const STATUS_VAR_BG = "--my-toolbox-status-bg";
@@ -25,29 +25,58 @@ const STATUS_VAR_FG = "--my-toolbox-status-fg";
 const STATUS_VAR_PRIMARY = "--my-toolbox-status-primary";
 const STATUS_VAR_SECONDARY = "--my-toolbox-status-secondary";
 const STATUS_VAR_STROKE = "--my-toolbox-status-stroke";
+const STATUS_RIBBON_DELAY_VAR = "--my-toolbox-status-ribbon-delay";
+const STATUS_RIBBON_TILE_SIZE = "28.284271px";
+const STATUS_RIBBON_ANIMATION_DURATION_MS = 1200;
+const STATUS_RIBBON_ANIMATION_DURATION =
+  `${STATUS_RIBBON_ANIMATION_DURATION_MS}ms`;
 const ATLASSIAN_STATUS_BADGE_SELECTOR =
-  "[data-testid^='issue.fields.status.common.ui.status-lozenge.'] > span";
+  "[data-testid^='issue.fields.status.common.ui.status-lozenge.']";
 const HISTORY_STATUS_BADGE_SELECTOR =
   "[data-testid='common-components-status-lozenge.status-lozenge']";
+const HISTORY_STATUS_BADGE_TEXT_SELECTOR =
+  "[data-testid='common-components-status-lozenge.status-lozenge--text']";
 const INLINE_CARD_STATUS_BADGE_SELECTOR =
   "[data-testid='inline-card-resolved-view-lozenge']";
+const INLINE_CARD_STATUS_BADGE_TEXT_SELECTOR =
+  "[data-testid='inline-card-resolved-view-lozenge--text']";
+const GENERIC_STATUS_BADGE_CONTAINER_SELECTOR =
+  "[data-testid*='status-lozenge']:not([data-testid$='--text']), [data-test-id*='status-lozenge']:not([data-test-id$='--text'])";
+const GENERIC_STATUS_BADGE_TEXT_SELECTOR =
+  "[data-testid*='status-lozenge'][data-testid$='--text'], [data-test-id*='status-lozenge'][data-test-id$='--text']";
+const ISSUE_TABLE_STATUS_CELL_SELECTOR =
+  "[data-testid*='cell-wrapper-row'][data-testid$='-status'], [data-testid*='native-issue-table'][data-testid*='status']";
 const CLASSIC_STATUS_BADGE_SELECTOR =
   "td.status > span.jira-issue-status-lozenge, table.issue-table td.status span.jira-issue-status-lozenge";
 const ISSUE_STATUS_BUTTON_SELECTOR =
   "button[data-testid='issue-field-status.ui.status-view.status-button.status-button']";
 const WORKFLOW_STATUS_NODE_SELECTOR =
   "svg[data-testid='accessible-workflow-diagram.svg-root'] g[data-drag-type='status']";
-const STATUS_BADGE_SELECTORS = [
+const STATUS_BADGE_CONTAINER_SELECTORS = [
   ATLASSIAN_STATUS_BADGE_SELECTOR,
   HISTORY_STATUS_BADGE_SELECTOR,
   INLINE_CARD_STATUS_BADGE_SELECTOR,
+  GENERIC_STATUS_BADGE_CONTAINER_SELECTOR,
+  ISSUE_TABLE_STATUS_CELL_SELECTOR,
   CLASSIC_STATUS_BADGE_SELECTOR,
 ];
+const STATUS_BADGE_TEXT_SELECTORS = [
+  HISTORY_STATUS_BADGE_TEXT_SELECTOR,
+  INLINE_CARD_STATUS_BADGE_TEXT_SELECTOR,
+  GENERIC_STATUS_BADGE_TEXT_SELECTOR,
+];
+const STATUS_BADGE_SELECTORS = [
+  ...STATUS_BADGE_CONTAINER_SELECTORS,
+  ...STATUS_BADGE_TEXT_SELECTORS,
+];
+const STATUS_BADGE_CONTAINER_SELECTOR = STATUS_BADGE_CONTAINER_SELECTORS.join(",");
+const STATUS_BADGE_TEXT_SELECTOR = STATUS_BADGE_TEXT_SELECTORS.join(",");
 const VIEWPORT_REFRESH_MIN_INTERVAL_MS = 120;
 let activeStatusElements = null;
 const TRACKED_STATUS_CLASSES = [
   STATUS_BASE_CLASS,
   STATUS_RIBBON_CLASS,
+  STATUS_BUTTON_SURFACE_CLASS,
   STATUS_BUTTON_RIBBON_CLASS,
   STATUS_WORKFLOW_CLASS,
 ];
@@ -133,6 +162,15 @@ function observeWorkerBodyMutations(callback) {
     callback();
   });
   observer.observe(document.body, {
+    attributes: true,
+    attributeFilter: [
+      "aria-label",
+      "class",
+      "data-test-id",
+      "data-testid",
+      "title",
+    ],
+    characterData: true,
     childList: true,
     subtree: true,
   });
@@ -253,8 +291,8 @@ function ensureStatusColorizerStyle() {
   style.id = STATUS_STYLE_ID;
   style.textContent = `
     @keyframes my-toolbox-status-ribbon-move {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 200% 50%; }
+      0% { background-position: 0 0; }
+      100% { background-position: ${STATUS_RIBBON_TILE_SIZE} 0; }
     }
 
     .${STATUS_BASE_CLASS} {
@@ -271,8 +309,47 @@ function ensureStatusColorizerStyle() {
         var(${STATUS_VAR_SECONDARY}, transparent) 20px
       ) !important;
       background-repeat: repeat !important;
-      background-size: 200% 200% !important;
-      animation: my-toolbox-status-ribbon-move 8s linear infinite !important;
+      background-size: ${STATUS_RIBBON_TILE_SIZE} ${STATUS_RIBBON_TILE_SIZE} !important;
+      animation: my-toolbox-status-ribbon-move ${STATUS_RIBBON_ANIMATION_DURATION} linear infinite !important;
+      animation-delay: var(${STATUS_RIBBON_DELAY_VAR}, 0ms) !important;
+    }
+
+    .${STATUS_BUTTON_SURFACE_CLASS} {
+      position: relative !important;
+      overflow: hidden !important;
+      background-color: transparent !important;
+      background-image: none !important;
+    }
+
+    .${STATUS_BUTTON_SURFACE_CLASS}::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      border-radius: inherit;
+      background-color: var(${STATUS_VAR_BG}, transparent) !important;
+      background-image: none !important;
+    }
+
+    .${STATUS_BUTTON_SURFACE_CLASS}.${STATUS_BUTTON_RIBBON_CLASS}::before {
+      background-color: transparent !important;
+      background-image: repeating-linear-gradient(
+        45deg,
+        var(${STATUS_VAR_PRIMARY}, transparent),
+        var(${STATUS_VAR_PRIMARY}, transparent) 10px,
+        var(${STATUS_VAR_SECONDARY}, transparent) 10px,
+        var(${STATUS_VAR_SECONDARY}, transparent) 20px
+      ) !important;
+      background-repeat: repeat !important;
+      background-size: ${STATUS_RIBBON_TILE_SIZE} ${STATUS_RIBBON_TILE_SIZE} !important;
+      animation: my-toolbox-status-ribbon-move ${STATUS_RIBBON_ANIMATION_DURATION} linear infinite !important;
+      animation-delay: var(${STATUS_RIBBON_DELAY_VAR}, 0ms) !important;
+    }
+
+    .${STATUS_BUTTON_SURFACE_CLASS} > * {
+      position: relative !important;
+      z-index: 1 !important;
     }
 
     .${STATUS_WORKFLOW_CLASS} rect {
@@ -429,27 +506,26 @@ function setTrackedStatusPalette(element, statusSetting) {
   );
 }
 
-function setTrackedStaticRibbonStyles(element, statusSetting) {
-  setTrackedStyle(
-    element,
-    "background-image",
-    getStatusRibbonBackground(statusSetting),
-    "important"
-  );
-  setTrackedStyle(element, "background-repeat", "repeat", "important");
-  setTrackedStyle(element, "background-size", "200% 200%", "important");
-  setTrackedStyle(element, "background-position", "0% 50%", "important");
-  setTrackedStyle(element, "animation", "none", "important");
-  setTrackedStyle(element, "transition", "none", "important");
-}
-
 function clearTrackedRibbonStyles(element) {
+  setTrackedStyle(element, STATUS_RIBBON_DELAY_VAR, "");
   setTrackedStyle(element, "background-image", "");
   setTrackedStyle(element, "background-repeat", "");
   setTrackedStyle(element, "background-size", "");
   setTrackedStyle(element, "background-position", "");
   setTrackedStyle(element, "animation", "");
   setTrackedStyle(element, "transition", "");
+}
+
+function setTrackedRibbonPhase(element) {
+  if (
+    !element?.style.getPropertyValue ||
+    element.style.getPropertyValue(STATUS_RIBBON_DELAY_VAR)
+  ) {
+    return;
+  }
+
+  const phase = getRefreshTimestamp() % STATUS_RIBBON_ANIMATION_DURATION_MS;
+  setTrackedStyle(element, STATUS_RIBBON_DELAY_VAR, `${-phase}ms`);
 }
 
 function findStatusSetting(statusText) {
@@ -479,6 +555,149 @@ function getTicketButtonStatusText(ticketButton) {
   );
 }
 
+function getStatusBadgeTestId(element) {
+  return (
+    element?.getAttribute?.("data-testid") ||
+    element?.getAttribute?.("data-test-id") ||
+    ""
+  );
+}
+
+function isStatusBadgeTextElement(element) {
+  return /status-lozenge--text$/.test(getStatusBadgeTestId(element));
+}
+
+function getStatusBadgeContainer(element) {
+  if (!element?.closest) {
+    return null;
+  }
+
+  const startElement = isStatusBadgeTextElement(element)
+    ? element.parentElement
+    : element;
+  return startElement?.closest(STATUS_BADGE_CONTAINER_SELECTOR) || element;
+}
+
+function getNestedVisualBadge(element) {
+  if (
+    !element?.matches?.(
+      `${ATLASSIAN_STATUS_BADGE_SELECTOR}, ${GENERIC_STATUS_BADGE_CONTAINER_SELECTOR}`
+    )
+  ) {
+    if (!element?.matches?.(ISSUE_TABLE_STATUS_CELL_SELECTOR)) {
+      return null;
+    }
+  }
+
+  return (
+    element.querySelector(STATUS_BADGE_CONTAINER_SELECTOR) ||
+    element.querySelector(
+      ":scope > span:not([data-testid$='--text']):not([data-test-id$='--text']), :scope > div:not([data-testid$='--text']):not([data-test-id$='--text'])"
+    )
+  );
+}
+
+function getStatusButtonCandidates(element) {
+  const container = getStatusBadgeContainer(element);
+  return [
+    element?.closest?.("button"),
+    container?.closest?.("button"),
+    ...(container?.querySelectorAll?.("button") || []),
+    ...(element?.querySelectorAll?.("button") || []),
+  ].filter(Boolean);
+}
+
+function findStatusButtonTarget(element, statusSetting) {
+  const buttons = [...new Set(getStatusButtonCandidates(element))];
+  if (buttons.length === 0) {
+    return null;
+  }
+
+  if (!statusSetting) {
+    return buttons[0];
+  }
+
+  return (
+    buttons.find(
+      (button) =>
+        findStatusSettingFromCandidates([
+          button.textContent,
+          button.getAttribute("aria-label"),
+          button.getAttribute("title"),
+        ]) === statusSetting
+    ) || buttons[0]
+  );
+}
+
+function resolveStatusBadgePaintTarget(element, statusSetting = null) {
+  if (!element) {
+    return null;
+  }
+
+  const statusButton = findStatusButtonTarget(element, statusSetting);
+  if (statusButton) {
+    return statusButton;
+  }
+
+  const container = getStatusBadgeContainer(element);
+  const visualBadge = getNestedVisualBadge(container);
+
+  return visualBadge || container || element.parentElement || element;
+}
+
+function collectStatusTextElements(container) {
+  if (!container?.querySelectorAll) {
+    return [];
+  }
+
+  return [...container.querySelectorAll(STATUS_BADGE_TEXT_SELECTOR)];
+}
+
+function normalizeStatusTextCandidate(text) {
+  return typeof text === "string" ? text.replace(/\s+/g, " ").trim() : "";
+}
+
+function addStatusTextCandidate(candidates, text) {
+  const value = normalizeStatusTextCandidate(text);
+  if (!value) {
+    return;
+  }
+
+  candidates.add(value);
+  const labelValue = value.match(/^(?:status|статус)\s*[:：-]\s*(.+)$/i)?.[1];
+  if (labelValue) {
+    candidates.add(normalizeStatusTextCandidate(labelValue));
+  }
+}
+
+function getStatusBadgeTextCandidates(element) {
+  const candidates = new Set();
+  const container = getStatusBadgeContainer(element);
+  const paintTarget = resolveStatusBadgePaintTarget(element);
+  const textElements = collectStatusTextElements(container);
+  const sources = [element, container, paintTarget, ...textElements];
+
+  sources.forEach((source) => {
+    addStatusTextCandidate(candidates, source?.textContent);
+    addStatusTextCandidate(candidates, source?.getAttribute?.("aria-label"));
+    addStatusTextCandidate(candidates, source?.getAttribute?.("title"));
+  });
+
+  return [...candidates];
+}
+
+function findStatusSettingFromCandidates(statusTexts) {
+  const texts = Array.isArray(statusTexts) ? statusTexts : [statusTexts];
+  for (const statusText of texts) {
+    const statusSetting = findStatusSetting(statusText);
+    if (statusSetting) {
+      return statusSetting;
+    }
+  }
+
+  return null;
+}
+
 function applyStatusSettingToBadge(outerBadge, statusSetting) {
   if (!outerBadge || !statusSetting) {
     return;
@@ -496,8 +715,10 @@ function applyStatusSettingToBadge(outerBadge, statusSetting) {
   );
 
   if (statusSetting.animationClass === "ribbon") {
+    setTrackedRibbonPhase(outerBadge);
     setTrackedStyle(outerBadge, "background-color", "transparent");
   } else {
+    setTrackedStyle(outerBadge, STATUS_RIBBON_DELAY_VAR, "");
     setTrackedStyle(outerBadge, "background-color", "");
   }
   if (innerText) {
@@ -507,7 +728,39 @@ function applyStatusSettingToBadge(outerBadge, statusSetting) {
       statusSetting.animationClass === "ribbon" ? "transparent" : ""
     );
   }
-  setTrackedStyle(textTarget, "color", statusSetting.textColor || "");
+  setTrackedStyle(
+    textTarget,
+    "color",
+    statusSetting.textColor || "",
+    statusSetting.textColor ? "important" : ""
+  );
+}
+
+function applyStatusSettingToBadgeSource(sourceBadge, statusSetting) {
+  const paintTarget = resolveStatusBadgePaintTarget(sourceBadge, statusSetting);
+  if (!paintTarget) {
+    return;
+  }
+
+  if (paintTarget.matches?.("button")) {
+    applyStatusSettingToTicketButton(paintTarget, statusSetting);
+  } else {
+    applyStatusSettingToBadge(paintTarget, statusSetting);
+  }
+
+  collectStatusTextElements(getStatusBadgeContainer(sourceBadge)).forEach(
+    (textElement) => {
+      setTrackedStyle(
+        textElement,
+        "color",
+        statusSetting.textColor || "",
+        statusSetting.textColor ? "important" : ""
+      );
+      if (statusSetting.animationClass === "ribbon") {
+        setTrackedStyle(textElement, "background-color", "transparent");
+      }
+    }
+  );
 }
 
 function collectUniqueElements(...selectors) {
@@ -520,9 +773,16 @@ function collectUniqueElements(...selectors) {
   return elements;
 }
 
-function paintStatusTargets(targets, { getStatusText, applyStatusSetting }) {
+function paintStatusTargets(
+  targets,
+  { getStatusText, getStatusTexts, applyStatusSetting }
+) {
   targets.forEach((target) => {
-    const statusSetting = findStatusSetting(getStatusText(target));
+    const statusTexts =
+      typeof getStatusTexts === "function"
+        ? getStatusTexts(target)
+        : getStatusText(target);
+    const statusSetting = findStatusSettingFromCandidates(statusTexts);
     if (!statusSetting) {
       return;
     }
@@ -541,48 +801,116 @@ function applyStatusSettingToWorkflowNode(statusNode, statusSetting) {
   setTrackedClassState(statusNode, STATUS_WORKFLOW_CLASS, true);
 }
 
+function getTicketButtonStyleTargets(ticketButton) {
+  return ticketButton ? [ticketButton] : [];
+}
+
+function getTicketButtonTextTargets(ticketButton) {
+  return [
+    ...new Set(
+      getTicketButtonStyleTargets(ticketButton).flatMap((target) => [
+        target,
+        ...(target.querySelectorAll?.("span, div, svg") || []),
+      ])
+    ),
+  ];
+}
+
+function getTicketButtonSurfaceBlockers(ticketButton) {
+  if (!ticketButton?.querySelectorAll) {
+    return [];
+  }
+
+  return [
+    ...ticketButton.querySelectorAll(
+      ":scope > span, :scope > div, :scope > span span, :scope > span div, :scope > div span, :scope > div div"
+    ),
+  ].filter((target) => {
+    const isDirectEmptyOverlay =
+      target.parentElement === ticketButton &&
+      target.matches("div") &&
+      !getStatusBadgeTestId(target).includes("status-lozenge") &&
+      !normalizeStatusTextCandidate(target.textContent);
+
+    return !isDirectEmptyOverlay;
+  });
+}
+
+function clearTicketButtonHoverOverlay(ticketButton) {
+  getTicketButtonSurfaceBlockers(ticketButton).forEach((target) => {
+    setTrackedStyle(target, "background-color", "transparent", "important");
+    setTrackedStyle(target, "background-image", "none", "important");
+  });
+}
+
+function setTicketButtonColor(ticketButton, statusSetting) {
+  const textColor = statusSetting.textColor || "";
+  getTicketButtonTextTargets(ticketButton).forEach((target) => {
+    if (textColor) {
+      setTrackedStyle(target, "color", textColor, "important");
+      return;
+    }
+
+    setTrackedStyle(target, "color", "");
+  });
+}
+
+function clearTicketButtonRibbonStyles(ticketButton) {
+  getTicketButtonStyleTargets(ticketButton).forEach((target) => {
+    clearTrackedRibbonStyles(target);
+  });
+}
+
+function setTicketButtonBackground(ticketButton) {
+  getTicketButtonStyleTargets(ticketButton).forEach((target) => {
+    clearTrackedRibbonStyles(target);
+    setTrackedStyle(target, "background-color", "transparent", "important");
+    setTrackedStyle(target, "background-image", "none", "important");
+    setTrackedClassState(target, STATUS_BUTTON_SURFACE_CLASS, true);
+    setTrackedClassState(target, STATUS_BUTTON_RIBBON_CLASS, false);
+    setTrackedClassState(target, STATUS_RIBBON_CLASS, false);
+  });
+  clearTicketButtonHoverOverlay(ticketButton);
+}
+
+function setTicketButtonRibbonStyles(ticketButton) {
+  getTicketButtonStyleTargets(ticketButton).forEach((target) => {
+    if (!target.classList.contains(STATUS_BUTTON_RIBBON_CLASS)) {
+      clearTrackedRibbonStyles(target);
+    }
+    setTrackedRibbonPhase(target);
+    setTrackedStyle(target, "background-color", "transparent", "important");
+    setTrackedStyle(target, "background-image", "none", "important");
+    setTrackedClassState(target, STATUS_BUTTON_SURFACE_CLASS, true);
+    setTrackedClassState(target, STATUS_BUTTON_RIBBON_CLASS, true);
+    setTrackedClassState(target, STATUS_RIBBON_CLASS, false);
+  });
+  clearTicketButtonHoverOverlay(ticketButton);
+}
+
 function applyStatusSettingToTicketButton(ticketButton, statusSetting) {
   if (!ticketButton || !statusSetting) {
     return;
   }
 
   ensureStatusColorizerStyle();
-  setTrackedStatusPalette(ticketButton, statusSetting);
+  getTicketButtonStyleTargets(ticketButton).forEach((target) => {
+    setTrackedStatusPalette(target, statusSetting);
+  });
   if (!statusSetting.animationClass) {
-    clearTrackedRibbonStyles(ticketButton);
-    setTrackedStyle(
-      ticketButton,
-      "background-color",
-      statusSetting.backgroundColor,
-      "important"
-    );
-    if (statusSetting.textColor) {
-      setTrackedStyle(
-        ticketButton,
-        "color",
-        statusSetting.textColor,
-        "important"
-      );
-    } else {
-      setTrackedStyle(ticketButton, "color", "");
-    }
-    setTrackedClassState(ticketButton, STATUS_BUTTON_RIBBON_CLASS, false);
+    clearTicketButtonRibbonStyles(ticketButton);
+    setTicketButtonBackground(ticketButton);
+    setTicketButtonColor(ticketButton, statusSetting);
+    getTicketButtonStyleTargets(ticketButton).forEach((target) => {
+      setTrackedClassState(target, STATUS_BUTTON_SURFACE_CLASS, true);
+      setTrackedClassState(target, STATUS_BUTTON_RIBBON_CLASS, false);
+      setTrackedClassState(target, STATUS_RIBBON_CLASS, false);
+    });
     return;
   }
 
-  setTrackedStyle(ticketButton, "background-color", "transparent", "important");
-  if (statusSetting.textColor) {
-    setTrackedStyle(
-      ticketButton,
-      "color",
-      statusSetting.textColor,
-      "important"
-    );
-  } else {
-    setTrackedStyle(ticketButton, "color", "");
-  }
-  setTrackedStaticRibbonStyles(ticketButton, statusSetting);
-  setTrackedClassState(ticketButton, STATUS_BUTTON_RIBBON_CLASS, false);
+  setTicketButtonColor(ticketButton, statusSetting);
+  setTicketButtonRibbonStyles(ticketButton);
 }
 
 function collectBadgeTargets() {
@@ -602,8 +930,8 @@ function getStatusSurfaces() {
   return [
     {
       collectTargets: collectBadgeTargets,
-      getStatusText: (badge) => badge.textContent,
-      applyStatusSetting: applyStatusSettingToBadge,
+      getStatusTexts: getStatusBadgeTextCandidates,
+      applyStatusSetting: applyStatusSettingToBadgeSource,
     },
     {
       collectTargets: collectTicketButtonTargets,
@@ -703,6 +1031,14 @@ function observeDOMChanges() {
   observeWorkerBodyMutations(scheduleStatusRefresh);
   observeWorkerViewportActivity(() => {
     scheduleStatusRefresh("viewport");
+  });
+  document.addEventListener("mouseover", scheduleStatusRefresh, {
+    capture: true,
+    passive: true,
+  });
+  document.addEventListener("focusin", scheduleStatusRefresh, {
+    capture: true,
+    passive: true,
   });
 }
 

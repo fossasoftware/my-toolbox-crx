@@ -5,6 +5,22 @@ All notable changes to the "My ToolBox" Chrome extension will be documented in t
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (starting from this documented version).
 
+## [5.0.2] - 2026-04-29
+
+This patch release restores Status Colorizer behavior after recent Atlassian Jira status button and lozenge markup changes.
+
+### Changed
+
+- Reworked Status Colorizer button painting to use a dedicated button surface layer so Jira ticket status buttons and compact status controls share the same stable background/ribbon rendering model.
+- Expanded Jira helper mutation observation to include text, class, and stable status-related attribute changes so Jira hover/remount states repaint without waiting for slower viewport refreshes.
+
+### Fixed
+
+- Fixed Jira statuses not coloring automatically on page load after Atlassian delayed or changed status lozenge markup.
+- Fixed Jira status colors disappearing or repainting late when hovering status buttons that Jira remounts into a different presentation structure.
+- Fixed animated ribbon styling on Jira issue-view status buttons and compact status controls so animations render on the visible control surface instead of only on nested text spans.
+- Fixed ribbon animation looping so the stripe pattern repeats seamlessly and keeps its phase when Jira remounts hovered status buttons.
+
 ## [5.0.1] - 2026-03-31
 
 This patch release focuses on post-5.0.0 stabilization, Jira helper performance, and release hardening.
