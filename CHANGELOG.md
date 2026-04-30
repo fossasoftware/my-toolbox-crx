@@ -5,6 +5,16 @@ All notable changes to the "My ToolBox" Chrome extension will be documented in t
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (starting from this documented version).
 
+## [5.1.1] - 2026-04-30
+
+This patch release improves Status Colorizer rendering across newer Jira status surfaces.
+
+### Fixed
+
+- Fixed animated ribbon status text being hidden on classic dashboard status lozenges.
+- Added Status Colorizer coverage for Jira Home `For you` issue list status pills.
+- Added Status Colorizer coverage for JQL builder status picker lozenges.
+
 ## [5.1.0] - 2026-04-30
 
 This minor release adds selectable Status Colorizer animations and simplifies animated ribbon configuration.

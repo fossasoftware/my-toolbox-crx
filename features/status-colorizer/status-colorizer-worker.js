@@ -55,6 +55,8 @@ const INLINE_CARD_STATUS_BADGE_SELECTOR =
   "[data-testid='inline-card-resolved-view-lozenge']";
 const INLINE_CARD_STATUS_BADGE_TEXT_SELECTOR =
   "[data-testid='inline-card-resolved-view-lozenge--text']";
+const JQL_PICKER_STATUS_BADGE_SELECTOR =
+  "[data-testid='jql-builder-basic-picker.ui.format-option-label.lozenge-option-label.lozenge']";
 const GENERIC_STATUS_BADGE_CONTAINER_SELECTOR =
   "[data-testid*='status-lozenge']:not([data-testid$='--text']), [data-test-id*='status-lozenge']:not([data-test-id$='--text'])";
 const GENERIC_STATUS_BADGE_TEXT_SELECTOR =
@@ -67,10 +69,12 @@ const ISSUE_STATUS_BUTTON_SELECTOR =
   "button[data-testid='issue-field-status.ui.status-view.status-button.status-button']";
 const WORKFLOW_STATUS_NODE_SELECTOR =
   "svg[data-testid='accessible-workflow-diagram.svg-root'] g[data-drag-type='status']";
+const HOME_LIST_ITEM_SELECTOR = "li[data-testid^='home-list-item-']";
 const STATUS_BADGE_CONTAINER_SELECTORS = [
   ATLASSIAN_STATUS_BADGE_SELECTOR,
   HISTORY_STATUS_BADGE_SELECTOR,
   INLINE_CARD_STATUS_BADGE_SELECTOR,
+  JQL_PICKER_STATUS_BADGE_SELECTOR,
   GENERIC_STATUS_BADGE_CONTAINER_SELECTOR,
   ISSUE_TABLE_STATUS_CELL_SELECTOR,
   CLASSIC_STATUS_BADGE_SELECTOR,
@@ -391,6 +395,7 @@ function ensureStatusColorizerStyle() {
 
     .${STATUS_RIBBON_CLASS} {
       position: relative !important;
+      z-index: 0 !important;
       isolation: isolate !important;
       overflow: hidden !important;
       background-color: transparent !important;
@@ -404,7 +409,7 @@ function ensureStatusColorizerStyle() {
       bottom: 0;
       left: 0;
       width: calc(100% + ${STATUS_RIBBON_TILE_SIZE});
-      z-index: 0;
+      z-index: -1;
       pointer-events: none;
       border-radius: inherit;
       background-image: repeating-linear-gradient(
@@ -801,7 +806,7 @@ function getStatusBadgeContainer(element) {
 function getNestedVisualBadge(element) {
   if (
     !element?.matches?.(
-      `${ATLASSIAN_STATUS_BADGE_SELECTOR}, ${GENERIC_STATUS_BADGE_CONTAINER_SELECTOR}`
+      `${ATLASSIAN_STATUS_BADGE_SELECTOR}, ${JQL_PICKER_STATUS_BADGE_SELECTOR}, ${GENERIC_STATUS_BADGE_CONTAINER_SELECTOR}`
     )
   ) {
     if (!element?.matches?.(ISSUE_TABLE_STATUS_CELL_SELECTOR)) {
@@ -918,6 +923,72 @@ function findStatusSettingFromCandidates(statusTexts) {
   return null;
 }
 
+function getHomeListStatusRegion(item) {
+  if (!item?.children?.length) {
+    return null;
+  }
+
+  const contentChildren = [...item.children].filter(
+    (child) =>
+      child.tagName !== "A" && normalizeStatusTextCandidate(child.textContent)
+  );
+  return contentChildren[contentChildren.length - 1] || null;
+}
+
+function isHomeListStatusTextLeaf(element) {
+  if (!element || element.children.length > 0) {
+    return false;
+  }
+
+  const text = normalizeStatusTextCandidate(element.textContent);
+  return Boolean(text && findStatusSetting(text));
+}
+
+function resolveHomeListStatusPaintTarget(textElement, item) {
+  const statusText = normalizeStatusTextCandidate(textElement?.textContent);
+  if (!statusText || !item) {
+    return null;
+  }
+
+  let target = textElement;
+  let current = textElement;
+  while (current?.parentElement && current.parentElement !== item) {
+    const parent = current.parentElement;
+    if (normalizeStatusTextCandidate(parent.textContent) !== statusText) {
+      break;
+    }
+    if (parent.matches("span, button")) {
+      target = parent;
+    }
+    current = parent;
+  }
+
+  return target;
+}
+
+function collectHomeListStatusTargets() {
+  const targets = new Set();
+  document.querySelectorAll(HOME_LIST_ITEM_SELECTOR).forEach((item) => {
+    const region = getHomeListStatusRegion(item);
+    if (!region?.querySelectorAll) {
+      return;
+    }
+
+    region.querySelectorAll("span, div").forEach((element) => {
+      if (!isHomeListStatusTextLeaf(element)) {
+        return;
+      }
+
+      const target = resolveHomeListStatusPaintTarget(element, item);
+      if (target) {
+        targets.add(target);
+      }
+    });
+  });
+
+  return [...targets];
+}
+
 function applyStatusSettingToBadge(outerBadge, statusSetting) {
   if (!outerBadge || !statusSetting) {
     return;
@@ -983,6 +1054,16 @@ function applyStatusSettingToBadgeSource(sourceBadge, statusSetting) {
       );
     }
   );
+}
+
+function applyStatusSettingToHomeListStatus(statusBadge, statusSetting) {
+  applyStatusSettingToBadge(statusBadge, statusSetting);
+  const textColor = statusSetting.textColor || "";
+  statusBadge.querySelectorAll?.("span, div").forEach((target) => {
+    setTrackedStyle(target, "color", textColor, textColor ? "important" : "");
+    setTrackedStyle(target, "background-color", "transparent", "important");
+    setTrackedStyle(target, "background-image", "none", "important");
+  });
 }
 
 function collectUniqueElements(...selectors) {
@@ -1159,6 +1240,11 @@ function getStatusSurfaces() {
       collectTargets: collectTicketButtonTargets,
       getStatusText: getTicketButtonStatusText,
       applyStatusSetting: applyStatusSettingToTicketButton,
+    },
+    {
+      collectTargets: collectHomeListStatusTargets,
+      getStatusText: (statusBadge) => statusBadge.textContent,
+      applyStatusSetting: applyStatusSettingToHomeListStatus,
     },
     {
       collectTargets: collectWorkflowTargets,
