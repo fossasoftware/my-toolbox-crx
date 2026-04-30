@@ -11,6 +11,10 @@ const statusColorizerLogic = global.MyToolboxStatusColorizerLogic || {};
 const {
   buildStatusLookup = () => new Map(),
   findStatusSettingFromLookup = () => null,
+  migrateStatusSettings = (settings) => ({
+    changed: false,
+    settings: Array.isArray(settings) ? settings : [],
+  }),
 } = statusColorizerLogic;
 const STATUS_TOUCH_ATTR = "data-my-toolbox-status-touched";
 const STATUS_PROPS_ATTR = "data-my-toolbox-status-props";
@@ -20,6 +24,17 @@ const STATUS_RIBBON_CLASS = "my-toolbox-status-ribbon";
 const STATUS_BUTTON_SURFACE_CLASS = "my-toolbox-status-button-surface";
 const STATUS_BUTTON_RIBBON_CLASS = "my-toolbox-status-button-ribbon";
 const STATUS_WORKFLOW_CLASS = "my-toolbox-status-workflow";
+const STATUS_ANIMATION_SURFACE_CLASS = "my-toolbox-status-animation-surface";
+const STATUS_ANIMATION_CLASS_BY_NAME = {
+  ping: "my-toolbox-status-anim-ping",
+  breathe: "my-toolbox-status-anim-breathe",
+  nudge: "my-toolbox-status-anim-nudge",
+  shimmer: "my-toolbox-status-anim-shimmer",
+  glow: "my-toolbox-status-anim-glow",
+  urgent: "my-toolbox-status-anim-urgent",
+  sweep: "my-toolbox-status-anim-sweep",
+};
+const STATUS_ANIMATION_CLASS_NAMES = Object.values(STATUS_ANIMATION_CLASS_BY_NAME);
 const STATUS_VAR_BG = "--my-toolbox-status-bg";
 const STATUS_VAR_FG = "--my-toolbox-status-fg";
 const STATUS_VAR_PRIMARY = "--my-toolbox-status-primary";
@@ -79,6 +94,8 @@ const TRACKED_STATUS_CLASSES = [
   STATUS_BUTTON_SURFACE_CLASS,
   STATUS_BUTTON_RIBBON_CLASS,
   STATUS_WORKFLOW_CLASS,
+  STATUS_ANIMATION_SURFACE_CLASS,
+  ...STATUS_ANIMATION_CLASS_NAMES,
 ];
 
 function loadWorkerBooleanPreference(key, callback, defaultValue = true) {
@@ -274,8 +291,19 @@ function loadStatusColorizerEnabled(callback) {
 
 function loadStatusColorSettings(callback) {
   loadWorkerArraySetting("statusColorSettings", (settings) => {
-    statusColorSettings = settings;
-    compiledStatusLookup = buildStatusLookup(settings);
+    const migration = migrateStatusSettings(settings);
+    statusColorSettings = migration.settings;
+    compiledStatusLookup = buildStatusLookup(statusColorSettings);
+    if (migration.changed) {
+      chrome.storage.sync.set({ statusColorSettings: statusColorSettings }, () => {
+        if (chrome.runtime.lastError) {
+          console.error(
+            "Status Colorizer: Failed to persist migrated settings",
+            chrome.runtime.lastError
+          );
+        }
+      });
+    }
     callback?.();
   }, {
     defaultResourcePath: "data/defaultSettings.json",
@@ -291,8 +319,70 @@ function ensureStatusColorizerStyle() {
   style.id = STATUS_STYLE_ID;
   style.textContent = `
     @keyframes my-toolbox-status-ribbon-move {
-      0% { background-position: 0 0; }
-      100% { background-position: ${STATUS_RIBBON_TILE_SIZE} 0; }
+      0% { transform: translate3d(calc(-1 * ${STATUS_RIBBON_TILE_SIZE}), 0, 0); }
+      100% { transform: translate3d(0, 0, 0); }
+    }
+
+    @keyframes my-toolbox-status-ping {
+      0% {
+        box-shadow: 0 0 0 0 color-mix(
+          in srgb,
+          var(${STATUS_VAR_BG}, #00a3bf) 55%,
+          transparent
+        );
+      }
+      80%, 100% {
+        box-shadow: 0 0 0 14px transparent;
+      }
+    }
+
+    @keyframes my-toolbox-status-breathe {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.78; }
+    }
+
+    @keyframes my-toolbox-status-nudge {
+      0%, 88%, 100% { transform: translateX(0); }
+      92% { transform: translateX(-3px); }
+      96% { transform: translateX(3px); }
+    }
+
+    @keyframes my-toolbox-status-shimmer {
+      0% { left: -60%; }
+      60%, 100% { left: 120%; }
+    }
+
+    @keyframes my-toolbox-status-glow {
+      0%, 100% { box-shadow: 0 0 0 0 transparent; }
+      50% {
+        box-shadow: 0 0 12px 2px color-mix(
+          in srgb,
+          var(${STATUS_VAR_BG}, #ffc400) 60%,
+          transparent
+        );
+      }
+    }
+
+    @keyframes my-toolbox-status-urgent {
+      0%, 100% {
+        transform: translateX(0);
+        box-shadow: 0 0 0 0 color-mix(
+          in srgb,
+          var(${STATUS_VAR_BG}, #de350b) 50%,
+          transparent
+        );
+      }
+      25% { transform: translateX(-1px); }
+      50% {
+        transform: translateX(1px);
+        box-shadow: 0 0 0 6px transparent;
+      }
+      75% { transform: translateX(-1px); }
+    }
+
+    @keyframes my-toolbox-status-sweep {
+      0% { left: -100%; }
+      100% { left: 100%; }
     }
 
     .${STATUS_BASE_CLASS} {
@@ -300,7 +390,23 @@ function ensureStatusColorizerStyle() {
     }
 
     .${STATUS_RIBBON_CLASS} {
+      position: relative !important;
+      isolation: isolate !important;
+      overflow: hidden !important;
       background-color: transparent !important;
+      background-image: none !important;
+    }
+
+    .${STATUS_RIBBON_CLASS}::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: calc(100% + ${STATUS_RIBBON_TILE_SIZE});
+      z-index: 0;
+      pointer-events: none;
+      border-radius: inherit;
       background-image: repeating-linear-gradient(
         45deg,
         var(${STATUS_VAR_PRIMARY}, transparent),
@@ -309,9 +415,14 @@ function ensureStatusColorizerStyle() {
         var(${STATUS_VAR_SECONDARY}, transparent) 20px
       ) !important;
       background-repeat: repeat !important;
-      background-size: ${STATUS_RIBBON_TILE_SIZE} ${STATUS_RIBBON_TILE_SIZE} !important;
       animation: my-toolbox-status-ribbon-move ${STATUS_RIBBON_ANIMATION_DURATION} linear infinite !important;
       animation-delay: var(${STATUS_RIBBON_DELAY_VAR}, 0ms) !important;
+      will-change: transform;
+    }
+
+    .${STATUS_RIBBON_CLASS} > * {
+      position: relative !important;
+      z-index: 1 !important;
     }
 
     .${STATUS_BUTTON_SURFACE_CLASS} {
@@ -324,7 +435,10 @@ function ensureStatusColorizerStyle() {
     .${STATUS_BUTTON_SURFACE_CLASS}::before {
       content: "";
       position: absolute;
-      inset: 0;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: calc(100% + ${STATUS_RIBBON_TILE_SIZE});
       z-index: 0;
       pointer-events: none;
       border-radius: inherit;
@@ -342,14 +456,82 @@ function ensureStatusColorizerStyle() {
         var(${STATUS_VAR_SECONDARY}, transparent) 20px
       ) !important;
       background-repeat: repeat !important;
-      background-size: ${STATUS_RIBBON_TILE_SIZE} ${STATUS_RIBBON_TILE_SIZE} !important;
       animation: my-toolbox-status-ribbon-move ${STATUS_RIBBON_ANIMATION_DURATION} linear infinite !important;
       animation-delay: var(${STATUS_RIBBON_DELAY_VAR}, 0ms) !important;
+      will-change: transform;
     }
 
     .${STATUS_BUTTON_SURFACE_CLASS} > * {
       position: relative !important;
       z-index: 1 !important;
+    }
+
+    .${STATUS_ANIMATION_SURFACE_CLASS} {
+      position: relative !important;
+      isolation: isolate !important;
+      overflow: hidden !important;
+    }
+
+    .${STATUS_ANIMATION_SURFACE_CLASS} > * {
+      position: relative !important;
+      z-index: 1 !important;
+    }
+
+    .${STATUS_ANIMATION_CLASS_BY_NAME.ping} {
+      animation: my-toolbox-status-ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite !important;
+    }
+
+    .${STATUS_ANIMATION_CLASS_BY_NAME.breathe} {
+      animation: my-toolbox-status-breathe 3.2s ease-in-out infinite !important;
+    }
+
+    .${STATUS_ANIMATION_CLASS_BY_NAME.nudge} {
+      animation: my-toolbox-status-nudge 2.8s ease-in-out infinite !important;
+    }
+
+    .${STATUS_ANIMATION_CLASS_BY_NAME.shimmer}::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -60%;
+      width: 40%;
+      height: 100%;
+      z-index: 0;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.28),
+        transparent
+      );
+      transform: skewX(-20deg);
+      animation: my-toolbox-status-shimmer 2.6s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .${STATUS_ANIMATION_CLASS_BY_NAME.glow} {
+      animation: my-toolbox-status-glow 2.2s ease-in-out infinite !important;
+    }
+
+    .${STATUS_ANIMATION_CLASS_BY_NAME.urgent} {
+      animation: my-toolbox-status-urgent 1.4s ease-in-out infinite !important;
+    }
+
+    .${STATUS_ANIMATION_CLASS_BY_NAME.sweep}::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.4),
+        transparent
+      );
+      animation: my-toolbox-status-sweep 1.4s ease-out 1 forwards;
+      pointer-events: none;
     }
 
     .${STATUS_WORKFLOW_CLASS} rect {
@@ -360,6 +542,24 @@ function ensureStatusColorizerStyle() {
     .${STATUS_WORKFLOW_CLASS} text,
     .${STATUS_WORKFLOW_CLASS} tspan {
       fill: var(${STATUS_VAR_FG}, currentColor) !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .${STATUS_BASE_CLASS},
+      .${STATUS_BASE_CLASS} *,
+      .${STATUS_BASE_CLASS}::before,
+      .${STATUS_BASE_CLASS}::after,
+      .${STATUS_BUTTON_SURFACE_CLASS},
+      .${STATUS_BUTTON_SURFACE_CLASS} *,
+      .${STATUS_BUTTON_SURFACE_CLASS}::before,
+      .${STATUS_BUTTON_SURFACE_CLASS}::after,
+      .${STATUS_ANIMATION_SURFACE_CLASS},
+      .${STATUS_ANIMATION_SURFACE_CLASS} *,
+      .${STATUS_ANIMATION_SURFACE_CLASS}::before,
+      .${STATUS_ANIMATION_SURFACE_CLASS}::after {
+        animation: none !important;
+        transition: none !important;
+      }
     }
   `;
   (document.head || document.documentElement).appendChild(style);
@@ -486,6 +686,26 @@ function setTrackedClassState(element, className, enabled) {
 
 function setTrackedStatusVariable(element, variableName, value) {
   setTrackedStyle(element, variableName, value || "");
+}
+
+function getStatusAnimationClassName(animationClass) {
+  return STATUS_ANIMATION_CLASS_BY_NAME[animationClass] || "";
+}
+
+function isRibbonAnimation(animationClass) {
+  return animationClass === "ribbon";
+}
+
+function setTrackedStatusAnimation(element, animationClass) {
+  const nextClassName = getStatusAnimationClassName(animationClass);
+  STATUS_ANIMATION_CLASS_NAMES.forEach((className) => {
+    setTrackedClassState(element, className, className === nextClassName);
+  });
+  setTrackedClassState(
+    element,
+    STATUS_ANIMATION_SURFACE_CLASS,
+    Boolean(nextClassName)
+  );
 }
 
 function setTrackedStatusPalette(element, statusSetting) {
@@ -706,15 +926,14 @@ function applyStatusSettingToBadge(outerBadge, statusSetting) {
   ensureStatusColorizerStyle();
   const innerText = outerBadge.querySelector(":scope > span, :scope > div");
   const textTarget = innerText || outerBadge;
+  const animationClass = statusSetting.animationClass || "";
+  const usesRibbon = isRibbonAnimation(animationClass);
   setTrackedStatusPalette(outerBadge, statusSetting);
   setTrackedClassState(outerBadge, STATUS_BASE_CLASS, true);
-  setTrackedClassState(
-    outerBadge,
-    STATUS_RIBBON_CLASS,
-    statusSetting.animationClass === "ribbon"
-  );
+  setTrackedClassState(outerBadge, STATUS_RIBBON_CLASS, usesRibbon);
+  setTrackedStatusAnimation(outerBadge, animationClass);
 
-  if (statusSetting.animationClass === "ribbon") {
+  if (usesRibbon) {
     setTrackedRibbonPhase(outerBadge);
     setTrackedStyle(outerBadge, "background-color", "transparent");
   } else {
@@ -725,7 +944,7 @@ function applyStatusSettingToBadge(outerBadge, statusSetting) {
     setTrackedStyle(
       innerText,
       "background-color",
-      statusSetting.animationClass === "ribbon" ? "transparent" : ""
+      usesRibbon ? "transparent" : ""
     );
   }
   setTrackedStyle(
@@ -741,6 +960,7 @@ function applyStatusSettingToBadgeSource(sourceBadge, statusSetting) {
   if (!paintTarget) {
     return;
   }
+  const usesRibbon = isRibbonAnimation(statusSetting.animationClass || "");
 
   if (paintTarget.matches?.("button")) {
     applyStatusSettingToTicketButton(paintTarget, statusSetting);
@@ -756,9 +976,11 @@ function applyStatusSettingToBadgeSource(sourceBadge, statusSetting) {
         statusSetting.textColor || "",
         statusSetting.textColor ? "important" : ""
       );
-      if (statusSetting.animationClass === "ribbon") {
-        setTrackedStyle(textElement, "background-color", "transparent");
-      }
+      setTrackedStyle(
+        textElement,
+        "background-color",
+        usesRibbon ? "transparent" : ""
+      );
     }
   );
 }
@@ -858,17 +1080,20 @@ function setTicketButtonColor(ticketButton, statusSetting) {
 function clearTicketButtonRibbonStyles(ticketButton) {
   getTicketButtonStyleTargets(ticketButton).forEach((target) => {
     clearTrackedRibbonStyles(target);
+    setTrackedStatusAnimation(target, "");
   });
 }
 
-function setTicketButtonBackground(ticketButton) {
+function setTicketButtonBackground(ticketButton, animationClass = "") {
   getTicketButtonStyleTargets(ticketButton).forEach((target) => {
     clearTrackedRibbonStyles(target);
     setTrackedStyle(target, "background-color", "transparent", "important");
     setTrackedStyle(target, "background-image", "none", "important");
+    setTrackedClassState(target, STATUS_BASE_CLASS, true);
     setTrackedClassState(target, STATUS_BUTTON_SURFACE_CLASS, true);
     setTrackedClassState(target, STATUS_BUTTON_RIBBON_CLASS, false);
     setTrackedClassState(target, STATUS_RIBBON_CLASS, false);
+    setTrackedStatusAnimation(target, animationClass);
   });
   clearTicketButtonHoverOverlay(ticketButton);
 }
@@ -881,9 +1106,11 @@ function setTicketButtonRibbonStyles(ticketButton) {
     setTrackedRibbonPhase(target);
     setTrackedStyle(target, "background-color", "transparent", "important");
     setTrackedStyle(target, "background-image", "none", "important");
+    setTrackedClassState(target, STATUS_BASE_CLASS, false);
     setTrackedClassState(target, STATUS_BUTTON_SURFACE_CLASS, true);
     setTrackedClassState(target, STATUS_BUTTON_RIBBON_CLASS, true);
     setTrackedClassState(target, STATUS_RIBBON_CLASS, false);
+    setTrackedStatusAnimation(target, "");
   });
   clearTicketButtonHoverOverlay(ticketButton);
 }
@@ -897,15 +1124,10 @@ function applyStatusSettingToTicketButton(ticketButton, statusSetting) {
   getTicketButtonStyleTargets(ticketButton).forEach((target) => {
     setTrackedStatusPalette(target, statusSetting);
   });
-  if (!statusSetting.animationClass) {
-    clearTicketButtonRibbonStyles(ticketButton);
-    setTicketButtonBackground(ticketButton);
+  const animationClass = statusSetting.animationClass || "";
+  if (!animationClass || !isRibbonAnimation(animationClass)) {
+    setTicketButtonBackground(ticketButton, animationClass);
     setTicketButtonColor(ticketButton, statusSetting);
-    getTicketButtonStyleTargets(ticketButton).forEach((target) => {
-      setTrackedClassState(target, STATUS_BUTTON_SURFACE_CLASS, true);
-      setTrackedClassState(target, STATUS_BUTTON_RIBBON_CLASS, false);
-      setTrackedClassState(target, STATUS_RIBBON_CLASS, false);
-    });
     return;
   }
 

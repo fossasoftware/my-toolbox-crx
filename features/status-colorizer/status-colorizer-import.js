@@ -4,6 +4,11 @@ import {
   mergeNamedRuleEntry,
   sanitizeRuleAliases,
 } from "../shared/rule-import-utils.js";
+import {
+  isValidStatusAnimationClass,
+  normalizeStatusAnimationClass,
+} from "./status-colorizer-animations.js";
+import { normalizeStoredStatusSetting } from "./status-colorizer-settings-normalizer.js";
 import { normalizeStatusName } from "./status-colorizer-table.js";
 import { STATUS_COLOR_SETTINGS_KEY } from "./status-colorizer-storage.js";
 
@@ -17,8 +22,6 @@ function mergeStatusEntry(target, source) {
       "backgroundColor",
       "textColor",
       "animationClass",
-      "primaryColor",
-      "secondaryColor",
     ],
     normalizeName: normalizeStatusName,
     primaryField: "statusName",
@@ -78,31 +81,17 @@ function mergeImportedStatusSettings(data) {
       );
       return null;
     }
-    if ("animationClass" in item && item.animationClass === "ribbon") {
-      if (
-        !("primaryColor" in item) ||
-        typeof item.primaryColor !== "string" ||
-        !colorRegex.test(item.primaryColor)
-      ) {
-        console.error(
-          "Import validation failed: Missing or invalid primaryColor for animation.",
-          item
-        );
-        return null;
-      }
-      if (
-        !("secondaryColor" in item) ||
-        typeof item.secondaryColor !== "string" ||
-        !colorRegex.test(item.secondaryColor)
-      ) {
-        console.error(
-          "Import validation failed: Missing or invalid secondaryColor for animation.",
-          item
-        );
-        return null;
-      }
+    if (
+      "animationClass" in item &&
+      !isValidStatusAnimationClass(item.animationClass)
+    ) {
+      console.error(
+        `Import validation failed: Unsupported animationClass "${item.animationClass}".`,
+        item
+      );
+      return null;
     }
-
+    const animationClass = normalizeStatusAnimationClass(item.animationClass);
     const aliasSources = [];
     if ("aliases" in item) {
       if (!Array.isArray(item.aliases)) {
@@ -135,15 +124,16 @@ function mergeImportedStatusSettings(data) {
     }
     const aliases = sanitizeAliases(statusName, aliasSources);
 
-    const entry = {
+    const entry = normalizeStoredStatusSetting({
+      ...item,
+      animationClass,
+      aliases,
       statusName,
-      backgroundColor: item.backgroundColor,
-    };
-    if ("textColor" in item) entry.textColor = item.textColor;
-    if ("animationClass" in item) entry.animationClass = item.animationClass;
-    if ("primaryColor" in item) entry.primaryColor = item.primaryColor;
-    if ("secondaryColor" in item) entry.secondaryColor = item.secondaryColor;
-    if (aliases.length > 0) entry.aliases = aliases;
+    });
+    if (!entry) {
+      console.error("Import validation failed: Could not normalize item.", item);
+      return null;
+    }
     entries.push(entry);
   }
 

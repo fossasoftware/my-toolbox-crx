@@ -3,6 +3,10 @@ import {
   createAliasRow,
   REMOVE_ICON_SVG,
 } from "../shared/rule-alias-ui.js";
+import {
+  STATUS_ANIMATION_OPTIONS,
+  normalizeStatusAnimationClass,
+} from "./status-colorizer-animations.js";
 
 export function updateButtonVisibility() {
   const tbody = document.querySelector("#statusTable tbody");
@@ -36,8 +40,6 @@ export function addRow(
   backgroundColor = "#ffffff",
   textColor = "#000000",
   animationClass = "",
-  primaryColor = "#000000",
-  secondaryColor = "#ffffff",
   aliases = []
 ) {
   const tbody = document.querySelector("#statusTable tbody");
@@ -143,27 +145,19 @@ export function addRow(
   row.appendChild(cellText);
 
   const cellAnim = document.createElement("td");
-  const inputAnim = document.createElement("input");
-  inputAnim.type = "checkbox";
-  inputAnim.checked = animationClass === "ribbon";
-  cellAnim.appendChild(inputAnim);
+  const animationSelect = document.createElement("select");
+  animationSelect.className = "status-animation-select";
+  animationSelect.setAttribute("aria-label", getText("settingsTableAnimation"));
+  STATUS_ANIMATION_OPTIONS.forEach((optionConfig) => {
+    const option = document.createElement("option");
+    option.value = optionConfig.value;
+    option.dataset.i18n = optionConfig.labelKey;
+    option.textContent = getText(optionConfig.labelKey);
+    animationSelect.appendChild(option);
+  });
+  animationSelect.value = normalizeStatusAnimationClass(animationClass);
+  cellAnim.appendChild(animationSelect);
   row.appendChild(cellAnim);
-
-  const cellPrimary = document.createElement("td");
-  const inputPrimary = document.createElement("input");
-  inputPrimary.type = "color";
-  inputPrimary.value = primaryColor;
-  inputPrimary.disabled = !inputAnim.checked;
-  cellPrimary.appendChild(inputPrimary);
-  row.appendChild(cellPrimary);
-
-  const cellSecondary = document.createElement("td");
-  const inputSecondary = document.createElement("input");
-  inputSecondary.type = "color";
-  inputSecondary.value = secondaryColor;
-  inputSecondary.disabled = !inputAnim.checked;
-  cellSecondary.appendChild(inputSecondary);
-  row.appendChild(cellSecondary);
 
   const cellAction = document.createElement("td");
   const removeButton = document.createElement("button");
@@ -172,15 +166,14 @@ export function addRow(
   removeButton.innerHTML = REMOVE_ICON_SVG;
   removeButton.className = "button button-delete-row";
 
-  const applyAnimationState = (enabled) => {
-    inputPrimary.disabled = !enabled;
-    inputSecondary.disabled = !enabled;
-    inputBg.disabled = enabled;
-    row.classList.toggle("animation-enabled", enabled);
+  const applyAnimationState = (nextAnimationClass) => {
+    const normalizedAnimationClass =
+      normalizeStatusAnimationClass(nextAnimationClass);
+    row.classList.toggle("animation-enabled", Boolean(normalizedAnimationClass));
   };
-  applyAnimationState(inputAnim.checked);
-  inputAnim.addEventListener("change", (event) => {
-    applyAnimationState(event.target.checked);
+  applyAnimationState(animationSelect.value);
+  animationSelect.addEventListener("change", (event) => {
+    applyAnimationState(event.target.value);
   });
   removeButton.addEventListener("click", () => {
     row.classList.add("row-leaving");
@@ -219,8 +212,6 @@ export function renderStatusSettings(settings) {
         setting.backgroundColor,
         setting.textColor || "#ffffff",
         setting.animationClass,
-        setting.primaryColor || "#ffffff",
-        setting.secondaryColor || "#ffffff",
         aliases
       );
     });

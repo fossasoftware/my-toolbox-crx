@@ -25,10 +25,15 @@
   vertical-align: middle;
 }
 .status-colorizer-table th:first-child {
-  width: 30%;
+  width: 38%;
 }
-.status-colorizer-table th:nth-child(n + 2) {
-  width: calc(70% / 6);
+.status-colorizer-table th:nth-child(4) {
+  width: 20%;
+}
+.status-colorizer-table th:nth-child(2),
+.status-colorizer-table th:nth-child(3),
+.status-colorizer-table th:nth-child(5) {
+  width: 14%;
 }
 .status-colorizer-table th {
   font-family: var(--font-heading);
@@ -70,7 +75,8 @@
 
 .status-colorizer-table input[type="text"],
 .status-colorizer-table input[type="color"],
-.status-colorizer-table input[type="checkbox"] {
+.status-colorizer-table input[type="checkbox"],
+.status-colorizer-table select {
   font-family: var(--font-body);
   font-size: 14px;
   vertical-align: middle;
@@ -92,7 +98,8 @@
   box-shadow: 0 0 4px 0 rgba(13, 24, 28, 0.1), 0 0 8px 0 rgba(13, 24, 28, 0.1);
 }
 .status-colorizer-table input[type="text"]:disabled,
-.status-colorizer-table input[type="color"]:disabled {
+.status-colorizer-table input[type="color"]:disabled,
+.status-colorizer-table select:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -226,6 +233,23 @@
 .status-colorizer-table input[type="color"]::-moz-color-swatch {
   border: none;
   border-radius: 1px;
+}
+.status-colorizer-table select.status-animation-select {
+  width: 100%;
+  min-width: 92px;
+  height: var(--input-height);
+  padding: 4px 22px 4px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-input);
+  background-color: var(--background-light);
+  color: var(--dark-text);
+  cursor: pointer;
+}
+.status-colorizer-table select.status-animation-select:focus {
+  outline: none;
+  border-color: var(--dark-text);
+  box-shadow: 0 0 4px 0 rgba(13, 24, 28, 0.1),
+    0 0 8px 0 rgba(13, 24, 28, 0.1);
 }
 .status-colorizer-table input[type="checkbox"] {
   -webkit-appearance: none;

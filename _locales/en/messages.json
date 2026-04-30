@@ -7,8 +7,6 @@
   "settingsTableBackground": { "message": "Background" },
   "settingsTableText": { "message": "Text" },
   "settingsTableAnimation": { "message": "Animation" },
-  "settingsTablePrimaryColor": { "message": "Primary color" },
-  "settingsTableSecondaryColor": { "message": "Secondary color" },
   "settingsTableRemoveRow": { "message": "Delete" },
   "settingsTableKeyword": { "message": "Keyword" },
   "settingsTableColor": { "message": "Color" },
@@ -23,6 +21,16 @@
   "keywordAliasRemoveLabel": { "message": "Remove alias" },
   "statusAliasAddLabel": { "message": "Add alias" },
   "statusAliasRemoveLabel": { "message": "Remove alias" },
+
+  "statusAnimationNone": { "message": "None" },
+  "statusAnimationPing": { "message": "Ping" },
+  "statusAnimationBreathe": { "message": "Breathe" },
+  "statusAnimationNudge": { "message": "Nudge" },
+  "statusAnimationShimmer": { "message": "Shimmer" },
+  "statusAnimationGlow": { "message": "Glow" },
+  "statusAnimationUrgent": { "message": "Urgent" },
+  "statusAnimationSweep": { "message": "Sweep" },
+  "statusAnimationRibbon": { "message": "Ribbon" },
 
   "addRowButton": { "message": "Add row" },
   "addKeywordButton": { "message": "Add row" },
@@ -70,14 +78,6 @@
   },
   "errorInvalidTextColor": {
     "message": "Row $ROW$ error: Invalid text color \"$COLOR$\". Use #rrggbb.",
-    "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } }
-  },
-  "errorInvalidPrimaryColor": {
-    "message": "Row $ROW$ error: Primary color \"$COLOR$\" is required for animations. Use #rrggbb.",
-    "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } }
-  },
-  "errorInvalidSecondaryColor": {
-    "message": "Row $ROW$ error: Secondary color \"$COLOR$\" is required for animations. Use #rrggbb.",
     "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } }
   },
   "errorInternalRow": {

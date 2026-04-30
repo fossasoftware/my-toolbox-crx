@@ -7,8 +7,6 @@
   "settingsTableBackground": { "message": "Фон" },
   "settingsTableText": { "message": "Текст" },
   "settingsTableAnimation": { "message": "Анімація" },
-  "settingsTablePrimaryColor": { "message": "Основний колір" },
-  "settingsTableSecondaryColor": { "message": "Додатковий колір" },
   "settingsTableRemoveRow": { "message": "Видалити" },
   "settingsTableKeyword": { "message": "Ключове слово" },
   "settingsTableColor": { "message": "Колір" },
@@ -22,6 +20,17 @@
   "keywordAliasRemoveLabel": { "message": "Прибрати альтернативне слово" },
   "statusAliasAddLabel": { "message": "Додати альтернативну назву" },
   "statusAliasRemoveLabel": { "message": "прибрати альтернативну назву" },
+
+  "statusAnimationNone": { "message": "Немає" },
+  "statusAnimationPing": { "message": "Пінг" },
+  "statusAnimationBreathe": { "message": "Дихання" },
+  "statusAnimationNudge": { "message": "Поштовх" },
+  "statusAnimationShimmer": { "message": "Блік" },
+  "statusAnimationGlow": { "message": "Світіння" },
+  "statusAnimationUrgent": { "message": "Терміново" },
+  "statusAnimationSweep": { "message": "Промінь" },
+  "statusAnimationRibbon": { "message": "Стрічка" },
+
   "addRowButton": { "message": "Додати рядок" },
   "addKeywordButton": { "message": "Додати рядок" },
   "saveButton": { "message": "Зберегти" },
@@ -67,14 +76,6 @@
   },
   "errorInvalidTextColor": {
     "message": "Помилка в рядку $ROW$: некоректний колір тексту \"$COLOR$\". Використовуйте формат #rrggbb.",
-    "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } }
-  },
-  "errorInvalidPrimaryColor": {
-    "message": "Помилка в рядку $ROW$: для анімації потрібен основний колір \"$COLOR$\" у форматі #rrggbb.",
-    "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } }
-  },
-  "errorInvalidSecondaryColor": {
-    "message": "Помилка в рядку $ROW$: для анімації потрібен додатковий колір \"$COLOR$\" у форматі #rrggbb.",
     "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } }
   },
   "errorInternalRow": {

@@ -15,23 +15,80 @@
         : [];
   }
 
+  const SUPPORTED_STATUS_ANIMATIONS = new Set([
+    "",
+    "ping",
+    "breathe",
+    "nudge",
+    "shimmer",
+    "glow",
+    "urgent",
+    "sweep",
+    "ribbon",
+  ]);
+
+  function normalizeStatusAnimationClass(animationClass) {
+    return typeof animationClass === "string" &&
+      SUPPORTED_STATUS_ANIMATIONS.has(animationClass)
+      ? animationClass
+      : "";
+  }
+
+  function isHexColor(value) {
+    return typeof value === "string" && /^#[0-9a-f]{6}$/i.test(value);
+  }
+
+  function parseHexColor(value) {
+    if (!isHexColor(value)) {
+      return null;
+    }
+
+    return {
+      r: Number.parseInt(value.slice(1, 3), 16),
+      g: Number.parseInt(value.slice(3, 5), 16),
+      b: Number.parseInt(value.slice(5, 7), 16),
+    };
+  }
+
+  function componentToHex(value) {
+    return Math.max(0, Math.min(255, Math.round(value)))
+      .toString(16)
+      .padStart(2, "0");
+  }
+
+  function rgbToHex({ r, g, b }) {
+    return `#${componentToHex(r)}${componentToHex(g)}${componentToHex(b)}`;
+  }
+
+  function lightenHexColor(value, amount = 0.24) {
+    const color = parseHexColor(value);
+    if (!color) {
+      return value || "";
+    }
+
+    return rgbToHex({
+      r: color.r + (255 - color.r) * amount,
+      g: color.g + (255 - color.g) * amount,
+      b: color.b + (255 - color.b) * amount,
+    });
+  }
+
   function normalizeStatusSetting(setting) {
-    const backgroundColor =
+    const rawBackgroundColor =
       typeof setting?.backgroundColor === "string" ? setting.backgroundColor : "";
-    const primaryColor =
-      typeof setting?.primaryColor === "string" && setting.primaryColor
+    const animationClass = normalizeStatusAnimationClass(setting?.animationClass);
+    const backgroundColor =
+      animationClass === "ribbon" && isHexColor(setting?.primaryColor)
         ? setting.primaryColor
-        : backgroundColor;
-    const secondaryColor =
-      typeof setting?.secondaryColor === "string" && setting.secondaryColor
-        ? setting.secondaryColor
-        : primaryColor || backgroundColor;
+        : rawBackgroundColor;
+    const primaryColor = backgroundColor;
+    const secondaryColor = lightenHexColor(primaryColor || backgroundColor);
 
     return {
       statusName: normalizeStatusName(setting?.statusName),
       backgroundColor,
       textColor: typeof setting?.textColor === "string" ? setting.textColor : "",
-      animationClass: setting?.animationClass === "ribbon" ? "ribbon" : "",
+      animationClass,
       primaryColor,
       secondaryColor,
     };
@@ -71,7 +128,73 @@
   }
 
   function getStatusRibbonBackground(statusSetting) {
-    return `repeating-linear-gradient(45deg, ${statusSetting.primaryColor}, ${statusSetting.primaryColor} 10px, ${statusSetting.secondaryColor} 10px, ${statusSetting.secondaryColor} 20px)`;
+    const primaryColor =
+      typeof statusSetting?.primaryColor === "string" &&
+      statusSetting.primaryColor
+        ? statusSetting.primaryColor
+        : statusSetting?.backgroundColor || "";
+    const secondaryColor = lightenHexColor(primaryColor);
+    return `repeating-linear-gradient(45deg, ${primaryColor}, ${primaryColor} 10px, ${secondaryColor} 10px, ${secondaryColor} 20px)`;
+  }
+
+  function normalizeStoredStatusSetting(setting) {
+    if (!setting || typeof setting !== "object" || Array.isArray(setting)) {
+      return null;
+    }
+
+    const statusName = normalizeStatusName(setting.statusName);
+    if (!statusName) {
+      return null;
+    }
+
+    const animationClass = normalizeStatusAnimationClass(setting.animationClass);
+    const backgroundColor =
+      animationClass === "ribbon" && isHexColor(setting.primaryColor)
+        ? setting.primaryColor
+        : setting.backgroundColor;
+    const normalized = {
+      statusName,
+      backgroundColor:
+        typeof backgroundColor === "string" ? backgroundColor : "#ffffff",
+    };
+    if (isHexColor(setting.textColor)) {
+      normalized.textColor = setting.textColor;
+    }
+    if (animationClass) {
+      normalized.animationClass = animationClass;
+    }
+
+    const aliases = [];
+    const seenAliases = new Set();
+    getStatusAliases(setting).forEach((alias) => {
+      const normalizedAlias = normalizeStatusName(alias);
+      if (
+        !normalizedAlias ||
+        normalizedAlias === statusName ||
+        seenAliases.has(normalizedAlias)
+      ) {
+        return;
+      }
+      seenAliases.add(normalizedAlias);
+      aliases.push(normalizedAlias);
+    });
+    if (aliases.length > 0) {
+      normalized.aliases = aliases;
+    }
+
+    return normalized;
+  }
+
+  function migrateStatusSettings(settings) {
+    const source = Array.isArray(settings) ? settings : [];
+    const migrated = source
+      .map((setting) => normalizeStoredStatusSetting(setting))
+      .filter(Boolean);
+
+    return {
+      changed: JSON.stringify(source) !== JSON.stringify(migrated),
+      settings: migrated,
+    };
   }
 
   global.MyToolboxStatusColorizerLogic = {
@@ -79,6 +202,9 @@
     findStatusSettingFromLookup,
     getStatusAliases,
     getStatusRibbonBackground,
+    lightenHexColor,
+    migrateStatusSettings,
+    normalizeStatusAnimationClass,
     normalizeStatusName,
     normalizeStatusSetting,
   };

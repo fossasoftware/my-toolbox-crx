@@ -1,15 +1,15 @@
 # My ToolBox
 
-[![Release](https://img.shields.io/badge/release-5.0.2-blue)](https://github.com/fossasoftware/my-toolbox-crx/releases)
+[![Release](https://img.shields.io/badge/release-5.1.0-blue)](https://github.com/fossasoftware/my-toolbox-crx/releases)
 
 **Chrome Extension**
 
 **My ToolBox** is a Chrome extension for Jira Cloud that combines helper rules, a whiteboard-style board, bookmarks, and a built-in markdown notepad into one workspace.
 
-**Version:** 5.0.2
+**Version:** 5.1.0
 **Author:** Vitalii Kopach
 
-`5.0.2` is a compatibility patch release focused on restoring reliable Jira status coloring after Atlassian status button and lozenge DOM changes.
+`5.1.0` adds selectable Status Colorizer animations, a refreshed default Jira status palette, and automatic migration for simplified ribbon settings.
 
 ## Highlights
 
@@ -23,7 +23,8 @@
 
 - **Status Colorizer**
   - Set background + text colors for Jira statuses.
-  - Optional animated ribbon with primary/secondary colors.
+  - Choose optional status animations such as ping, breathe, nudge, shimmer, glow, urgent, sweep, and ribbon.
+  - Ribbon animation derives its secondary stripe color automatically from the status background.
   - Add **aliases** so multiple status names share one rule.
   - Import/export presets as JSON.
   - Changes apply live on already open Jira tabs.

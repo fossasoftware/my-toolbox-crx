@@ -5,6 +5,28 @@ All notable changes to the "My ToolBox" Chrome extension will be documented in t
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (starting from this documented version).
 
+## [5.1.0] - 2026-04-30
+
+This minor release adds selectable Status Colorizer animations and simplifies animated ribbon configuration.
+
+### Added
+
+- Added a Status Colorizer animation selector with ping, breathe, nudge, shimmer, glow, urgent, sweep, and ribbon options.
+- Added automatic Status Colorizer settings migration so older saved rules continue to work after the animation schema changes.
+- Added `AGENTS.md` with repository contributor guidelines.
+
+### Changed
+
+- Refreshed the default Status Colorizer palette and default animation assignments for common Jira statuses.
+- Removed manual primary/secondary ribbon color settings; ribbon now derives a lighter secondary stripe from the status background color.
+- Removed the dots and stripes animation options and simplified sweep to a sweep-only effect.
+
+### Fixed
+
+- Fixed Jira issue-view status button painting so colors and animations render on the visible button surface.
+- Improved ribbon animation rendering to reduce visible seams and lag.
+- Adjusted ping so the external wave remains visible without changing the button layout.
+
 ## [5.0.2] - 2026-04-29
 
 This patch release restores Status Colorizer behavior after recent Atlassian Jira status button and lozenge markup changes.

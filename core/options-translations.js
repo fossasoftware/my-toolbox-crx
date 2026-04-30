@@ -66,6 +66,11 @@ export function applyOptionsTranslations({
       button.setAttribute("aria-label", label);
     });
   document
+    .querySelectorAll('#statusTable tbody .status-animation-select')
+    .forEach((select) => {
+      select.setAttribute("aria-label", getText("settingsTableAnimation"));
+    });
+  document
     .querySelectorAll('#rowHighlightTable tbody .keyword-input')
     .forEach((input) => {
       input.placeholder = getText("inputKeywordPlaceholder");

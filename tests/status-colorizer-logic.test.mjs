@@ -77,7 +77,7 @@ test("findStatusSettingFromLookup resolves aliases and ignores blanks", async ()
   assert.equal(logic.findStatusSettingFromLookup(lookup, ""), null);
 });
 
-test("normalizeStatusSetting fills ribbon fallback colors", async () => {
+test("normalizeStatusSetting derives ribbon colors from the background", async () => {
   const logic = await loadStatusColorizerLogic();
   const normalized = logic.normalizeStatusSetting({
     statusName: "Blocked",
@@ -90,7 +90,43 @@ test("normalizeStatusSetting fills ribbon fallback colors", async () => {
   assert.equal(normalized.textColor, "");
   assert.equal(normalized.animationClass, "ribbon");
   assert.equal(normalized.primaryColor, "#ff0000");
-  assert.equal(normalized.secondaryColor, "#ff0000");
+  assert.equal(normalized.secondaryColor, "#ff3d3d");
+});
+
+test("normalizeStatusSetting uses legacy ribbon primaryColor as the migrated background", async () => {
+  const logic = await loadStatusColorizerLogic();
+  const normalized = logic.normalizeStatusSetting({
+    statusName: "Open",
+    backgroundColor: "#111111",
+    animationClass: "ribbon",
+    primaryColor: "#0065ff",
+    secondaryColor: "#b3d4ff",
+  });
+
+  assert.equal(normalized.backgroundColor, "#0065ff");
+  assert.equal(normalized.primaryColor, "#0065ff");
+  assert.equal(normalized.secondaryColor, "#3d8aff");
+});
+
+test("normalizeStatusSetting preserves supported animations and drops unknown ones", async () => {
+  const logic = await loadStatusColorizerLogic();
+
+  assert.equal(
+    logic.normalizeStatusSetting({
+      statusName: "Open",
+      backgroundColor: "#0065ff",
+      animationClass: "shimmer",
+    }).animationClass,
+    "shimmer"
+  );
+  assert.equal(
+    logic.normalizeStatusSetting({
+      statusName: "Open",
+      backgroundColor: "#0065ff",
+      animationClass: "stripes",
+    }).animationClass,
+    ""
+  );
 });
 
 test("getStatusRibbonBackground builds the expected repeating gradient", async () => {
@@ -98,9 +134,37 @@ test("getStatusRibbonBackground builds the expected repeating gradient", async (
 
   assert.equal(
     logic.getStatusRibbonBackground({
-      primaryColor: "#111111",
-      secondaryColor: "#eeeeee",
+      backgroundColor: "#111111",
     }),
-    "repeating-linear-gradient(45deg, #111111, #111111 10px, #eeeeee 10px, #eeeeee 20px)"
+    "repeating-linear-gradient(45deg, #111111, #111111 10px, #4a4a4a 10px, #4a4a4a 20px)"
+  );
+});
+
+test("migrateStatusSettings removes legacy ribbon colors and statusAliases", async () => {
+  const logic = await loadStatusColorizerLogic();
+  const migration = logic.migrateStatusSettings([
+    {
+      statusName: " Open ",
+      statusAliases: ["WIP", " open "],
+      backgroundColor: "#111111",
+      textColor: "#ffffff",
+      animationClass: "ribbon",
+      primaryColor: "#0065ff",
+      secondaryColor: "#b3d4ff",
+    },
+  ]);
+
+  assert.equal(migration.changed, true);
+  assert.equal(
+    JSON.stringify(migration.settings),
+    JSON.stringify([
+      {
+        statusName: "open",
+        backgroundColor: "#0065ff",
+        textColor: "#ffffff",
+        animationClass: "ribbon",
+        aliases: ["wip"],
+      },
+    ])
   );
 });

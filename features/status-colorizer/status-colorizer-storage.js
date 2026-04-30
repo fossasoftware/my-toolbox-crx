@@ -1,4 +1,5 @@
 import { getSyncStorage, setSyncStorage } from "../../core/storage.js";
+import { migrateStatusColorSettings } from "./status-colorizer-settings-normalizer.js";
 
 export const STATUS_COLOR_SETTINGS_KEY = "statusColorSettings";
 
@@ -23,6 +24,21 @@ export async function loadStatusColorSettings(defaultSettings = []) {
       settings = [];
     }
   }
+  const migration = migrateStatusColorSettings(settings);
+  settings = migration.settings;
+
+  if (
+    Object.prototype.hasOwnProperty.call(result.data, STATUS_COLOR_SETTINGS_KEY) &&
+    migration.changed
+  ) {
+    const saveResult = await saveStatusColorSettings(settings);
+    if (!saveResult.ok) {
+      console.error(
+        "Status Colorizer: Failed to persist migrated settings.",
+        saveResult.error
+      );
+    }
+  }
 
   return {
     ok: true,
@@ -32,7 +48,9 @@ export async function loadStatusColorSettings(defaultSettings = []) {
 }
 
 export function saveStatusColorSettings(settings) {
-  return setSyncStorage({ [STATUS_COLOR_SETTINGS_KEY]: settings });
+  return setSyncStorage({
+    [STATUS_COLOR_SETTINGS_KEY]: migrateStatusColorSettings(settings).settings,
+  });
 }
 
 export function clearStatusColorSettings() {
@@ -40,5 +58,5 @@ export function clearStatusColorSettings() {
 }
 
 export function resetStatusColorSettings(defaultSettings) {
-  return setSyncStorage({ [STATUS_COLOR_SETTINGS_KEY]: defaultSettings });
+  return saveStatusColorSettings(defaultSettings);
 }

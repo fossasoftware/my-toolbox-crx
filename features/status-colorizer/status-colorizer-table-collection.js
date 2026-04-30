@@ -1,4 +1,7 @@
 import { showValidationErrorModal } from "../../core/options-ui.js";
+import {
+  normalizeStatusAnimationClass,
+} from "./status-colorizer-animations.js";
 
 export function normalizeStatusName(statusName) {
   return typeof statusName === "string" ? statusName.trim().toLowerCase() : "";
@@ -18,17 +21,15 @@ export function collectStatusSettings() {
       row.cells[0]?.querySelectorAll(".status-alias-input") || [];
     const bgInput = row.cells[1]?.querySelector('input[type="color"]');
     const textInput = row.cells[2]?.querySelector('input[type="color"]');
-    const animCheckbox = row.cells[3]?.querySelector('input[type="checkbox"]');
-    const primaryInput = row.cells[4]?.querySelector('input[type="color"]');
-    const secondaryInput = row.cells[5]?.querySelector('input[type="color"]');
+    const animationSelect = row.cells[3]?.querySelector(
+      ".status-animation-select"
+    );
 
     if (
       !statusInput ||
       !bgInput ||
       !textInput ||
-      !animCheckbox ||
-      !primaryInput ||
-      !secondaryInput
+      !animationSelect
     ) {
       showValidationErrorModal("errorInternalRow", String(index + 1));
       return null;
@@ -37,9 +38,7 @@ export function collectStatusSettings() {
     const statusName = normalizeStatusName(statusInput.value);
     const backgroundColor = bgInput.value;
     const textColor = textInput.value;
-    const animationEnabled = animCheckbox.checked;
-    const primaryColor = primaryInput.value;
-    const secondaryColor = secondaryInput.value;
+    const animationClass = normalizeStatusAnimationClass(animationSelect.value);
 
     if (!statusName) {
       showValidationErrorModal("errorStatusEmpty", String(index + 1));
@@ -91,32 +90,11 @@ export function collectStatusSettings() {
       textInput.focus();
       return null;
     }
-    if (animationEnabled) {
-      if (!colorRegex.test(primaryColor)) {
-        showValidationErrorModal("errorInvalidPrimaryColor", [
-          String(index + 1),
-          primaryColor,
-        ]);
-        primaryInput.focus();
-        return null;
-      }
-      if (!colorRegex.test(secondaryColor)) {
-        showValidationErrorModal("errorInvalidSecondaryColor", [
-          String(index + 1),
-          secondaryColor,
-        ]);
-        secondaryInput.focus();
-        return null;
-      }
-    }
-
     settings.push({
       statusName,
       backgroundColor,
       textColor,
-      animationClass: animationEnabled ? "ribbon" : "",
-      primaryColor: animationEnabled ? primaryColor : undefined,
-      secondaryColor: animationEnabled ? secondaryColor : undefined,
+      animationClass,
       aliases: aliases.length > 0 ? aliases : undefined,
     });
   }

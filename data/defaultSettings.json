@@ -1,12 +1,12 @@
 [
-    { "statusName": "waiting for customer", "textColor": "#ffffff", "backgroundColor": "#228B22" },
-    { "statusName": "pending", "textColor": "#ffffff", "backgroundColor": "#000000" },
-    { "statusName": "waiting for support", "textColor": "#ffffff", "backgroundColor": "#FF4500" },
-    { "statusName": "open", "textColor": "#ffffff", "backgroundColor": "#FF6347", "primaryColor": "#FF6347", "secondaryColor": "#FFC0CB", "animationClass": "ribbon" },
-    { "statusName": "waiting for feedback", "textColor": "#ffffff", "backgroundColor": "#0000CD" },
-    { "statusName": "waiting for approval", "textColor": "#A52A2A", "backgroundColor": "#FFD700" },
-    { "statusName": "escalated", "textColor": "#ffffff", "backgroundColor": "#DC143C", "primaryColor": "#DC143C", "secondaryColor": "#F08080", "animationClass": "ribbon" },
-    { "statusName": "in progress", "textColor": "#ffffff", "backgroundColor": "#0747A6", "primaryColor": "#0747A6", "secondaryColor": "#B0C4DE", "animationClass": "ribbon" },
-    { "statusName": "done", "backgroundColor": "#90EE90" },
-    { "statusName": "closed", "textColor": "#ffffff", "backgroundColor": "#000000" }
+    { "statusName": "waiting for customer", "textColor": "#FFFFFF", "backgroundColor": "#00A3BF", "animationClass": "ping" },
+    { "statusName": "pending", "textColor": "#FFFFFF", "backgroundColor": "#5E6C84", "animationClass": "breathe" },
+    { "statusName": "waiting for support", "textColor": "#FFFFFF", "backgroundColor": "#FF8B00", "animationClass": "nudge" },
+    { "statusName": "open", "textColor": "#FFFFFF", "backgroundColor": "#0065FF", "animationClass": "shimmer" },
+    { "statusName": "waiting for feedback", "textColor": "#FFFFFF", "backgroundColor": "#6554C0" },
+    { "statusName": "waiting for approval", "textColor": "#172B4D", "backgroundColor": "#FFC400", "animationClass": "glow" },
+    { "statusName": "escalated", "textColor": "#FFFFFF", "backgroundColor": "#DE350B", "animationClass": "urgent" },
+    { "statusName": "in progress", "textColor": "#FFFFFF", "backgroundColor": "#0052CC" },
+    { "statusName": "done", "textColor": "#FFFFFF", "backgroundColor": "#00875A", "animationClass": "sweep" },
+    { "statusName": "closed", "textColor": "#FFFFFF", "backgroundColor": "#253858" }
   ]
