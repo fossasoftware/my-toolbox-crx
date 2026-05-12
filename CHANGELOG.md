@@ -5,6 +5,28 @@ All notable changes to the "My ToolBox" Chrome extension will be documented in t
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (starting from this documented version).
 
+## [5.2.0] - 2026-05-12
+
+This minor release adds a Jira issue security level customizer for the issue header actions.
+
+### Added
+
+- Added a Security Level Customizer content script that shows the selected Jira security level directly on the issue header security button.
+- Added cached Jira issue security-level loading so the button label appears quickly across reloads and issue navigation.
+- Added a popup toggle for turning Security Level Customizer on or off.
+- Added Preferences controls for Security Level Customizer text size, rainbow border, and hover rainbow glow.
+
+### Changed
+
+- Styled the security-level button as a single compact control with a rainbow border, balanced spacing, centered icon/text alignment, and static rainbow glow on hover.
+- Disabled the hover rainbow glow preference when the rainbow border preference is turned off.
+- Refreshed English and Ukrainian UI copy for the popup and Security Level Customizer settings card.
+- Restored standard Atlassian-style hover behavior when rainbow hover glow is disabled.
+
+### Fixed
+
+- Preserved the native Jira security-level menu behavior when clicking either the lock icon or the displayed security-level text.
+
 ## [5.1.1] - 2026-04-30
 
 This patch release improves Status Colorizer rendering across newer Jira status surfaces.

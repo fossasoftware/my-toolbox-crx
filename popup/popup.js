@@ -16,6 +16,7 @@ async function initializePopup() {
     "userLanguage",
     "statusColorizerEnabled",
     "rowHighlighterEnabled",
+    "securityLevelCustomiserEnabled",
   ]);
   if (!prefsResult.ok) {
     console.error("Could not load popup preferences:", prefsResult.error);
@@ -35,6 +36,12 @@ async function initializePopup() {
   )
     ? storedPrefs.rowHighlighterEnabled
     : true;
+  const securityLevelCustomiserEnabled = Object.prototype.hasOwnProperty.call(
+    storedPrefs,
+    "securityLevelCustomiserEnabled"
+  )
+    ? storedPrefs.securityLevelCustomiserEnabled
+    : true;
 
   await loadMessages(langPref);
   applyPopupTranslations();
@@ -44,6 +51,9 @@ async function initializePopup() {
   );
   const rowHighlighterToggle = document.getElementById(
     "rowHighlighterTogglePopup"
+  );
+  const securityLevelCustomiserToggle = document.getElementById(
+    "securityLevelCustomiserTogglePopup"
   );
 
   if (statusColorizerToggle) {
@@ -70,6 +80,21 @@ async function initializePopup() {
       if (!result.ok) {
         console.error(
           "Error saving row highlighter toggle preference:",
+          result.error
+        );
+      }
+    });
+  }
+
+  if (securityLevelCustomiserToggle) {
+    securityLevelCustomiserToggle.checked = securityLevelCustomiserEnabled;
+    securityLevelCustomiserToggle.addEventListener("change", async () => {
+      const result = await setSyncStorage({
+        securityLevelCustomiserEnabled: securityLevelCustomiserToggle.checked,
+      });
+      if (!result.ok) {
+        console.error(
+          "Error saving security level customiser toggle preference:",
           result.error
         );
       }

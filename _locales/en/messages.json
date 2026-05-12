@@ -1,7 +1,7 @@
 {
-  "appName": { "message": "My ToolBox" },
+  "appName": { "message": "My Toolbox" },
   "appDescription": { "message": "Make Jira Cloud easier to scan: color-code statuses, highlight rows, save presets, and keep notes in the built-in editor." },
-  "optionsTitle": { "message": "My ToolBox" },
+  "optionsTitle": { "message": "My Toolbox" },
 
   "settingsTableStatus": { "message": "Status" },
   "settingsTableBackground": { "message": "Background" },
@@ -101,8 +101,8 @@
     "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } }
   },
 
-  "popupTitle": { "message": "My ToolBox" },
-  "popupDescription": { "message": "Open Settings to customize the extension." },
+  "popupTitle": { "message": "My Toolbox" },
+  "popupDescription": { "message": "Open settings to customize the extension." },
   "popupOpenOptionsButton": { "message": "Open settings" },
 
   "footerStoreLink": { "message": "Chrome Web Store" },
@@ -117,6 +117,11 @@
 
   "statusColorizerTitle": { "message": "Status colorizer" },
   "rowHighlighterTitle": { "message": "Row highlighter" },
+  "securityLevelCustomiserTitle": { "message": "Security Level Customizer" },
+  "securityLevelCustomiserDescription": { "message": "Customizes the security level button in the Jira issue header." },
+  "securityLevelCustomiserTextSizeLabel": { "message": "Text size" },
+  "securityLevelCustomiserRainbowBorderLabel": { "message": "Rainbow border" },
+  "securityLevelCustomiserAnimationLabel": { "message": "Rainbow hover" },
 
   "notepadTitle": { "message": "Notes" },
   "notepadAutosaveLabel": { "message": "Autosave" },
@@ -265,6 +270,7 @@
 
   "toggleStatusColorizerLabel": { "message": "Status colorizer" },
   "toggleRowHighlighterLabel": { "message": "Row highlighter" },
+  "toggleSecurityLevelCustomiserLabel": { "message": "Security level customizer" },
 
   "menuLabel": { "message": "Menu" },
   "bookmarksTitle": { "message": "Bookmarks" },

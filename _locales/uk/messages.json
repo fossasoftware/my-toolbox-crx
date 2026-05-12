@@ -1,7 +1,7 @@
 {
-  "appName": { "message": "Мій Тулбокс" },
+  "appName": { "message": "Мій тулбокс" },
   "appDescription": { "message": "Візуально впорядкуйте Jira Cloud: розфарбовуйте статуси, підсвічуйте рядки, зберігайте пресети та ведіть нотатки у вбудованому редакторі." },
-  "optionsTitle": { "message": "Мій Тулбокс" },
+  "optionsTitle": { "message": "Мій тулбокс" },
 
   "settingsTableStatus": { "message": "Статус" },
   "settingsTableBackground": { "message": "Фон" },
@@ -99,7 +99,7 @@
     "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } }
   },
 
-  "popupTitle": { "message": "Мій Тулбокс" },
+  "popupTitle": { "message": "Мій тулбокс" },
   "popupDescription": { "message": "Відкрийте налаштування, щоб змінити параметри розширення." },
   "popupOpenOptionsButton": { "message": "Відкрити налаштування" },
 
@@ -115,6 +115,11 @@
 
   "statusColorizerTitle": { "message": "Колоризатор статусів" },
   "rowHighlighterTitle": { "message": "Підсвічування рядків" },
+  "securityLevelCustomiserTitle": { "message": "Кастомізація рівня безпеки" },
+  "securityLevelCustomiserDescription": { "message": "Налаштовує кнопку рівня безпеки в заголовку Jira issue." },
+  "securityLevelCustomiserTextSizeLabel": { "message": "Розмір тексту" },
+  "securityLevelCustomiserRainbowBorderLabel": { "message": "Rainbow-обвідка" },
+  "securityLevelCustomiserAnimationLabel": { "message": "Rainbow-підсвічування" },
 
   "notepadTitle": { "message": "Мої нотатки" },
   "notepadAutosaveLabel": { "message": "Автозбереження" },
@@ -263,6 +268,7 @@
 
   "toggleStatusColorizerLabel": { "message": "Колоризатор статусів" },
   "toggleRowHighlighterLabel": { "message": "Підсвічування рядків" },
+  "toggleSecurityLevelCustomiserLabel": { "message": "Кастомізація рівня безпеки" },
 
   "menuLabel": { "message": "Меню" },
   "bookmarksTitle": { "message": "Мої закладки" },
