@@ -9,6 +9,7 @@ import { initializeBoardTab } from "../features/board/board-tab.js";
 import { initializeSettingsTab } from "../features/settings/settings-tab.js";
 import { initializeBookmarks } from "../features/bookmarks/bookmarks.js";
 import { initializeBookmarksTab } from "../features/bookmarks/bookmarks-tab.js";
+import { initializeSecurityLevelCustomiserSettings } from "../features/security-level-customiser/security-level-customiser-settings.js";
 import {
   getDefaultLanguage,
   getText,
@@ -186,6 +187,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initializeNotepad();
   initializeBoard();
   initializeBookmarks();
+  initializeSecurityLevelCustomiserSettings();
   initializeTableEmptyStates();
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(() => {

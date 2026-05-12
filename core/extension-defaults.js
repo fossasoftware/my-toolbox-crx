@@ -4,6 +4,10 @@ export const SYNC_PREFERENCE_DEFAULTS = {
   userLanguage: getDefaultLanguage(),
   statusColorizerEnabled: true,
   rowHighlighterEnabled: true,
+  securityLevelCustomiserEnabled: true,
+  securityLevelCustomiserAnimationEnabled: true,
+  securityLevelCustomiserRainbowBorderEnabled: true,
+  securityLevelCustomiserTextSize: 14,
   notepadAutosaveEnabled: true,
   boardAutosaveEnabled: true,
 };
