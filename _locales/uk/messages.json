@@ -10,6 +10,7 @@
   "settingsTableRemoveRow": { "message": "Видалити" },
   "settingsTableKeyword": { "message": "Ключове слово" },
   "settingsTableColor": { "message": "Колір" },
+  "settingsTablePriority": { "message": "Пріоритет" },
   "settingsTableEnabled": { "message": "Активно" },
 
   "inputStatusPlaceholder": { "message": "Назва статусу" },
@@ -97,6 +98,10 @@
   "errorInvalidColor": {
     "message": "Помилка в рядку $ROW$: некоректний колір \"$COLOR$\". Використовуйте формат #rrggbb.",
     "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } }
+  },
+  "errorInvalidPriority": {
+    "message": "Помилка в рядку $ROW$: некоректний пріоритет \"$PRIORITY$\". Використовуйте значення від 0 до 10.",
+    "placeholders": { "row": { "content": "$1" }, "priority": { "content": "$2" } }
   },
 
   "popupTitle": { "message": "Мій тулбокс" },

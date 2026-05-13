@@ -5,6 +5,20 @@ All notable changes to the "My ToolBox" Chrome extension will be documented in t
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (starting from this documented version).
 
+## [5.2.1] - 2026-05-13
+
+This patch release fixes Row Highlighter matching for short keywords and Jira labels.
+
+### Added
+
+- Added Row Highlighter rule priority selection from `0` to `10` so higher-priority matching rows win when multiple keywords match the same Jira row.
+- Added a compact Row Highlighter priority dropdown sized for the numeric `0` to `10` range.
+
+### Fixed
+
+- Fixed Row Highlighter keyword matching so values such as `AI` match complete words instead of arbitrary letter combinations inside other words.
+- Fixed Row Highlighter coverage for Jira label chips so rows can be highlighted by labels such as `L1`.
+
 ## [5.2.0] - 2026-05-12
 
 This minor release adds a Jira issue security level customizer for the issue header actions.
