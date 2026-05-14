@@ -25,12 +25,15 @@
   vertical-align: middle;
 }
 .highlighter-table th:first-child {
-  width: 70%;
+  width: 58%;
 }
 .highlighter-table th:nth-child(2),
-.highlighter-table th:nth-child(3),
-.highlighter-table th:nth-child(4) {
+.highlighter-table th:nth-child(4),
+.highlighter-table th:nth-child(5) {
   width: 10%;
+}
+.highlighter-table th:nth-child(3) {
+  width: 12%;
 }
 .highlighter-table th {
   font-family: var(--font-heading);
@@ -71,13 +74,15 @@
 }
 
 .highlighter-table input[type="text"],
+.highlighter-table select,
 .highlighter-table input[type="color"],
 .highlighter-table input[type="checkbox"] {
   font-family: var(--font-body);
   font-size: 14px;
   vertical-align: middle;
 }
-.highlighter-table input[type="text"] {
+.highlighter-table input[type="text"],
+.highlighter-table select {
   width: 100%;
   height: var(--input-height);
   padding: 5px;
@@ -87,11 +92,18 @@
   background-color: var(--background-light);
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
-.highlighter-table input[type="text"]:focus {
+.highlighter-table input[type="text"]:focus,
+.highlighter-table select:focus {
   outline: none;
   border-color: var(--dark-text);
   background-color: #fff;
   box-shadow: 0 0 4px 0 rgba(13, 24, 28, 0.1), 0 0 8px 0 rgba(13, 24, 28, 0.1);
+}
+.highlighter-table .keyword-priority-input {
+  min-width: 40px;
+  max-width: 45px;
+  text-align: center;
+  width: 45px;
 }
 .highlighter-table td.keyword-cell {
   vertical-align: top;

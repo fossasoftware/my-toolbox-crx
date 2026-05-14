@@ -94,6 +94,11 @@ export function applyOptionsTranslations({
       button.title = label;
       button.setAttribute("aria-label", label);
     });
+  document
+    .querySelectorAll('#rowHighlightTable tbody .keyword-priority-input')
+    .forEach((input) => {
+      input.setAttribute("aria-label", getText("settingsTablePriority"));
+    });
   const notepadArea = document.getElementById("notepadArea");
   if (notepadArea) {
     notepadArea.placeholder = getText("notepadPlaceholder");

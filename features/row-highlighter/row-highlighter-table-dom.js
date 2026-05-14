@@ -4,6 +4,9 @@ import {
   REMOVE_ICON_SVG,
 } from "../shared/rule-alias-ui.js";
 
+const MIN_PRIORITY = 0;
+const MAX_PRIORITY = 10;
+
 export function updateButtonVisibility() {
   const tbody = document.querySelector("#rowHighlightTable tbody");
   const saveBtn = document.getElementById("rowHighlightSave");
@@ -28,7 +31,8 @@ export function addRow(
   keyword = "",
   color = "#ffffff",
   enabled = true,
-  aliases = []
+  aliases = [],
+  priority = 0
 ) {
   const tbody = document.querySelector("#rowHighlightTable tbody");
   if (!tbody) return;
@@ -120,6 +124,29 @@ export function addRow(
   cellColor.appendChild(inputColor);
   row.appendChild(cellColor);
 
+  const cellPriority = document.createElement("td");
+  const inputPriority = document.createElement("select");
+  const normalizedPriority = Number(priority);
+  inputPriority.className = "keyword-priority-input";
+  inputPriority.setAttribute("aria-label", getText("settingsTablePriority"));
+  for (
+    let priorityValue = MIN_PRIORITY;
+    priorityValue <= MAX_PRIORITY;
+    priorityValue += 1
+  ) {
+    const option = document.createElement("option");
+    option.value = String(priorityValue);
+    option.textContent = String(priorityValue);
+    inputPriority.appendChild(option);
+  }
+  inputPriority.value = Number.isInteger(normalizedPriority) &&
+    normalizedPriority >= MIN_PRIORITY &&
+    normalizedPriority <= MAX_PRIORITY
+    ? String(normalizedPriority)
+    : String(MIN_PRIORITY);
+  cellPriority.appendChild(inputPriority);
+  row.appendChild(cellPriority);
+
   const cellEnabled = document.createElement("td");
   const inputEnabled = document.createElement("input");
   inputEnabled.type = "checkbox";
@@ -166,7 +193,8 @@ export function renderHighlightSettings(settings) {
       item.keyword,
       item.color,
       item.hasOwnProperty("enabled") ? item.enabled : true,
-      aliases
+      aliases,
+      item.hasOwnProperty("priority") ? item.priority : 0
     );
   });
   updateButtonVisibility();

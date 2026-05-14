@@ -1,7 +1,25 @@
 import { showValidationErrorModal } from "../../core/options-ui.js";
 
+const MIN_PRIORITY = 0;
+const MAX_PRIORITY = 10;
+
 export function normalizeKeyword(keyword) {
   return typeof keyword === "string" ? keyword.trim().toLowerCase() : "";
+}
+
+function parsePriority(priority) {
+  const text = typeof priority === "string" ? priority.trim() : String(priority);
+  if (!text) {
+    return 0;
+  }
+
+  const numeric = Number(text);
+  return Number.isFinite(numeric) &&
+    Number.isInteger(numeric) &&
+    numeric >= MIN_PRIORITY &&
+    numeric <= MAX_PRIORITY
+    ? numeric
+    : null;
 }
 
 export function collectHighlightSettings() {
@@ -17,8 +35,9 @@ export function collectHighlightSettings() {
     const aliasInputs =
       row.cells[0]?.querySelectorAll(".keyword-alias-input") || [];
     const colorInput = row.cells[1]?.querySelector('input[type="color"]');
-    const enabledInput = row.cells[2]?.querySelector('input[type="checkbox"]');
-    if (!keywordInput || !colorInput || !enabledInput) {
+    const priorityInput = row.cells[2]?.querySelector(".keyword-priority-input");
+    const enabledInput = row.cells[3]?.querySelector('input[type="checkbox"]');
+    if (!keywordInput || !colorInput || !priorityInput || !enabledInput) {
       showValidationErrorModal("errorInternalRow", String(idx + 1));
       return null;
     }
@@ -67,9 +86,20 @@ export function collectHighlightSettings() {
       return null;
     }
 
+    const priority = parsePriority(priorityInput.value);
+    if (priority === null) {
+      showValidationErrorModal("errorInvalidPriority", [
+        String(idx + 1),
+        priorityInput.value,
+      ]);
+      priorityInput.focus();
+      return null;
+    }
+
     settings.push({
       keyword,
       color,
+      priority,
       enabled: enabledInput.checked,
       aliases: aliases.length > 0 ? aliases : undefined,
     });

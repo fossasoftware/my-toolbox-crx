@@ -10,6 +10,7 @@
   "settingsTableRemoveRow": { "message": "Delete" },
   "settingsTableKeyword": { "message": "Keyword" },
   "settingsTableColor": { "message": "Color" },
+  "settingsTablePriority": { "message": "Priority" },
   "settingsTableEnabled": { "message": "Active" },
 
   "inputStatusPlaceholder": { "message": "Status name" },
@@ -99,6 +100,10 @@
   "errorInvalidColor": {
     "message": "Row $ROW$ error: Invalid color \"$COLOR$\". Use #rrggbb.",
     "placeholders": { "row": { "content": "$1" }, "color": { "content": "$2" } }
+  },
+  "errorInvalidPriority": {
+    "message": "Row $ROW$ error: Invalid priority \"$PRIORITY$\". Use a value from 0 to 10.",
+    "placeholders": { "row": { "content": "$1" }, "priority": { "content": "$2" } }
   },
 
   "popupTitle": { "message": "My Toolbox" },

@@ -7,16 +7,33 @@ import {
 import { normalizeKeyword } from "./row-highlighter-table.js";
 import { ROW_HIGHLIGHT_SETTINGS_KEY } from "./row-highlighter-storage.js";
 
+const MIN_PRIORITY = 0;
+const MAX_PRIORITY = 10;
+
 function sanitizeKeywordAliases(keyword, aliases) {
   return sanitizeRuleAliases(keyword, aliases, normalizeKeyword);
 }
 
 function mergeKeywordEntry(target, source) {
   mergeNamedRuleEntry(target, source, {
-    mergeFields: ["color", "enabled"],
+    mergeFields: ["color", "enabled", "priority"],
     normalizeName: normalizeKeyword,
     primaryField: "keyword",
   });
+}
+
+function normalizeImportedPriority(priority) {
+  if (priority === undefined) {
+    return undefined;
+  }
+
+  return typeof priority === "number" &&
+    Number.isFinite(priority) &&
+    Number.isInteger(priority) &&
+    priority >= MIN_PRIORITY &&
+    priority <= MAX_PRIORITY
+    ? priority
+    : null;
 }
 
 function mergeImportedHighlightSettings(data) {
@@ -50,6 +67,14 @@ function mergeImportedHighlightSettings(data) {
     if ("enabled" in item && typeof item.enabled !== "boolean") {
       console.error(
         `Import validation failed: Invalid enabled value "${item.enabled}".`,
+        item
+      );
+      return null;
+    }
+    const priority = normalizeImportedPriority(item.priority);
+    if (priority === null) {
+      console.error(
+        `Import validation failed: Invalid priority "${item.priority}".`,
         item
       );
       return null;
@@ -91,6 +116,7 @@ function mergeImportedHighlightSettings(data) {
       keyword,
       color: item.color,
     };
+    if (priority !== undefined) entry.priority = priority;
     if ("enabled" in item) entry.enabled = item.enabled;
     if (aliases.length > 0) entry.aliases = aliases;
     entries.push(entry);
@@ -100,7 +126,7 @@ function mergeImportedHighlightSettings(data) {
     mergeEntry: mergeKeywordEntry,
     normalizeName: normalizeKeyword,
     primaryField: "keyword",
-  });
+  }).map((entry) => Object.assign({ priority: 0 }, entry));
 }
 
 export function handleRowHighlightImport(event, restoreSettings, showToast) {

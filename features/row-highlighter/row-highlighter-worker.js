@@ -33,6 +33,13 @@
   ].join(",");
   const VIEWPORT_REFRESH_MIN_INTERVAL_MS = 120;
   const VIEWPORT_ROW_MARGIN_PX = 240;
+  const ISSUE_LABEL_SELECTORS = [
+    "[data-testid*='cell-wrapper-row'][data-testid*='labels']",
+    "[data-testid*='native-issue-table'][data-testid*='labels']",
+    "[data-testid*='issue-cells'][data-testid*='labels']",
+    "a[href*='jql=labels']",
+    "a[href*='labels%20%3D']",
+  ];
 
   function loadWorkerBooleanPreference(key, callback, defaultValue = true) {
     if (ruleWorkerRuntime?.loadBooleanPreference) {
@@ -251,6 +258,7 @@
       "[data-testid*='cell-wrapper-row'][data-testid$='-status']",
       "[data-testid='native-issue-table.common.ui.issue-cells.issue-key.issue-key-cell']",
       "[data-testid='native-issue-table.common.ui.issue-cells.issue-summary.issue-summary-cell']",
+      ...ISSUE_LABEL_SELECTORS,
       "td.issuekey",
       "td.summary",
       "td.status",
@@ -268,6 +276,7 @@
       "[data-testid*='issue-key']",
       "[data-testid*='issue-summary']",
       "[data-testid*='status-lozenge']",
+      ...ISSUE_LABEL_SELECTORS,
       ".issue-link",
     ]);
     return parts.length > 0 ? parts.join(" ") : "";
@@ -281,6 +290,7 @@
       "[data-testid*='status-lozenge']",
       "[data-testid*='issue-key']",
       "[data-testid*='summary']",
+      ...ISSUE_LABEL_SELECTORS,
       ".issue-link",
     ]);
     return parts.length > 0 ? parts.join(" ") : "";
@@ -294,6 +304,7 @@
       "[data-testid='inline-card-resolved-view-lozenge--text']",
       "[data-testid='common-components-status-lozenge.status-lozenge']",
       "[data-testid='common-components-status-lozenge.status-lozenge--text']",
+      ...ISSUE_LABEL_SELECTORS,
       "a[data-testid='inline-card-resolved-view']",
       "a[href*='/browse/']",
     ]);
@@ -306,6 +317,7 @@
       "[data-testid*='issue-summary']",
       "[data-testid*='status']",
       "[data-testid*='status-lozenge']",
+      ...ISSUE_LABEL_SELECTORS,
       "strong",
       "span",
     ]);
