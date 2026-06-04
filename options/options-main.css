@@ -128,6 +128,8 @@
   --border-subtle: rgba(var(--slate-400-rgb), 0.35);
   --border-subtle-weak: rgba(var(--slate-400-rgb), 0.26);
   --border-strong: rgba(var(--slate-500-rgb), 0.55);
+  /* Calm default for board connections (red stays the selection accent) */
+  --board-link-color: #64748b;
   --font-size-base: 14px;
   --font-size-h1: 36px;
   --font-size-h2: 28px;

@@ -5,6 +5,29 @@ All notable changes to the "My ToolBox" Chrome extension will be documented in t
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (starting from this documented version).
 
+## [5.3.0] - 2026-06-04
+
+This minor release refreshes the Notepad and Board with a new search affordance, a save-status indicator, and accessibility and readability improvements.
+
+### Added
+
+- Added a Notepad search button in the header that slides the find field out of the button as one pill and collapses it back with the same animation on close.
+- Added a Notepad save-status indicator that surfaces saving, saved, and unsaved states.
+- Added hover and keyboard tooltips for the Notepad editor toolbar icon buttons.
+- Added tooltips for the Board note-type swatches and shape buttons.
+- Added a more inviting Board empty state with icon hints.
+
+### Changed
+
+- Switched the Notepad editor to a monospace font for clearer Markdown editing.
+- Capped the Notepad preview reading width for better legibility on wide screens.
+- Softened the default Board connector color to a calm slate, keeping red as the selection accent.
+- Standardized shared surface and slate colors as design tokens with no visual change, as groundwork for future theming.
+
+### Fixed
+
+- Restored a visible keyboard focus ring on buttons, tabs, and the language toggle.
+
 ## [5.2.1] - 2026-05-13
 
 This patch release fixes Row Highlighter matching for short keywords and Jira labels.

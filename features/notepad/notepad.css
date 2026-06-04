@@ -28,6 +28,11 @@
   margin-bottom: 0;
 }
 
+/* Cap the reading measure so prose stays legible on wide screens. */
+.notepad-preview > * {
+  max-width: 70ch;
+}
+
 .notepad-preview h1,
 .notepad-preview h2,
 .notepad-preview h3,

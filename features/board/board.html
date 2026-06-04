@@ -13,7 +13,16 @@
       <div id="boardPenCursor" class="board-pen-cursor" aria-hidden="true"></div>
       <div id="boardEraserCursor" class="board-eraser-cursor" aria-hidden="true"></div>
     </div>
-    <div id="boardEmptyState" class="board-empty" data-i18n="boardEmptyState"></div>
+    <div id="boardEmptyState" class="board-empty">
+      <div class="board-empty-inner">
+        <div class="board-empty-icons" aria-hidden="true">
+          <span class="board-empty-icon"><img src="../img/icons/note.svg" alt="" /></span>
+          <span class="board-empty-icon"><img src="../img/icons/shapes.svg" alt="" /></span>
+          <span class="board-empty-icon"><img src="../img/icons/pencil.svg" alt="" /></span>
+        </div>
+        <p class="board-empty-text" data-i18n="boardEmptyState"></p>
+      </div>
+    </div>
     <div id="boardItemMenu" class="board-item-menu" role="menu" aria-hidden="true">
       <button class="board-item-menu-item" type="button" role="menuitem" data-action="rename" data-i18n="boardItemMenuRename"></button>
       <div class="board-item-menu-separator" role="separator"></div>
