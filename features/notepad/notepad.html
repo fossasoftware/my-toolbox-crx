@@ -3,22 +3,22 @@
   <div class="notepad-header">
     <h2 data-i18n="notepadTitle"></h2>
     <div class="notepad-header-actions">
-      <div id="notepadSearchShell" class="notepad-search-shell">
-        <div id="notepadSearchPanel" class="notepad-search-panel" role="search" aria-hidden="true">
-          <div class="notepad-search">
-            <input id="notepadSearchInput" class="notepad-search-input" type="text" data-i18n="notepadSearchPlaceholder" data-label-key="notepadSearchPlaceholder" />
-            <span id="notepadSearchCount" class="notepad-search-count" aria-live="polite"></span>
-            <button id="notepadSearchPrevButton" class="button button-secondary icon-button notepad-search-nav" type="button" data-label-key="notepadSearchPrev">
-              <img src="../img/icons/chevron-up.svg" alt="" aria-hidden="true" />
-            </button>
-            <button id="notepadSearchNextButton" class="button button-secondary icon-button notepad-search-nav" type="button" data-label-key="notepadSearchNext">
-              <img src="../img/icons/chevron-down.svg" alt="" aria-hidden="true" />
-            </button>
-            <button id="notepadSearchCloseButton" class="button button-secondary icon-button notepad-search-close" type="button" data-label-key="notepadSearchClose">
-              <img src="../img/icons/close.svg" alt="" aria-hidden="true" />
-            </button>
-          </div>
+      <div id="notepadStatus" class="notepad-status" role="status" aria-live="polite"></div>
+      <div id="notepadSearchShell" class="notepad-search-shell" role="search">
+        <div id="notepadSearchPanel" class="notepad-search-panel" aria-hidden="true">
+          <input id="notepadSearchInput" class="notepad-search-input" type="text" data-i18n="notepadSearchPlaceholder" data-label-key="notepadSearchPlaceholder" />
+          <span id="notepadSearchCount" class="notepad-search-count" aria-live="polite"></span>
+          <button id="notepadSearchPrevButton" class="button button-secondary icon-button notepad-search-nav" type="button" data-label-key="notepadSearchPrev">
+            <img src="../img/icons/chevron-up.svg" alt="" aria-hidden="true" />
+          </button>
+          <button id="notepadSearchNextButton" class="button button-secondary icon-button notepad-search-nav" type="button" data-label-key="notepadSearchNext">
+            <img src="../img/icons/chevron-down.svg" alt="" aria-hidden="true" />
+          </button>
         </div>
+        <button id="notepadSearchToggle" class="button button-secondary icon-button notepad-search-toggle" type="button" data-label-key="notepadSearchOpen" aria-expanded="false" aria-controls="notepadSearchPanel">
+          <img class="notepad-search-toggle-icon is-closed-icon" src="../img/icons/search.svg" alt="" aria-hidden="true" />
+          <img class="notepad-search-toggle-icon is-open-icon" src="../img/icons/close.svg" alt="" aria-hidden="true" />
+        </button>
       </div>
     </div>
   </div>
@@ -34,15 +34,15 @@
           <span class="slider" aria-hidden="true"></span>
           <span data-i18n="notepadAutosaveLabel"></span>
         </label>
-        <button id="notepadSaveButton" class="button button-secondary icon-button board-save-button notepad-save-button" type="button">
+        <button id="notepadSaveButton" class="button button-secondary icon-button board-save-button notepad-save-button" type="button" data-label-key="saveButton">
           <img src="../img/icons/save.svg" alt="" aria-hidden="true" />
           <span class="btn-label" data-i18n="saveButton"></span>
         </button>
-        <button id="notepadUndoButton" class="button button-secondary icon-button board-history-button notepad-history-button" type="button">
+        <button id="notepadUndoButton" class="button button-secondary icon-button board-history-button notepad-history-button" type="button" data-label-key="boardActionUndo">
           <img src="../img/icons/undo.svg" alt="" aria-hidden="true" />
           <span class="btn-label" data-i18n="boardActionUndo"></span>
         </button>
-        <button id="notepadRedoButton" class="button button-secondary icon-button board-history-button notepad-history-button" type="button">
+        <button id="notepadRedoButton" class="button button-secondary icon-button board-history-button notepad-history-button" type="button" data-label-key="boardActionRedo">
           <img src="../img/icons/redo.svg" alt="" aria-hidden="true" />
           <span class="btn-label" data-i18n="boardActionRedo"></span>
         </button>
@@ -91,6 +91,5 @@
       <img src="../img/icons/preview.svg" alt="" aria-hidden="true" />
     </button>
   </div>
-  <div id="notepadStatus" class="notepad-status"></div>
 
 </div>

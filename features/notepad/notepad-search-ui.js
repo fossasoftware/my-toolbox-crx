@@ -49,12 +49,14 @@ export function setSearchOpenUI({
   getSearchInput,
   getSearchPanel,
   getSearchShell,
+  getSearchToggle,
   open,
   selectInput = false,
 }) {
   const searchShell = getSearchShell();
   const searchPanel = getSearchPanel();
   const searchInput = getSearchInput();
+  const searchToggle = getSearchToggle?.();
   const isSearchOpen = Boolean(open);
 
   if (searchShell) {
@@ -63,6 +65,11 @@ export function setSearchOpenUI({
 
   if (searchPanel) {
     searchPanel.setAttribute("aria-hidden", isSearchOpen ? "false" : "true");
+  }
+
+  if (searchToggle) {
+    searchToggle.setAttribute("aria-expanded", isSearchOpen ? "true" : "false");
+    searchToggle.classList.toggle("is-active", isSearchOpen);
   }
 
   if (!isSearchOpen) {

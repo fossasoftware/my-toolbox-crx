@@ -22,6 +22,7 @@ export function createNotepadSearchController({
   getSearchPanel,
   getSearchPrevButton,
   getSearchShell,
+  getSearchToggle,
   renderMarkdownPreview,
 }) {
   let isSearchOpen = false;
@@ -88,6 +89,7 @@ export function createNotepadSearchController({
       getSearchInput,
       getSearchPanel,
       getSearchShell,
+      getSearchToggle,
       open,
       selectInput,
     });

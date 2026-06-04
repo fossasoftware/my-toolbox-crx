@@ -6,14 +6,14 @@
   line-height: 1.5;
   resize: none;
   margin-bottom: 0;
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 13px;
   vertical-align: top;
 }
 .notepad-textarea:focus {
   outline: none;
   border-color: var(--dark-text);
-  box-shadow: 0 0 4px 0 rgba(13, 24, 28, 0.1), 0 0 8px 0 rgba(13, 24, 28, 0.1);
+  box-shadow: 0 0 4px 0 rgba(var(--dark-text-rgb), 0.1), 0 0 8px 0 rgba(var(--dark-text-rgb), 0.1);
 }
 
 .notepad-preview {
@@ -158,12 +158,12 @@
   gap: 4px;
   min-height: var(--input-height);
   padding: 4px;
-  border: 1px solid rgba(148, 163, 184, 0.28);
+  border: 1px solid rgba(var(--slate-400-rgb), 0.28);
   border-radius: 22px;
-  background-color: #f7fafa;
+  background-color: var(--surface-raised);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.75),
-    0 1px 2px rgba(15, 23, 42, 0.06);
+    0 1px 2px rgba(var(--slate-900-rgb), 0.06);
 }
 
 .notepad-view-switch-floating {
@@ -203,7 +203,7 @@
 
 #notepadTab .notepad-view-switch .button.button-secondary.notepad-view-button:hover {
   background-color: rgba(255, 255, 255, 0.72);
-  border-color: rgba(148, 163, 184, 0.22);
+  border-color: rgba(var(--slate-400-rgb), 0.22);
   box-shadow: none;
 }
 
@@ -216,7 +216,7 @@
 #notepadTab .notepad-view-switch .button.button-secondary.notepad-view-button.active,
 #notepadTab .notepad-view-switch .button.button-secondary.notepad-view-button[aria-pressed="true"] {
   background-color: #ffffff;
-  border-color: rgba(148, 163, 184, 0.35);
+  border-color: rgba(var(--slate-400-rgb), 0.35);
   color: var(--dark-text);
   box-shadow: none;
 }
@@ -224,7 +224,7 @@
 #notepadTab .notepad-view-switch .button.button-secondary.notepad-view-button.active:hover,
 #notepadTab .notepad-view-switch .button.button-secondary.notepad-view-button[aria-pressed="true"]:hover {
   background-color: #ffffff;
-  border-color: rgba(148, 163, 184, 0.35);
+  border-color: rgba(var(--slate-400-rgb), 0.35);
   transform: none;
 }
 
@@ -236,12 +236,12 @@
 }
 
 #notepadTab .notepad-toolbar-dock {
-  border-color: rgba(148, 163, 184, 0.26);
+  border-color: rgba(var(--slate-400-rgb), 0.26);
   border-radius: 22px;
-  background-color: #f7fafa;
+  background-color: var(--surface-raised);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.75),
-    0 1px 2px rgba(15, 23, 42, 0.06);
+    0 1px 2px rgba(var(--slate-900-rgb), 0.06);
 }
 
 #notepadTab .notepad-toolbar-dock .board-toolbar {
@@ -265,12 +265,12 @@
 #notepadTab .notepad-toolbar-dock .board-tool-group + .board-tool-group {
   margin-left: 2px;
   padding-left: 6px;
-  border-left: 1px solid rgba(148, 163, 184, 0.28);
+  border-left: 1px solid rgba(var(--slate-400-rgb), 0.28);
 }
 
 #notepadTab .notepad-toolbar-dock .button.button-secondary {
   background-color: #ffffff;
-  border-color: rgba(148, 163, 184, 0.35);
+  border-color: rgba(var(--slate-400-rgb), 0.35);
   color: var(--dark-text);
   box-shadow: none;
   transition:
@@ -281,13 +281,13 @@
 
 #notepadTab .notepad-toolbar-dock .button.button-secondary:hover {
   background-color: #ffffff;
-  border-color: rgba(148, 163, 184, 0.45);
+  border-color: rgba(var(--slate-400-rgb), 0.45);
   box-shadow: none;
 }
 
 #notepadTab .notepad-toolbar-dock .button.button-secondary:active {
-  background-color: #f8fafc;
-  border-color: rgba(148, 163, 184, 0.45);
+  background-color: var(--slate-50);
+  border-color: rgba(var(--slate-400-rgb), 0.45);
   box-shadow: none;
   transform: translateY(1px) scale(0.97);
 }
@@ -295,7 +295,7 @@
 #notepadTab .notepad-toolbar-dock .button.button-secondary.active,
 #notepadTab .notepad-toolbar-dock .button.button-secondary[aria-pressed="true"] {
   background-color: #ffffff;
-  border-color: rgba(148, 163, 184, 0.35);
+  border-color: rgba(var(--slate-400-rgb), 0.35);
   color: var(--dark-text);
   box-shadow: none;
 }
@@ -303,9 +303,9 @@
 #notepadTab .notepad-toolbar-dock .button.button-secondary.active:hover,
 #notepadTab .notepad-toolbar-dock .button.button-secondary[aria-pressed="true"]:hover {
   background-color: #ffffff;
-  border-color: rgba(148, 163, 184, 0.35);
+  border-color: rgba(var(--slate-400-rgb), 0.35);
   box-shadow:
-    0 2px 4px rgba(15, 23, 42, 0.09),
+    0 2px 4px rgba(var(--slate-900-rgb), 0.09),
     0 0 0 1px rgba(255, 255, 255, 0.9) inset;
   transform: none;
 }
@@ -380,62 +380,67 @@
   max-width: var(--input-height);
 }
 
+/* The search lives in the header as ONE pill. Collapsed, only the round toggle
+   shows; opening slides the field out of the button (right-to-left), closing
+   plays the same animation in reverse. */
 .notepad-search-shell {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  z-index: 4;
-  pointer-events: none;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  height: var(--input-height);
+  border: 1px solid var(--border-subtle);
+  border-radius: 22px;
+  background-color: var(--surface-card);
+  box-shadow: var(--box-shadow-sm);
+  transition:
+    border-color var(--transition-fast),
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
-.notepad-search-shell.is-open {
-  pointer-events: auto;
+.notepad-search-shell:focus-within {
+  border-color: var(--slate-400);
 }
 
 .notepad-search-panel {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transform: translateY(-8px) scale(0.98);
-  transform-origin: top right;
-  transition:
-    opacity 180ms var(--md-ease),
-    transform 220ms var(--md-ease),
-    visibility 0s linear 220ms;
-}
-
-.notepad-search-shell.is-open .notepad-search-panel {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-  transform: translateY(0) scale(1);
-  transition:
-    opacity 180ms var(--md-ease),
-    transform 220ms var(--md-ease),
-    visibility 0s linear 0s;
-}
-
-.notepad-search {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  max-width: min(360px, calc(100vw - 72px));
-  min-height: var(--input-height);
-  padding: 3px 4px 3px 8px;
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  border-radius: 22px;
-  background-color: rgba(255, 255, 255, 0.92);
-  box-shadow: var(--box-shadow-sm);
+  width: 0;
+  max-width: min(320px, calc(100vw - 160px));
+  padding-left: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateX(8px);
+  pointer-events: none;
+  visibility: hidden;
+  transition:
+    width 280ms var(--md-ease),
+    padding 280ms var(--md-ease),
+    opacity 180ms var(--md-ease),
+    transform 240ms var(--md-ease),
+    visibility 0s linear 280ms;
 }
 
-.notepad-search:focus-within {
-  border-color: #94a3b8;
-  box-shadow: var(--box-shadow-sm);
+.notepad-search-shell.is-open .notepad-search-panel {
+  width: var(--notepad-search-panel-width, 236px);
+  padding-left: 10px;
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+  visibility: visible;
+  transition:
+    width 280ms var(--md-ease),
+    padding 280ms var(--md-ease),
+    opacity 180ms var(--md-ease),
+    transform 240ms var(--md-ease),
+    visibility 0s linear 0s;
 }
 
 .notepad-search-input {
+  flex: 1 1 auto;
   width: 138px;
-  min-width: 138px;
+  min-width: 0;
   border: none;
   background: transparent;
   color: var(--dark-text);
@@ -453,6 +458,7 @@
 }
 
 .notepad-search-count {
+  flex: 0 0 auto;
   min-width: 34px;
   text-align: center;
   font-family: var(--font-heading);
@@ -465,6 +471,7 @@
   width: calc(var(--input-height) - 8px);
   min-width: calc(var(--input-height) - 8px);
   min-height: calc(var(--input-height) - 8px);
+  flex: 0 0 auto;
   padding: 0;
   border-radius: 22px;
   display: inline-flex;
@@ -479,46 +486,24 @@
   opacity: 0.85;
 }
 
-.notepad-search-close {
-  width: calc(var(--input-height) - 8px);
-  min-width: calc(var(--input-height) - 8px);
-  min-height: calc(var(--input-height) - 8px);
-  padding: 0;
-  border-radius: 22px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: none;
-}
-
-.notepad-search-close img {
-  width: 12px;
-  height: 12px;
-  opacity: 0.85;
-}
-
-.button.button-secondary.notepad-search-nav,
-.button.button-secondary.notepad-search-close {
+.button.button-secondary.notepad-search-nav {
   background-color: transparent;
   border-color: transparent;
   color: var(--secondary-text);
 }
 
-.button.button-secondary.notepad-search-nav:hover,
-.button.button-secondary.notepad-search-close:hover {
+.button.button-secondary.notepad-search-nav:hover {
   background-color: #eef2f7;
   border-color: transparent;
   color: var(--dark-text);
 }
 
-.button.button-secondary.notepad-search-nav:active,
-.button.button-secondary.notepad-search-close:active {
-  background-color: #e2e8f0;
+.button.button-secondary.notepad-search-nav:active {
+  background-color: var(--slate-200);
   border-color: transparent;
 }
 
-.button.button-secondary.notepad-search-nav:disabled,
-.button.button-secondary.notepad-search-close:disabled {
+.button.button-secondary.notepad-search-nav:disabled {
   opacity: 0.45;
 }
 
@@ -626,4 +611,130 @@
 
 .notepad-toolbar-dock .board-toolbar::-webkit-scrollbar {
   display: none;
+}
+
+/* Search toggle: the right cap of the search pill. The shell provides the
+   border/background, so the toggle itself is transparent. */
+.notepad-search-shell .notepad-search-toggle {
+  position: relative;
+  flex: 0 0 auto;
+  width: var(--input-height);
+  height: var(--input-height);
+  min-width: var(--input-height);
+  max-width: var(--input-height);
+  padding: 5px;
+  border: none;
+  border-radius: 22px;
+  background-color: transparent;
+  color: var(--dark-text);
+  box-shadow: none;
+  overflow: visible;
+  transition:
+    background-color var(--transition-fast),
+    transform 120ms ease;
+}
+
+.notepad-search-shell .notepad-search-toggle:hover {
+  max-width: var(--input-height);
+  background-color: rgba(var(--slate-400-rgb), 0.16);
+}
+
+.notepad-search-shell .notepad-search-toggle:active {
+  transform: translateY(1px) scale(0.97);
+}
+
+/* Crossfade the search icon to a close icon while the pill is open. */
+.notepad-search-toggle .notepad-search-toggle-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 15px;
+  height: 15px;
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(-90deg) scale(0.7);
+  transition:
+    opacity 160ms var(--md-ease),
+    transform 220ms var(--md-ease);
+  filter: brightness(0) saturate(100%) invert(24%) sepia(10%)
+    saturate(548%) hue-rotate(177deg) brightness(92%) contrast(86%);
+}
+
+.notepad-search-toggle .is-closed-icon {
+  opacity: 0.85;
+  transform: translate(-50%, -50%) rotate(0) scale(1);
+}
+
+.notepad-search-shell.is-open .notepad-search-toggle .is-closed-icon {
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(90deg) scale(0.7);
+}
+
+.notepad-search-shell.is-open .notepad-search-toggle .is-open-icon {
+  opacity: 0.85;
+  transform: translate(-50%, -50%) rotate(0) scale(1);
+}
+
+/* Save status indicator in the header. */
+.notepad-header-actions .notepad-status {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-heading);
+  font-size: 10px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--secondary-text);
+  white-space: nowrap;
+  opacity: 0;
+  transition:
+    opacity 200ms var(--md-ease),
+    color 200ms var(--md-ease);
+}
+
+.notepad-header-actions .notepad-status.is-saving,
+.notepad-header-actions .notepad-status.is-saved,
+.notepad-header-actions .notepad-status.is-dirty {
+  opacity: 1;
+}
+
+.notepad-header-actions .notepad-status.is-dirty {
+  color: var(--primary-color);
+}
+
+/* Custom tooltip for notepad icon buttons (escapes dock overflow clipping). */
+.notepad-tooltip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9998;
+  max-width: 240px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--box-shadow-table);
+  color: var(--dark-text);
+  font-family: var(--font-heading);
+  font-size: 10px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  line-height: 1.3;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(2px);
+  transition:
+    opacity 120ms var(--md-ease),
+    transform 120ms var(--md-ease),
+    visibility 0s linear 120ms;
+}
+
+.notepad-tooltip.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition:
+    opacity 120ms var(--md-ease),
+    transform 120ms var(--md-ease),
+    visibility 0s linear 0s;
 }

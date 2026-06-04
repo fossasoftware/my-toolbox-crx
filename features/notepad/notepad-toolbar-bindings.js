@@ -101,6 +101,19 @@ export function bindImportExportControls({
   }
 }
 
+export function bindSearchToggle({ searchToggleButton, toggleSearch }) {
+  if (!searchToggleButton) {
+    return;
+  }
+
+  searchToggleButton.addEventListener("mousedown", (event) => {
+    event.preventDefault();
+  });
+  searchToggleButton.addEventListener("click", () => {
+    toggleSearch();
+  });
+}
+
 export function bindSearchControls({
   handleCloseClick,
   handleInputChange,

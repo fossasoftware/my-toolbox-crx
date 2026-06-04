@@ -21,6 +21,7 @@ export function createNotepadPersistenceController({
   saveNotepadViewModePreference,
   saveStoredNotepadContent,
   searchHasQuery,
+  setSaveStatus,
   setLastNonPreviewViewMode,
   setNotepadViewMode,
   showToast,
@@ -123,13 +124,16 @@ export function createNotepadPersistenceController({
   } = {}) => {
     const notepadArea = getNotepadArea();
     if (!notepadArea) return;
+    setSaveStatus?.("saving");
     saveStoredNotepadContent(notepadArea.value, {
       onSaved: () => {
+        setSaveStatus?.("saved");
         if (showSuccessToast) {
           showToast(successToastKey);
         }
       },
       onError: (error) => {
+        setSaveStatus?.("dirty");
         console.error("Notepad: Error saving content:", error);
         showToast(errorToastKey);
       },

@@ -69,7 +69,9 @@ export function createBoardMainToolbarController({
       shapeButtons.forEach((button) => {
         const tool = button.dataset.tool;
         if (tool && shapeToolLabels[tool]) {
-          button.setAttribute("aria-label", getText(shapeToolLabels[tool]));
+          const shapeLabel = getText(shapeToolLabels[tool]);
+          button.setAttribute("aria-label", shapeLabel);
+          button.title = shapeLabel;
         }
         button.addEventListener("click", (event) => {
           event.preventDefault();
@@ -120,7 +122,9 @@ export function createBoardMainToolbarController({
           button.style.setProperty("--note-color", itemTypeColors[colorKey]);
         }
         if (action) {
-          button.setAttribute("aria-label", getItemTitle(action));
+          const noteLabel = getItemTitle(action);
+          button.setAttribute("aria-label", noteLabel);
+          button.title = noteLabel;
         }
       });
     }

@@ -111,6 +111,23 @@
   --button-secondary-text: #ffffff;
   --font-body: "Roboto Condensed", sans-serif;
   --font-heading: "Oswald", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", "Roboto Mono", Menlo, Consolas, monospace;
+  /* Raised surfaces and slate scale (shared by board/notepad docks) */
+  --surface-raised: #f7fafa;
+  --surface-card: #ffffff;
+  --slate-50: #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-400: #94a3b8;
+  /* RGB channels for alpha composition (rgba(var(--token), A)) */
+  --slate-400-rgb: 148, 163, 184;
+  --slate-500-rgb: 100, 116, 139;
+  --slate-900-rgb: 15, 23, 42;
+  --dark-text-rgb: 13, 24, 28;
+  --border-subtle: rgba(var(--slate-400-rgb), 0.35);
+  --border-subtle-weak: rgba(var(--slate-400-rgb), 0.26);
+  --border-strong: rgba(var(--slate-500-rgb), 0.55);
   --font-size-base: 14px;
   --font-size-h1: 36px;
   --font-size-h2: 28px;
@@ -498,6 +515,15 @@ a:hover {
 .button.button-danger:active {
   background-color: #a5000c;
   border-color: #a5000c;
+}
+
+/* Restore a visible keyboard focus ring on shared controls (a11y). */
+.button:focus-visible,
+.tab-link:focus-visible,
+.tab-group-toggle:focus-visible,
+.lang-option:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
 }
 
 .footer {

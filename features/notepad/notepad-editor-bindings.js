@@ -3,6 +3,7 @@ export function bindNotepadAreaEvents({
   autosaveEnabledRef,
   debouncedSaveNotepad,
   notepadArea,
+  onContentDirty,
   pushHistorySnapshot,
   redoNotepad,
   renderMarkdownPreview,
@@ -17,6 +18,7 @@ export function bindNotepadAreaEvents({
       renderMarkdownPreview();
     }
     pushHistorySnapshot();
+    onContentDirty?.();
     if (autosaveEnabledRef()) {
       debouncedSaveNotepad();
     }
