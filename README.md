@@ -1,12 +1,12 @@
 # My ToolBox
 
-[![Release](https://img.shields.io/badge/release-5.3.0-blue)](https://github.com/fossasoftware/my-toolbox-crx/releases)
+[![Release](https://img.shields.io/badge/release-5.4.0-blue)](https://github.com/fossasoftware/my-toolbox-crx/releases)
 
 **Chrome Extension**
 
 **My ToolBox** is a Chrome extension for Jira Cloud that combines helper rules, a whiteboard-style board, bookmarks, and a built-in markdown notepad into one workspace.
 
-**Version:** 5.3.0
+**Version:** 5.4.0
 **Author:** Vitalii Kopach
 
 ## Highlights

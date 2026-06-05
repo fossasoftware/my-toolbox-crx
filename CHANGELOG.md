@@ -5,6 +5,17 @@ All notable changes to the "My ToolBox" Chrome extension will be documented in t
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (starting from this documented version).
 
+## [5.4.0] - 2026-06-05
+
+This minor release gives the Notepad a cleaner, more minimalist layout.
+
+### Changed
+
+- Moved the Notepad toolbar from a floating dock into a top band with a quiet background, grouping autosave, save, undo, and redo before the formatting controls.
+- Moved the Split / Preview switch into the header as a compact segmented control.
+- Wrapped the toolbar and editor in a single bordered, rounded container with a hairline divider between the editor and preview.
+- Lightened the Notepad page title and flattened the toolbar buttons for a calmer look.
+
 ## [5.3.0] - 2026-06-04
 
 This minor release refreshes the Notepad and Board with a new search affordance, a save-status indicator, and accessibility and readability improvements.

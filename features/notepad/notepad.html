@@ -20,76 +20,81 @@
           <img class="notepad-search-toggle-icon is-open-icon" src="../img/icons/close.svg" alt="" aria-hidden="true" />
         </button>
       </div>
+      <div class="notepad-view-switch" role="group" data-label-key="notepadViewMode">
+        <button class="notepad-view-button" type="button" data-view-mode="split" data-label-key="notepadViewSplit">
+          <img src="../img/icons/split.svg" alt="" aria-hidden="true" />
+        </button>
+        <button class="notepad-view-button" type="button" data-view-mode="preview" data-label-key="notepadViewPreview">
+          <img src="../img/icons/preview.svg" alt="" aria-hidden="true" />
+        </button>
+      </div>
     </div>
   </div>
-  <div class="notepad-wrapper">
-    <textarea id="notepadArea" class="notepad-textarea" data-i18n-placeholder="notepadPlaceholder"></textarea>
-    <div id="notepadPreview" class="notepad-preview"></div>
-  </div>
-  <div class="board-toolbar-dock notepad-toolbar-dock" aria-hidden="false">
-    <div class="board-toolbar" role="toolbar">
-      <div class="board-tool-group">
-        <label class="board-autosave" for="notepadAutosaveToggle">
+
+  <div class="notepad-frame">
+    <div class="notepad-toolbar" role="toolbar">
+      <div class="notepad-tool-group">
+        <label class="board-autosave notepad-autosave" for="notepadAutosaveToggle">
           <input id="notepadAutosaveToggle" type="checkbox" />
           <span class="slider" aria-hidden="true"></span>
           <span data-i18n="notepadAutosaveLabel"></span>
         </label>
-        <button id="notepadSaveButton" class="button button-secondary icon-button board-save-button notepad-save-button" type="button" data-label-key="saveButton">
+        <button id="notepadSaveButton" class="notepad-tool-btn notepad-save-button" type="button" data-label-key="saveButton">
           <img src="../img/icons/save.svg" alt="" aria-hidden="true" />
-          <span class="btn-label" data-i18n="saveButton"></span>
         </button>
-        <button id="notepadUndoButton" class="button button-secondary icon-button board-history-button notepad-history-button" type="button" data-label-key="boardActionUndo">
+        <button id="notepadUndoButton" class="notepad-tool-btn notepad-history-button" type="button" data-label-key="boardActionUndo">
           <img src="../img/icons/undo.svg" alt="" aria-hidden="true" />
-          <span class="btn-label" data-i18n="boardActionUndo"></span>
         </button>
-        <button id="notepadRedoButton" class="button button-secondary icon-button board-history-button notepad-history-button" type="button" data-label-key="boardActionRedo">
+        <button id="notepadRedoButton" class="notepad-tool-btn notepad-history-button" type="button" data-label-key="boardActionRedo">
           <img src="../img/icons/redo.svg" alt="" aria-hidden="true" />
-          <span class="btn-label" data-i18n="boardActionRedo"></span>
         </button>
       </div>
-      <div class="board-tool-group">
-        <button class="button button-secondary icon-button board-tool-icon notepad-format-button" type="button" data-format="bold" data-label-key="notepadFormatBold">
+
+      <span class="notepad-tool-sep" aria-hidden="true"></span>
+
+      <div class="notepad-tool-group">
+        <button class="notepad-tool-btn notepad-format-button" type="button" data-format="bold" data-label-key="notepadFormatBold">
           <img src="../img/icons/bold.svg" alt="" aria-hidden="true" />
         </button>
-        <button class="button button-secondary icon-button board-tool-icon notepad-format-button" type="button" data-format="italic" data-label-key="notepadFormatItalic">
+        <button class="notepad-tool-btn notepad-format-button" type="button" data-format="italic" data-label-key="notepadFormatItalic">
           <img src="../img/icons/italic.svg" alt="" aria-hidden="true" />
         </button>
-        <button class="button button-secondary icon-button board-tool-icon notepad-format-button" type="button" data-format="link" data-label-key="notepadFormatLink">
+        <button class="notepad-tool-btn notepad-format-button" type="button" data-format="link" data-label-key="notepadFormatLink">
           <img src="../img/icons/link.svg" alt="" aria-hidden="true" />
         </button>
-        <button class="button button-secondary icon-button board-tool-icon notepad-format-button" type="button" data-format="code" data-label-key="notepadFormatCode">
+        <button class="notepad-tool-btn notepad-format-button" type="button" data-format="code" data-label-key="notepadFormatCode">
           <img src="../img/icons/code.svg" alt="" aria-hidden="true" />
         </button>
-        <button class="button button-secondary icon-button board-tool-icon notepad-format-button" type="button" data-format="list" data-label-key="notepadFormatList">
+        <button class="notepad-tool-btn notepad-format-button" type="button" data-format="list" data-label-key="notepadFormatList">
           <img src="../img/icons/list.svg" alt="" aria-hidden="true" />
         </button>
-        <button class="button button-secondary icon-button board-tool-icon notepad-format-button" type="button" data-format="quote" data-label-key="notepadFormatQuote">
+        <button class="notepad-tool-btn notepad-format-button" type="button" data-format="quote" data-label-key="notepadFormatQuote">
           <img src="../img/icons/quote.svg" alt="" aria-hidden="true" />
         </button>
-        <button class="button button-secondary icon-button board-tool-icon notepad-format-button notepad-quick-button" type="button" data-format="checkbox" data-label-key="notepadFormatCheckbox">
+        <button class="notepad-tool-btn notepad-format-button" type="button" data-format="checkbox" data-label-key="notepadFormatCheckbox">
           <img src="../img/icons/checkbox.svg" alt="" aria-hidden="true" />
         </button>
       </div>
-      <div class="board-tool-group">
-        <button class="button button-secondary icon-button board-tool-icon notepad-format-button notepad-quick-button" type="button" data-format="heading1" data-label-key="notepadFormatHeading1">
+
+      <span class="notepad-tool-sep" aria-hidden="true"></span>
+
+      <div class="notepad-tool-group">
+        <button class="notepad-tool-btn notepad-format-button" type="button" data-format="heading1" data-label-key="notepadFormatHeading1">
           <img src="../img/icons/h1.svg" alt="" aria-hidden="true" />
         </button>
-        <button class="button button-secondary icon-button board-tool-icon notepad-format-button notepad-quick-button" type="button" data-format="heading2" data-label-key="notepadFormatHeading2">
+        <button class="notepad-tool-btn notepad-format-button" type="button" data-format="heading2" data-label-key="notepadFormatHeading2">
           <img src="../img/icons/h2.svg" alt="" aria-hidden="true" />
         </button>
-        <button class="button button-secondary icon-button board-tool-icon notepad-format-button notepad-quick-button" type="button" data-format="heading3" data-label-key="notepadFormatHeading3">
+        <button class="notepad-tool-btn notepad-format-button" type="button" data-format="heading3" data-label-key="notepadFormatHeading3">
           <img src="../img/icons/h3.svg" alt="" aria-hidden="true" />
         </button>
       </div>
     </div>
-  </div>
-  <div class="notepad-view-switch notepad-view-switch-floating" role="toolbar" data-label-key="notepadViewMode">
-    <button class="button button-secondary icon-button board-tool-icon notepad-view-button" type="button" data-view-mode="split" data-label-key="notepadViewSplit">
-      <img src="../img/icons/split.svg" alt="" aria-hidden="true" />
-    </button>
-    <button class="button button-secondary icon-button board-tool-icon notepad-view-button" type="button" data-view-mode="preview" data-label-key="notepadViewPreview">
-      <img src="../img/icons/preview.svg" alt="" aria-hidden="true" />
-    </button>
+
+    <div class="notepad-wrapper">
+      <textarea id="notepadArea" class="notepad-textarea" data-i18n-placeholder="notepadPlaceholder"></textarea>
+      <div id="notepadPreview" class="notepad-preview"></div>
+    </div>
   </div>
 
 </div>

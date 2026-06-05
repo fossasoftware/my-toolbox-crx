@@ -4,7 +4,7 @@
 // positioned with `position: fixed` to escape any ancestor clipping.
 
 const TOOLTIP_SELECTOR =
-  ".notepad-toolbar-dock .icon-button, .notepad-view-switch .icon-button, .notepad-search-toggle";
+  ".notepad-toolbar .notepad-tool-btn, .notepad-view-switch .notepad-view-button, .notepad-search-toggle";
 
 let tooltipInitialized = false;
 

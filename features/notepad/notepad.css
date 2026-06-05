@@ -1,27 +1,27 @@
 .notepad-textarea {
   width: 100%;
-  padding: var(--spacing-md);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-table);
-  line-height: 1.5;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: 0;
+  border-radius: 0;
+  line-height: 1.6;
   resize: none;
   margin-bottom: 0;
   font-family: var(--font-mono);
   font-size: 13px;
   vertical-align: top;
+  background: transparent;
+  color: #2a2f35;
 }
 .notepad-textarea:focus {
   outline: none;
-  border-color: var(--dark-text);
-  box-shadow: 0 0 4px 0 rgba(var(--dark-text-rgb), 0.1), 0 0 8px 0 rgba(var(--dark-text-rgb), 0.1);
 }
 
 .notepad-preview {
   width: 100%;
-  padding: var(--spacing-md);
-  border: 1px solid var(--border-color-table);
-  border-radius: var(--border-radius-table);
-  background-color: var(--background-light);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
   line-height: 1.6;
   font-family: var(--font-body);
   font-size: var(--font-size-base);
@@ -129,7 +129,6 @@
   flex-direction: column;
   height: calc(100vh - var(--spacing-xl) - var(--spacing-xl));
   position: relative;
-  padding-bottom: 72px;
 }
 
 .notepad-header {
@@ -146,6 +145,11 @@
 .notepad-header h2 {
   margin: 0;
   padding-top: 0;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  text-transform: none;
+  line-height: 1.1;
 }
 
 .notepad-header-actions {
@@ -157,233 +161,173 @@
   margin-left: auto;
 }
 
+/* ── Header segmented Split / Preview control ── */
 .notepad-view-switch {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  min-height: var(--input-height);
-  padding: 4px;
-  border: 1px solid rgba(var(--slate-400-rgb), 0.28);
-  border-radius: 22px;
-  background-color: var(--surface-raised);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.75),
-    0 1px 2px rgba(var(--slate-900-rgb), 0.06);
-}
-
-.notepad-view-switch-floating {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
-  z-index: 8;
-}
-
-#notepadTab .notepad-view-button,
-#notepadTab .notepad-view-button:hover {
-  max-width: var(--input-height);
+  gap: 3px;
+  padding: 3px;
+  border-radius: var(--border-radius-button);
+  background-color: var(--slate-100);
+  flex: 0 0 auto;
 }
 
 #notepadTab .notepad-view-button {
-  width: var(--input-height);
-  height: var(--input-height);
-  min-width: var(--input-height);
-  min-height: var(--input-height);
-  max-width: var(--input-height);
-  max-height: var(--input-height);
-  padding: 5px;
-  border-radius: 22px;
-  flex: 0 0 auto;
-}
-
-#notepadTab .notepad-view-switch .button.button-secondary.notepad-view-button {
+  width: 32px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--border-radius-button);
   background-color: transparent;
-  border-color: transparent;
-  color: var(--secondary-text);
-  box-shadow: none;
+  cursor: pointer;
   transition:
     background-color var(--transition-fast),
-    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
     transform 120ms ease;
 }
 
-#notepadTab .notepad-view-switch .button.button-secondary.notepad-view-button:hover {
-  background-color: rgba(255, 255, 255, 0.72);
-  border-color: rgba(var(--slate-400-rgb), 0.22);
-  box-shadow: none;
+#notepadTab .notepad-view-button img {
+  width: 15px;
+  height: 15px;
+  opacity: 0.7;
+  filter: brightness(0) saturate(100%) invert(13%) sepia(8%)
+    saturate(900%) hue-rotate(165deg) brightness(95%) contrast(88%);
 }
 
-#notepadTab .notepad-view-switch .notepad-view-button img {
-  width: 16px;
-  height: 16px;
+#notepadTab .notepad-view-button:hover img {
+  opacity: 0.95;
+}
+
+#notepadTab .notepad-view-button:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 1px;
+}
+
+#notepadTab .notepad-view-button.active,
+#notepadTab .notepad-view-button[aria-pressed="true"] {
+  background-color: var(--surface-card);
+  box-shadow: 0 1px 2px rgba(var(--slate-900-rgb), 0.08);
+}
+
+#notepadTab .notepad-view-button.active img,
+#notepadTab .notepad-view-button[aria-pressed="true"] img {
+  opacity: 1;
+}
+
+/* ── Outer frame wrapping the toolbar + editor ── */
+.notepad-frame {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color-table);
+  border-radius: var(--border-radius-table);
+  overflow: hidden;
+}
+
+/* ── Top toolbar band ── */
+.notepad-toolbar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background-color: var(--slate-50);
+  border-bottom: 1px solid var(--border-color-table);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.notepad-toolbar::-webkit-scrollbar {
+  display: none;
+}
+
+.notepad-tool-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex: 0 0 auto;
+}
+
+.notepad-tool-sep {
+  width: 1px;
+  height: 18px;
+  background-color: var(--border-color-table);
+  margin: 0 8px;
+  flex: 0 0 auto;
+}
+
+.notepad-tool-btn {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--border-radius-table);
+  background-color: transparent;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    transform 120ms ease;
+}
+
+.notepad-tool-btn img {
+  width: 17px;
+  height: 17px;
+  opacity: 0.62;
+  filter: brightness(0) saturate(100%) invert(13%) sepia(8%)
+    saturate(900%) hue-rotate(165deg) brightness(95%) contrast(88%);
+}
+
+.notepad-tool-btn:hover {
+  background-color: var(--slate-100);
+}
+
+.notepad-tool-btn:hover img {
   opacity: 0.9;
 }
 
-#notepadTab .notepad-view-switch .button.button-secondary.notepad-view-button.active,
-#notepadTab .notepad-view-switch .button.button-secondary.notepad-view-button[aria-pressed="true"] {
-  background-color: #ffffff;
-  border-color: rgba(var(--slate-400-rgb), 0.35);
-  color: var(--dark-text);
-  box-shadow: none;
-}
-
-#notepadTab .notepad-view-switch .button.button-secondary.notepad-view-button.active:hover,
-#notepadTab .notepad-view-switch .button.button-secondary.notepad-view-button[aria-pressed="true"]:hover {
-  background-color: #ffffff;
-  border-color: rgba(var(--slate-400-rgb), 0.35);
-  transform: none;
-}
-
-#notepadTab .notepad-toolbar-dock .board-history-button,
-#notepadTab .notepad-toolbar-dock .board-save-button,
-#notepadTab .notepad-toolbar-dock .board-tool-icon {
-  width: var(--board-toolbar-control-size, var(--input-height));
-  height: var(--board-toolbar-control-size, var(--input-height));
-}
-
-#notepadTab .notepad-toolbar-dock {
-  border-color: rgba(var(--slate-400-rgb), 0.26);
-  border-radius: 22px;
-  background-color: var(--surface-raised);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.75),
-    0 1px 2px rgba(var(--slate-900-rgb), 0.06);
-}
-
-#notepadTab .notepad-toolbar-dock .board-toolbar {
-  gap: 4px;
-  padding: 4px;
-  padding-right: 4px;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-}
-
-#notepadTab .notepad-toolbar-dock .board-tool-group {
-  padding: 0;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-}
-
-#notepadTab .notepad-toolbar-dock .board-tool-group + .board-tool-group {
-  margin-left: 2px;
-  padding-left: 6px;
-  border-left: 1px solid rgba(var(--slate-400-rgb), 0.28);
-}
-
-#notepadTab .notepad-toolbar-dock .button.button-secondary {
-  background-color: #ffffff;
-  border-color: rgba(var(--slate-400-rgb), 0.35);
-  color: var(--dark-text);
-  box-shadow: none;
-  transition:
-    background-color var(--transition-fast),
-    border-color var(--transition-fast),
-    transform 120ms ease;
-}
-
-#notepadTab .notepad-toolbar-dock .button.button-secondary:hover {
-  background-color: #ffffff;
-  border-color: rgba(var(--slate-400-rgb), 0.45);
-  box-shadow: none;
-}
-
-#notepadTab .notepad-toolbar-dock .button.button-secondary:active {
-  background-color: var(--slate-50);
-  border-color: rgba(var(--slate-400-rgb), 0.45);
-  box-shadow: none;
+.notepad-tool-btn:active {
   transform: translateY(1px) scale(0.97);
 }
 
-#notepadTab .notepad-toolbar-dock .button.button-secondary.active,
-#notepadTab .notepad-toolbar-dock .button.button-secondary[aria-pressed="true"] {
-  background-color: #ffffff;
-  border-color: rgba(var(--slate-400-rgb), 0.35);
-  color: var(--dark-text);
-  box-shadow: none;
+.notepad-tool-btn:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 1px;
 }
 
-#notepadTab .notepad-toolbar-dock .button.button-secondary.active:hover,
-#notepadTab .notepad-toolbar-dock .button.button-secondary[aria-pressed="true"]:hover {
-  background-color: #ffffff;
-  border-color: rgba(var(--slate-400-rgb), 0.35);
-  box-shadow:
-    0 2px 4px rgba(var(--slate-900-rgb), 0.09),
-    0 0 0 1px rgba(255, 255, 255, 0.9) inset;
-  transform: none;
+.notepad-tool-btn.active,
+.notepad-tool-btn[aria-pressed="true"] {
+  background-color: var(--slate-100);
 }
 
-#notepadTab .notepad-toolbar-dock .icon-button img,
-#notepadTab .notepad-toolbar-dock .icon-button svg {
-  width: 18px;
-  height: 18px;
-  display: block;
+.notepad-tool-btn.active img {
+  opacity: 1;
+}
+
+.notepad-tool-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.notepad-tool-btn:disabled:hover {
+  background-color: transparent;
+}
+
+/* autosave toggle within the band */
+#notepadTab .notepad-autosave {
   flex: 0 0 auto;
-  object-fit: contain;
-}
-
-#notepadTab .notepad-toolbar-dock .board-autosave {
-  padding: 0 6px 0 4px;
+  padding: 0 8px 0 2px;
   color: var(--secondary-text);
 }
 
-.notepad-save-button {
-  max-width: var(--input-height);
-}
-
-.notepad-history-button {
-  max-width: var(--input-height);
-}
-
-.notepad-history-button:hover {
-  max-width: var(--input-height);
-}
-
-.notepad-save-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
-.notepad-save-button:disabled:hover {
-  max-width: var(--input-height);
-}
-
-.notepad-history-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
-.notepad-history-button:disabled:hover {
-  max-width: var(--input-height);
-}
-
-.notepad-format-button {
-  max-width: var(--input-height);
-}
-
-.notepad-format-button:hover {
-  max-width: var(--input-height);
-}
-
-.notepad-quick-button {
-  max-width: var(--input-height);
-}
-
-.notepad-quick-button:hover {
-  max-width: var(--input-height);
-}
-
-.notepad-view-button {
-  max-width: var(--input-height);
-}
-
-.notepad-view-button:hover {
-  max-width: var(--input-height);
-}
+/* (toolbar button sizing now handled by .notepad-tool-btn / .notepad-view-button) */
 
 /* The search lives in the header as ONE pill. Collapsed, only the round toggle
    shows; opening slides the field out of the button (right-to-left), closing
@@ -527,7 +471,7 @@
 .notepad-wrapper {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: var(--spacing-md);
+  gap: 0;
   align-items: stretch;
   flex: 1 1 auto;
   min-height: 0;
@@ -535,6 +479,11 @@
   transition:
     grid-template-columns 280ms var(--md-ease),
     gap 240ms var(--md-ease);
+}
+
+/* single hairline divider between the panes in split view */
+.notepad-wrapper[data-view-mode="split"] .notepad-textarea {
+  border-right: 1px solid var(--border-color-table);
 }
 
 .notepad-wrapper[data-view-animation="none"] {
@@ -600,23 +549,7 @@
   transform: none;
 }
 
-.notepad-toolbar-dock {
-  position: absolute;
-  left: 50%;
-  bottom: 12px;
-  transform: translateX(-50%);
-  z-index: 3;
-  max-width: calc(100% - 24px);
-}
-
-.notepad-toolbar-dock .board-toolbar {
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.notepad-toolbar-dock .board-toolbar::-webkit-scrollbar {
-  display: none;
-}
+/* (legacy floating toolbar dock removed — toolbar is now an inline top band) */
 
 /* Search toggle: the right cap of the search pill. The shell provides the
    border/background, so the toggle itself is transparent. */
