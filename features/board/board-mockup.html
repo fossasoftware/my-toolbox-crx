@@ -1,0 +1,1017 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Board — мокап (minimalist refresh)</title>
+  <style>
+    /* ───────────────────────────────────────────────────────────
+       STANDALONE MOCKUP — not wired to extension logic.
+       Reuses the notepad "minimalist refresh" visual language:
+       clean header (title left + segmented controls right),
+       a bordered .frame wrapping an inline top toolbar band over
+       the canvas, monochrome icons, slate surfaces.
+       Open directly in a browser. Icons/fonts resolved at ../../
+       ─────────────────────────────────────────────────────────── */
+
+    /* Fonts (local, same as the extension) */
+    @font-face {
+      font-family: "Oswald";
+      src: url("../../fonts/Oswald/Oswald-Regular.ttf") format("truetype");
+      font-weight: 400; font-display: swap;
+    }
+    @font-face {
+      font-family: "Oswald";
+      src: url("../../fonts/Oswald/Oswald-Medium.ttf") format("truetype");
+      font-weight: 500; font-display: swap;
+    }
+    @font-face {
+      font-family: "Roboto Condensed";
+      src: url("../../fonts/RobotoCondensed/RobotoCondensed-Regular.ttf") format("truetype");
+      font-weight: 400; font-display: swap;
+    }
+    @font-face {
+      font-family: "Roboto Condensed";
+      src: url("../../fonts/RobotoCondensed/RobotoCondensed-Medium.ttf") format("truetype");
+      font-weight: 500; font-display: swap;
+    }
+
+    /* Design tokens (copied from options-main.css :root) */
+    :root {
+      --primary-color: #e30613;
+      --primary-hover: #be0510;
+      --dark-text: #0d181c;
+      --light-text: #ffffff;
+      --secondary-text: #6b7280;
+      --background-light: #ffffff;
+      --background-medium: #f9fafb;
+      --border-color: #d4d6dd;
+      --border-color-table: #ddd;
+      --danger-color: #dc2626;
+      --font-body: "Roboto Condensed", sans-serif;
+      --font-heading: "Oswald", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", "Roboto Mono", Menlo, Consolas, monospace;
+      --surface-raised: #f7fafa;
+      --surface-card: #ffffff;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-400: #94a3b8;
+      --slate-400-rgb: 148, 163, 184;
+      --slate-500-rgb: 100, 116, 139;
+      --slate-900-rgb: 15, 23, 42;
+      --border-subtle: rgba(var(--slate-400-rgb), 0.35);
+      --border-subtle-weak: rgba(var(--slate-400-rgb), 0.26);
+      --board-link-color: #64748b;
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 12px;
+      --spacing-lg: 16px;
+      --spacing-xl: 20px;
+      --input-height: 32px;
+      --border-radius-button: 30px;
+      --border-radius-table: 4px;
+      --box-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --box-shadow-table: 0 4px 8px 0 rgba(13, 24, 28, 0.05), 0 2px 4px 0 rgba(13, 24, 28, 0.05);
+      --box-shadow-modal: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --transition-fast: all 0.25s ease-in-out;
+      --md-ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+      /* Shared monochrome-icon tint (dark slate), lifted from notepad */
+      --icon-tint: brightness(0) saturate(100%) invert(13%) sepia(8%)
+        saturate(900%) hue-rotate(165deg) brightness(95%) contrast(88%);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--dark-text);
+      background-color: #eef1f4;
+      line-height: 1.5;
+      padding: 32px 24px 64px;
+    }
+
+    /* ── Mockup page chrome ────────────────────────────────── */
+    .mock-page { max-width: 1120px; margin: 0 auto; }
+
+    .mock-page-head { margin-bottom: 28px; }
+    .mock-page-head h1 {
+      font-family: var(--font-heading);
+      font-weight: 500;
+      font-size: 26px;
+      letter-spacing: 0.3px;
+    }
+    .mock-page-head p {
+      color: var(--secondary-text);
+      font-size: 14px;
+      max-width: 70ch;
+      margin-top: 6px;
+    }
+
+    .mock-section { margin-top: 40px; }
+    .mock-section > .mock-label {
+      display: inline-block;
+      font-family: var(--font-heading);
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--secondary-text);
+      margin-bottom: 12px;
+    }
+
+    /* ════════════════════════════════════════════════════════
+       BOARD — adapted to the notepad layout language
+       ════════════════════════════════════════════════════════ */
+
+    .board {
+      display: flex;
+      flex-direction: column;
+      background-color: var(--background-light);
+      border-radius: 8px;
+      box-shadow: var(--box-shadow-table);
+      padding: var(--spacing-xl);
+    }
+    .board.is-tall { height: 660px; }
+
+    /* ── Header: title left, actions right (mirrors .notepad-header) ── */
+    .board-header {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacing-md);
+      min-height: 32px;
+      margin-bottom: var(--spacing-lg);
+      flex: 0 0 auto;
+    }
+    .board-header h2 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      line-height: 1.1;
+    }
+    .board-header-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    /* Save status pill in the header (mirrors notepad status) */
+    .board-status {
+      display: inline-flex;
+      align-items: center;
+      font-family: var(--font-heading);
+      font-size: 10px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: var(--secondary-text);
+      white-space: nowrap;
+    }
+    .board-status.is-dirty { color: var(--primary-color); }
+
+    /* Round icon pill — same recipe as notepad's search toggle */
+    .board-round-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: var(--input-height);
+      height: var(--input-height);
+      padding: 0;
+      border: 1px solid var(--border-subtle);
+      border-radius: 22px;
+      background-color: var(--surface-card);
+      box-shadow: var(--box-shadow-sm);
+      cursor: pointer;
+      transition: background-color var(--transition-fast), border-color var(--transition-fast), transform 120ms ease;
+    }
+    .board-round-btn:hover { background-color: rgba(var(--slate-400-rgb), 0.16); }
+    .board-round-btn:active { transform: translateY(1px) scale(0.97); }
+    .board-round-btn.is-open {
+      background-color: var(--slate-100);
+      border-color: var(--slate-400);
+    }
+    .board-round-btn img { width: 15px; height: 15px; opacity: 0.8; filter: var(--icon-tint); }
+
+    /* Zoom: a segmented pill, styled like notepad's view-switch ── */
+    .board-zoom {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      padding: 3px;
+      border-radius: var(--border-radius-button);
+      background-color: var(--slate-100);
+      flex: 0 0 auto;
+    }
+    .board-zoom button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 26px;
+      padding: 0;
+      border: 0;
+      border-radius: var(--border-radius-button);
+      background-color: transparent;
+      cursor: pointer;
+      color: var(--dark-text);
+      transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+    .board-zoom .board-zoom-step { width: 28px; }
+    .board-zoom .board-zoom-step img { width: 13px; height: 13px; opacity: 0.7; filter: var(--icon-tint); }
+    .board-zoom .board-zoom-step:hover { background-color: rgba(var(--slate-400-rgb), 0.2); }
+    .board-zoom .board-zoom-label {
+      min-width: 46px;
+      font-family: var(--font-heading);
+      font-size: 11px;
+      letter-spacing: 0.4px;
+      background-color: var(--surface-card);
+      box-shadow: 0 1px 2px rgba(var(--slate-900-rgb), 0.08);
+    }
+
+    /* ── Frame wrapping toolbar band + canvas (mirrors .notepad-frame) ── */
+    .board-frame {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border-color-table);
+      border-radius: var(--border-radius-table);
+      overflow: hidden;
+    }
+
+    /* ── Top toolbar band (mirrors .notepad-toolbar) ── */
+    .board-toolbar {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 12px;
+      background-color: var(--slate-50);
+      border-bottom: 1px solid var(--border-color-table);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .board-toolbar::-webkit-scrollbar { display: none; }
+
+    .board-tool-group { display: inline-flex; align-items: center; gap: 2px; flex: 0 0 auto; }
+    .board-tool-group.is-grow { margin-left: auto; }
+
+    .board-tool-sep {
+      width: 1px; height: 18px;
+      background-color: var(--border-color-table);
+      margin: 0 8px; flex: 0 0 auto;
+    }
+
+    /* 32×32 transparent icon buttons (mirrors .notepad-tool-btn) */
+    .board-tool-btn {
+      position: relative;
+      width: 32px; height: 32px;
+      flex: 0 0 auto;
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 0; border: 0;
+      border-radius: var(--border-radius-table);
+      background-color: transparent;
+      cursor: pointer;
+      transition: background-color var(--transition-fast), box-shadow var(--transition-fast), transform 120ms ease;
+    }
+    .board-tool-btn img { width: 17px; height: 17px; opacity: 0.62; filter: var(--icon-tint); }
+    .board-tool-btn:hover { background-color: var(--slate-100); }
+    .board-tool-btn:hover img { opacity: 0.9; }
+    .board-tool-btn:active { transform: translateY(1px) scale(0.97); }
+    .board-tool-btn:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 1px; }
+
+    /* Active tool = a mode, so it reads stronger than a hover */
+    .board-tool-btn.is-active {
+      background-color: var(--slate-200);
+      box-shadow: inset 0 0 0 1px rgba(var(--slate-500-rgb), 0.18);
+    }
+    .board-tool-btn.is-active img { opacity: 1; }
+
+    /* Tools that open popovers get a tiny caret */
+    .board-tool-btn.has-popup::after {
+      content: "";
+      position: absolute;
+      right: 3px; bottom: 4px;
+      width: 0; height: 0;
+      border-left: 3px solid transparent;
+      border-right: 3px solid transparent;
+      border-top: 3px solid rgba(var(--slate-900-rgb), 0.4);
+    }
+
+    /* Autosave toggle inside the band (mirrors .notepad-autosave) */
+    .board-autosave {
+      display: inline-flex; align-items: center; gap: 6px;
+      flex: 0 0 auto;
+      padding: 0 8px 0 2px;
+      font-family: var(--font-heading);
+      font-size: 10px; letter-spacing: 0.4px; text-transform: uppercase;
+      color: var(--secondary-text);
+      cursor: pointer;
+      user-select: none;
+    }
+    .board-autosave input { position: absolute; opacity: 0; pointer-events: none; }
+    .board-autosave .slider {
+      position: relative;
+      width: 34px; height: 18px;
+      background-color: var(--slate-300);
+      border-radius: 10px;
+      transition: background-color var(--transition-fast);
+    }
+    .board-autosave .slider::before {
+      content: "";
+      position: absolute; top: 2px; left: 2px;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background-color: #fff;
+      box-shadow: 0 1px 2px rgba(var(--slate-900-rgb), 0.25);
+      transition: transform var(--transition-fast);
+    }
+    .board-autosave input:checked + .slider { background-color: var(--primary-color); }
+    .board-autosave input:checked + .slider::before { transform: translateX(16px); }
+
+    /* ── Canvas area ── */
+    .board-canvas {
+      position: relative;
+      flex: 1 1 auto;
+      min-height: 320px;
+      background-color: var(--background-light);
+      background-image: radial-gradient(circle, rgba(var(--slate-900-rgb), 0.07) 1px, transparent 1px);
+      background-size: 24px 24px;
+      overflow: hidden;
+    }
+
+    /* Sample board items (sticky notes / boxes) */
+    .b-item {
+      position: absolute;
+      border-radius: 6px;
+      padding: 12px 14px;
+      font-size: 13px;
+      line-height: 1.45;
+      box-shadow: 0 2px 6px rgba(var(--slate-900-rgb), 0.12), 0 1px 2px rgba(var(--slate-900-rgb), 0.08);
+      border: 1px solid rgba(var(--slate-900-rgb), 0.06);
+    }
+    .b-item .b-item-title {
+      font-family: var(--font-heading);
+      font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase;
+      color: var(--secondary-text);
+      margin-bottom: 4px;
+    }
+    .b-item.is-note { background-color: #fff6bf; }
+    .b-item.is-process { background-color: #e5f1ff; }
+    .b-item.is-decision { background-color: #ffe6d5; }
+    .b-item.is-task { background-color: #f6f7fb; }
+
+    /* A drawn shape (rect with colored stroke) */
+    .b-shape {
+      position: absolute;
+      border-radius: 8px;
+      background-color: #e9ddff;
+      border: 2px solid #7c3aed;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-heading);
+      font-size: 12px; letter-spacing: 0.4px; text-transform: uppercase;
+      color: #5b21b6;
+    }
+
+    /* Selection ring on the focused element */
+    .is-selected {
+      outline: 2px solid var(--primary-color);
+      outline-offset: 2px;
+    }
+    .b-handle {
+      position: absolute;
+      width: 9px; height: 9px;
+      background-color: #fff;
+      border: 1.5px solid var(--primary-color);
+      border-radius: 2px;
+    }
+
+    .board-links { position: absolute; inset: 0; pointer-events: none; }
+    .b-link-label {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      background-color: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 1px 8px;
+      font-size: 11px;
+      color: var(--secondary-text);
+      box-shadow: var(--box-shadow-sm);
+    }
+
+    /* ── Floating contextual toolbar card (shape / link / item) ──
+       New language: white card, subtle border + shadow, rounded. */
+    .ctx-card {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      padding: 4px;
+      background-color: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      box-shadow: var(--box-shadow-table);
+    }
+    .ctx-card.is-floating { position: absolute; z-index: 6; }
+    .ctx-sep { width: 1px; height: 20px; background-color: var(--border-color-table); margin: 0 4px; }
+
+    .ctx-btn {
+      width: 30px; height: 30px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border: 0; border-radius: 7px;
+      background-color: transparent;
+      cursor: pointer;
+      transition: background-color var(--transition-fast);
+    }
+    .ctx-btn:hover { background-color: var(--slate-100); }
+    .ctx-btn img { width: 15px; height: 15px; opacity: 0.7; filter: var(--icon-tint); }
+    .ctx-btn.is-danger:hover { background-color: rgba(220, 38, 38, 0.1); }
+    .ctx-btn.is-danger:hover img {
+      opacity: 1;
+      filter: brightness(0) saturate(100%) invert(28%) sepia(64%) saturate(2618%) hue-rotate(343deg) brightness(92%) contrast(92%);
+    }
+    .ctx-btn.is-text {
+      font-family: var(--font-heading);
+      font-size: 15px; font-weight: 500;
+      color: var(--dark-text);
+    }
+
+    /* Color/style swatch triggers */
+    .ctx-swatch {
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      border: 1px solid rgba(var(--slate-900-rgb), 0.18);
+      box-shadow: inset 0 0 0 2px #fff;
+    }
+    .ctx-swatch.is-stroke { background: conic-gradient(#0000 0 0); border: 3px solid #2563eb; box-shadow: none; }
+    .ctx-swatch.is-fill { background-color: #fff6bf; }
+    .ctx-swatch.is-line {
+      border: 0; box-shadow: none; background: transparent;
+      position: relative;
+    }
+    .ctx-swatch.is-line::after {
+      content: ""; position: absolute; left: 2px; right: 2px; top: 50%;
+      border-top: 2px dashed var(--secondary-text);
+    }
+    .ctx-size-dot {
+      width: 22px; height: 22px;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .ctx-size-dot::after { content: ""; width: 12px; height: 12px; border-radius: 50%; background-color: var(--dark-text); }
+
+    /* ── Popovers (shapes / notes / pen) — pop above the band ── */
+    .popover {
+      display: inline-block;
+      background-color: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      box-shadow: var(--box-shadow-modal);
+      padding: 10px;
+    }
+    .popover-title {
+      font-family: var(--font-heading);
+      font-size: 10px; letter-spacing: 0.8px; text-transform: uppercase;
+      color: var(--secondary-text);
+      margin: 2px 4px 8px;
+    }
+
+    .shape-grid { display: grid; grid-template-columns: repeat(5, 36px); gap: 4px; }
+    .shape-grid button {
+      width: 36px; height: 36px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border: 0; border-radius: 8px;
+      background-color: transparent;
+      cursor: pointer;
+      transition: background-color var(--transition-fast);
+    }
+    .shape-grid button:hover { background-color: var(--slate-100); }
+    .shape-grid svg { width: 18px; height: 18px; fill: none; stroke: var(--dark-text); stroke-width: 1.5; opacity: 0.75; }
+
+    .note-grid { display: flex; gap: 6px; }
+    .note-grid button {
+      width: 56px; height: 44px;
+      border: 1px solid rgba(var(--slate-900-rgb), 0.08);
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: var(--box-shadow-sm);
+      position: relative;
+      transition: transform 120ms ease;
+    }
+    .note-grid button:hover { transform: translateY(-2px); }
+    .note-grid button span {
+      position: absolute; left: 6px; bottom: 4px;
+      font-family: var(--font-heading);
+      font-size: 9px; letter-spacing: 0.4px; text-transform: uppercase;
+      color: var(--secondary-text);
+    }
+
+    .pen-panel { width: 230px; }
+    .pen-row { display: flex; align-items: center; gap: 10px; padding: 6px 4px; }
+    .pen-row .pen-ico {
+      width: 16px; flex: 0 0 auto;
+      font-family: var(--font-heading); font-size: 11px; color: var(--secondary-text);
+    }
+    .pen-row input[type="range"] {
+      flex: 1 1 auto;
+      -webkit-appearance: none; appearance: none;
+      height: 4px; border-radius: 4px;
+      background-color: var(--slate-200);
+    }
+    .pen-row input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 14px; height: 14px; border-radius: 50%;
+      background-color: var(--primary-color);
+      cursor: pointer;
+      box-shadow: 0 1px 2px rgba(var(--slate-900-rgb), 0.3);
+    }
+    .pen-row .pen-val {
+      width: 28px; text-align: right;
+      font-family: var(--font-heading); font-size: 11px; color: var(--dark-text);
+    }
+    .pen-colors { display: flex; gap: 6px; padding: 8px 4px 2px; border-top: 1px solid var(--border-color-table); margin-top: 4px; }
+    .pen-colors span {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 1px solid rgba(var(--slate-900-rgb), 0.12);
+      cursor: pointer;
+    }
+    .pen-colors span.is-active { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--primary-color); }
+
+    /* Note color menu (right-click on an item) */
+    .menu {
+      width: 200px;
+      background-color: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      box-shadow: var(--box-shadow-modal);
+      padding: 6px;
+    }
+    .menu-item {
+      display: flex; align-items: center; gap: 10px;
+      width: 100%;
+      padding: 7px 8px;
+      border: 0; border-radius: 6px;
+      background-color: transparent;
+      cursor: pointer;
+      font-family: var(--font-body); font-size: 13px; color: var(--dark-text);
+      text-align: left;
+    }
+    .menu-item:hover { background-color: var(--slate-100); }
+    .menu-sep { height: 1px; background-color: var(--border-color-table); margin: 5px 2px; }
+    .menu-head {
+      font-family: var(--font-heading);
+      font-size: 10px; letter-spacing: 0.6px; text-transform: uppercase;
+      color: var(--secondary-text);
+      padding: 4px 8px 2px;
+    }
+    .menu-swatch { width: 16px; height: 16px; border-radius: 4px; border: 1px solid rgba(var(--slate-900-rgb), 0.12); flex: 0 0 auto; }
+    .menu-item[aria-checked="true"] { background-color: var(--slate-100); }
+    .menu-item[aria-checked="true"]::after {
+      content: ""; margin-left: auto;
+      width: 6px; height: 10px;
+      border: solid var(--primary-color); border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    /* Empty state (mirrors boardEmptyState, restyled) */
+    .board-empty {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none;
+    }
+    .board-empty-inner { text-align: center; }
+    .board-empty-icons { display: inline-flex; gap: 12px; margin-bottom: 14px; }
+    .board-empty-icon {
+      width: 48px; height: 48px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 12px;
+      background-color: var(--slate-50);
+      border: 1px solid var(--border-color-table);
+    }
+    .board-empty-icon img { width: 22px; height: 22px; opacity: 0.5; filter: var(--icon-tint); }
+    .board-empty-text {
+      color: var(--secondary-text);
+      font-size: 14px;
+      max-width: 32ch;
+      margin: 0 auto;
+    }
+
+    /* Help panel (open) */
+    .help-panel {
+      width: 320px;
+      background-color: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      box-shadow: var(--box-shadow-modal);
+      padding: 16px;
+    }
+    .help-panel h4 {
+      font-family: var(--font-heading);
+      font-weight: 500; font-size: 15px;
+      margin-bottom: 12px;
+    }
+    .help-entry { margin-bottom: 12px; }
+    .help-entry h5 {
+      font-family: var(--font-heading);
+      font-weight: 500; font-size: 12px;
+      letter-spacing: 0.3px;
+      margin-bottom: 2px;
+    }
+    .help-entry p { font-size: 13px; color: var(--secondary-text); }
+
+    /* Showcase layout for isolated components */
+    .showcase {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .showcase-cell {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: var(--box-shadow-table);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .showcase-cell.has-dotbg {
+      background-image: radial-gradient(circle, rgba(var(--slate-900-rgb), 0.07) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .showcase-cap {
+      font-family: var(--font-heading);
+      font-size: 10px; letter-spacing: 0.8px; text-transform: uppercase;
+      color: var(--secondary-text);
+    }
+
+    .board-empty.is-static { position: static; height: 240px; }
+  </style>
+</head>
+<body>
+  <div class="mock-page">
+
+    <header class="mock-page-head">
+      <h1>Board — мокап у стилі Notepad</h1>
+      <p>
+        Статичний прев'ю редизайну. Перенесено візуальну мову оновленого notepad:
+        чиста шапка (заголовок зліва + сегментовані контролі справа), рамка з
+        інлайн-панеллю інструментів над полотном, монохромні іконки, slate-поверхні.
+        Кнопки інструментів і панелі переключаються по кліку — лише для відчуття дизайну.
+      </p>
+    </header>
+
+    <!-- ════════ 1. Основний екран (заповнене полотно) ════════ -->
+    <section class="mock-section">
+      <span class="mock-label">1 · Шапка + головна панель + полотно</span>
+
+      <div class="board is-tall">
+        <!-- Header -->
+        <div class="board-header">
+          <h2>Дошка</h2>
+          <div class="board-header-actions">
+            <span class="board-status">Збережено</span>
+            <button class="board-round-btn" id="helpBtn" type="button" aria-label="Довідка">
+              <img src="../../img/icons/question.svg" alt="" />
+            </button>
+            <div class="board-zoom" role="group" aria-label="Масштаб">
+              <button class="board-zoom-step" type="button" aria-label="Зменшити">
+                <img src="../../img/icons/minus.svg" alt="" />
+              </button>
+              <button class="board-zoom-label" type="button">100%</button>
+              <button class="board-zoom-step" type="button" aria-label="Збільшити">
+                <img src="../../img/icons/plus.svg" alt="" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Frame: toolbar band + canvas -->
+        <div class="board-frame">
+          <div class="board-toolbar" role="toolbar">
+            <!-- File / history group -->
+            <div class="board-tool-group">
+              <label class="board-autosave" for="msAutosave">
+                <input id="msAutosave" type="checkbox" checked />
+                <span class="slider" aria-hidden="true"></span>
+                <span>Автозбереження</span>
+              </label>
+              <button class="board-tool-btn" type="button" aria-label="Зберегти">
+                <img src="../../img/icons/save.svg" alt="" />
+              </button>
+              <button class="board-tool-btn" type="button" aria-label="Скасувати">
+                <img src="../../img/icons/undo.svg" alt="" />
+              </button>
+              <button class="board-tool-btn" type="button" aria-label="Повторити">
+                <img src="../../img/icons/redo.svg" alt="" />
+              </button>
+            </div>
+
+            <span class="board-tool-sep" aria-hidden="true"></span>
+
+            <!-- Selection / navigation tools -->
+            <div class="board-tool-group" data-toolset>
+              <button class="board-tool-btn is-active" type="button" data-tool aria-label="Виділення">
+                <img src="../../img/icons/select.svg" alt="" />
+              </button>
+              <button class="board-tool-btn" type="button" data-tool aria-label="Рука">
+                <img src="../../img/icons/hand.svg" alt="" />
+              </button>
+              <button class="board-tool-btn" type="button" data-tool aria-label="Зв'язок">
+                <img src="../../img/icons/link.svg" alt="" />
+              </button>
+            </div>
+
+            <span class="board-tool-sep" aria-hidden="true"></span>
+
+            <!-- Creation tools (open popovers) -->
+            <div class="board-tool-group" data-toolset>
+              <button class="board-tool-btn has-popup" type="button" data-tool aria-label="Олівець">
+                <img src="../../img/icons/pencil.svg" alt="" />
+              </button>
+              <button class="board-tool-btn has-popup" type="button" data-tool aria-label="Гумка">
+                <img src="../../img/icons/eraser.svg" alt="" />
+              </button>
+              <button class="board-tool-btn has-popup" type="button" data-tool aria-label="Фігури">
+                <img src="../../img/icons/shapes.svg" alt="" />
+              </button>
+              <button class="board-tool-btn has-popup" type="button" data-tool aria-label="Нотатки">
+                <img src="../../img/icons/note.svg" alt="" />
+              </button>
+            </div>
+
+            <!-- Trailing: clear (pushed right) -->
+            <div class="board-tool-group is-grow">
+              <button class="board-tool-btn" type="button" aria-label="Очистити">
+                <img src="../../img/icons/broom.svg" alt="" />
+              </button>
+            </div>
+          </div>
+
+          <!-- Canvas with sample content -->
+          <div class="board-canvas">
+            <!-- links layer -->
+            <svg class="board-links" viewBox="0 0 1040 540" preserveAspectRatio="none">
+              <path d="M250 150 C 330 150, 330 250, 430 250" fill="none"
+                    stroke="#64748b" stroke-width="2" />
+              <path d="M250 150 C 330 150, 330 250, 430 250" fill="none"
+                    stroke="#64748b" stroke-width="2" marker-end=""/>
+              <circle cx="430" cy="250" r="3.5" fill="#64748b" />
+            </svg>
+            <div class="b-link-label" style="left:330px; top:200px;">залежить від</div>
+
+            <div class="b-item is-note" style="left:48px; top:96px; width:200px;">
+              <div class="b-item-title">Нотатка</div>
+              Зібрати вимоги до релізу 5.5 та узгодити з командою.
+            </div>
+
+            <div class="b-item is-process" style="left:430px; top:210px; width:200px;">
+              <div class="b-item-title">Процес</div>
+              Code review → QA → staging.
+            </div>
+
+            <div class="b-item is-decision" style="left:705px; top:120px; width:185px;">
+              <div class="b-item-title">Рішення</div>
+              Випускати у п'ятницю?
+            </div>
+
+            <!-- Selected shape + its floating contextual toolbar -->
+            <div class="b-shape is-selected" style="left:470px; top:380px; width:170px; height:96px;">
+              Модуль
+              <span class="b-handle" style="left:-5px; top:-5px;"></span>
+              <span class="b-handle" style="right:-5px; top:-5px;"></span>
+              <span class="b-handle" style="left:-5px; bottom:-5px;"></span>
+              <span class="b-handle" style="right:-5px; bottom:-5px;"></span>
+            </div>
+            <div class="ctx-card is-floating" style="left:470px; top:336px;">
+              <button class="ctx-btn" type="button" aria-label="Заливка"><span class="ctx-swatch is-fill" style="background:#e9ddff"></span></button>
+              <button class="ctx-btn" type="button" aria-label="Обведення"><span class="ctx-swatch is-stroke" style="border-color:#7c3aed"></span></button>
+              <button class="ctx-btn" type="button" aria-label="Товщина"><span class="ctx-size-dot"></span></button>
+              <span class="ctx-sep" aria-hidden="true"></span>
+              <button class="ctx-btn" type="button" aria-label="Зв'язок"><img src="../../img/icons/link.svg" alt="" /></button>
+              <button class="ctx-btn is-text" type="button" aria-label="Текст">T</button>
+              <span class="ctx-sep" aria-hidden="true"></span>
+              <button class="ctx-btn is-danger" type="button" aria-label="Видалити"><img src="../../img/icons/bin.svg" alt="" /></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ 2. Порожній стан ════════ -->
+    <section class="mock-section">
+      <span class="mock-label">2 · Порожній стан</span>
+
+      <div class="board">
+        <div class="board-header">
+          <h2>Дошка</h2>
+          <div class="board-header-actions">
+            <span class="board-status is-dirty">Не збережено</span>
+            <button class="board-round-btn" type="button" aria-label="Довідка">
+              <img src="../../img/icons/question.svg" alt="" />
+            </button>
+            <div class="board-zoom" role="group" aria-label="Масштаб">
+              <button class="board-zoom-step" type="button" aria-label="Зменшити"><img src="../../img/icons/minus.svg" alt="" /></button>
+              <button class="board-zoom-label" type="button">100%</button>
+              <button class="board-zoom-step" type="button" aria-label="Збільшити"><img src="../../img/icons/plus.svg" alt="" /></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="board-frame">
+          <div class="board-toolbar" role="toolbar">
+            <div class="board-tool-group">
+              <label class="board-autosave"><input type="checkbox" /><span class="slider"></span><span>Автозбереження</span></label>
+              <button class="board-tool-btn" type="button"><img src="../../img/icons/save.svg" alt="" /></button>
+              <button class="board-tool-btn" type="button"><img src="../../img/icons/undo.svg" alt="" /></button>
+              <button class="board-tool-btn" type="button"><img src="../../img/icons/redo.svg" alt="" /></button>
+            </div>
+            <span class="board-tool-sep"></span>
+            <div class="board-tool-group">
+              <button class="board-tool-btn is-active" type="button"><img src="../../img/icons/select.svg" alt="" /></button>
+              <button class="board-tool-btn" type="button"><img src="../../img/icons/hand.svg" alt="" /></button>
+              <button class="board-tool-btn" type="button"><img src="../../img/icons/link.svg" alt="" /></button>
+            </div>
+            <span class="board-tool-sep"></span>
+            <div class="board-tool-group">
+              <button class="board-tool-btn has-popup" type="button"><img src="../../img/icons/pencil.svg" alt="" /></button>
+              <button class="board-tool-btn has-popup" type="button"><img src="../../img/icons/eraser.svg" alt="" /></button>
+              <button class="board-tool-btn has-popup" type="button"><img src="../../img/icons/shapes.svg" alt="" /></button>
+              <button class="board-tool-btn has-popup" type="button"><img src="../../img/icons/note.svg" alt="" /></button>
+            </div>
+            <div class="board-tool-group is-grow">
+              <button class="board-tool-btn" type="button"><img src="../../img/icons/broom.svg" alt="" /></button>
+            </div>
+          </div>
+
+          <div class="board-canvas" style="min-height:300px;">
+            <div class="board-empty">
+              <div class="board-empty-inner">
+                <div class="board-empty-icons" aria-hidden="true">
+                  <span class="board-empty-icon"><img src="../../img/icons/note.svg" alt="" /></span>
+                  <span class="board-empty-icon"><img src="../../img/icons/shapes.svg" alt="" /></span>
+                  <span class="board-empty-icon"><img src="../../img/icons/pencil.svg" alt="" /></span>
+                </div>
+                <p class="board-empty-text">Оберіть інструмент на панелі, щоб додати нотатки, фігури чи малюнок.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ 3. Спливаючі панелі (popovers) ════════ -->
+    <section class="mock-section">
+      <span class="mock-label">3 · Спливаючі панелі інструментів</span>
+
+      <div class="showcase">
+        <div class="showcase-cell">
+          <span class="showcase-cap">Фігури</span>
+          <div class="popover">
+            <div class="popover-title">Фігури</div>
+            <div class="shape-grid">
+              <button type="button"><svg viewBox="0 0 18 18"><path d="M3 15L15 3"/></svg></button>
+              <button type="button"><svg viewBox="0 0 18 18"><rect x="3" y="4" width="12" height="10" rx="1.5"/></svg></button>
+              <button type="button"><svg viewBox="0 0 18 18"><circle cx="9" cy="9" r="6"/></svg></button>
+              <button type="button"><svg viewBox="0 0 18 18"><path d="M9 2.5L15 9L9 15.5L3 9Z"/></svg></button>
+              <button type="button"><svg viewBox="0 0 18 18"><path d="M9 3L15 15H3Z"/></svg></button>
+              <button type="button"><svg viewBox="0 0 18 18"><path d="M5 3H15L13 15H3Z"/></svg></button>
+              <button type="button"><svg viewBox="0 0 18 18"><path d="M5 4H13L16 14H2Z"/></svg></button>
+              <button type="button"><svg viewBox="0 0 18 18"><path d="M5 3H13L16 9L13 15H5L2 9Z"/></svg></button>
+              <button type="button"><svg viewBox="0 0 18 18"><path d="M9 2.5L11 6.6L15.5 7.2L12.2 10.4L13.1 15L9 12.8L4.9 15L5.8 10.4L2.5 7.2L7 6.6Z"/></svg></button>
+              <button type="button"><svg viewBox="0 0 18 18"><path d="M9 15C6.8 12.8 3.5 10.4 3.5 6.9C3.5 5 5 3.6 6.9 3.6C7.9 3.6 8.8 4.1 9.4 4.9C10 4.1 10.9 3.6 11.9 3.6C13.8 3.6 15.3 5 15.3 6.9C15.3 10.4 12 12.8 9.8 15L9.4 15.4Z"/></svg></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="showcase-cell">
+          <span class="showcase-cap">Нотатки</span>
+          <div class="popover">
+            <div class="popover-title">Нотатки</div>
+            <div class="note-grid">
+              <button type="button" style="background:#fff6bf"><span>Нотатка</span></button>
+              <button type="button" style="background:#f6f7fb"><span>Задача</span></button>
+              <button type="button" style="background:#e5f1ff"><span>Процес</span></button>
+              <button type="button" style="background:#ffe6d5"><span>Рішення</span></button>
+              <button type="button" style="background:#ffffff"><span>Текст</span></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="showcase-cell">
+          <span class="showcase-cap">Олівець</span>
+          <div class="popover pen-panel">
+            <div class="popover-title">Олівець</div>
+            <div class="pen-row">
+              <span class="pen-ico">●</span>
+              <input type="range" min="1" max="16" value="4" />
+              <span class="pen-val">4</span>
+            </div>
+            <div class="pen-row">
+              <span class="pen-ico">◑</span>
+              <input type="range" min="0" max="100" value="100" />
+              <span class="pen-val">100</span>
+            </div>
+            <div class="pen-colors">
+              <span class="is-active" style="background:#0d181c"></span>
+              <span style="background:#e30613"></span>
+              <span style="background:#2563eb"></span>
+              <span style="background:#16a34a"></span>
+              <span style="background:#f6b100"></span>
+              <span style="background:#7c3aed"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="showcase-cell">
+          <span class="showcase-cap">Довідка</span>
+          <div class="help-panel">
+            <h4>Про дошку</h4>
+            <div class="help-entry">
+              <h5>Що це?</h5>
+              <p>Нескінченне полотно для нотаток, фігур, зв'язків і вільного малювання.</p>
+            </div>
+            <div class="help-entry">
+              <h5>Збереження</h5>
+              <p>Дані зберігаються локально у браузері. Увімкніть автозбереження на панелі.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ 4. Контекстні тулбари ════════ -->
+    <section class="mock-section">
+      <span class="mock-label">4 · Контекстні тулбари та меню</span>
+
+      <div class="showcase">
+        <div class="showcase-cell has-dotbg">
+          <span class="showcase-cap">Фігура</span>
+          <div class="ctx-card">
+            <button class="ctx-btn" type="button" aria-label="Заливка"><span class="ctx-swatch is-fill"></span></button>
+            <button class="ctx-btn" type="button" aria-label="Обведення"><span class="ctx-swatch is-stroke"></span></button>
+            <button class="ctx-btn" type="button" aria-label="Товщина"><span class="ctx-size-dot"></span></button>
+            <span class="ctx-sep"></span>
+            <button class="ctx-btn" type="button" aria-label="Зв'язок"><img src="../../img/icons/link.svg" alt="" /></button>
+            <button class="ctx-btn is-text" type="button" aria-label="Текст">T</button>
+            <span class="ctx-sep"></span>
+            <button class="ctx-btn is-danger" type="button" aria-label="Видалити"><img src="../../img/icons/bin.svg" alt="" /></button>
+          </div>
+        </div>
+
+        <div class="showcase-cell has-dotbg">
+          <span class="showcase-cap">Зв'язок</span>
+          <div class="ctx-card">
+            <button class="ctx-btn" type="button" aria-label="Колір"><span class="ctx-swatch is-stroke" style="border-color:#64748b"></span></button>
+            <button class="ctx-btn" type="button" aria-label="Стиль лінії"><span class="ctx-swatch is-line"></span></button>
+            <button class="ctx-btn is-text" type="button" aria-label="Текст">T</button>
+            <span class="ctx-sep"></span>
+            <button class="ctx-btn is-danger" type="button" aria-label="Видалити"><img src="../../img/icons/bin.svg" alt="" /></button>
+          </div>
+        </div>
+
+        <div class="showcase-cell has-dotbg">
+          <span class="showcase-cap">Меню нотатки</span>
+          <div class="menu" role="menu">
+            <button class="menu-item" type="button" role="menuitem">
+              <img src="../../img/icons/pencil.svg" alt="" style="width:14px;height:14px;opacity:.55;filter:var(--icon-tint)" />
+              Перейменувати
+            </button>
+            <div class="menu-sep"></div>
+            <div class="menu-head">Колір</div>
+            <button class="menu-item" type="button" role="menuitemradio" aria-checked="true"><span class="menu-swatch" style="background:#fff6bf"></span>Нотатка</button>
+            <button class="menu-item" type="button" role="menuitemradio" aria-checked="false"><span class="menu-swatch" style="background:#f6f7fb"></span>Задача</button>
+            <button class="menu-item" type="button" role="menuitemradio" aria-checked="false"><span class="menu-swatch" style="background:#e5f1ff"></span>Процес</button>
+            <button class="menu-item" type="button" role="menuitemradio" aria-checked="false"><span class="menu-swatch" style="background:#ffe6d5"></span>Рішення</button>
+            <button class="menu-item" type="button" role="menuitemradio" aria-checked="false"><span class="menu-swatch" style="background:#ffffff"></span>Текст</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // Light interactivity for the mockup only — no real board logic.
+    document.querySelectorAll("[data-toolset]").forEach(function (group) {
+      group.addEventListener("click", function (e) {
+        var btn = e.target.closest("[data-tool]");
+        if (!btn) return;
+        document.querySelectorAll("[data-tool]").forEach(function (b) {
+          b.classList.remove("is-active");
+        });
+        btn.classList.add("is-active");
+      });
+    });
+
+    var helpBtn = document.getElementById("helpBtn");
+    if (helpBtn) {
+      helpBtn.addEventListener("click", function () {
+        helpBtn.classList.toggle("is-open");
+      });
+    }
+  </script>
+</body>
+</html>

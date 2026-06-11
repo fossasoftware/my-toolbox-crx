@@ -1,5 +1,6 @@
 import { getText } from "../../core/i18n.js";
 import { showToast } from "../../core/options-ui.js";
+import { initBoardTooltip } from "./board-tooltip.js";
 import {
   cloneBoardState,
   createBoardId as createId,
@@ -734,4 +735,5 @@ Object.assign(boardControllers, {
 
 export async function initializeBoard() {
   await boardLifecycle.initializeBoard();
+  initBoardTooltip({ root: document.getElementById("boardTab") });
 }

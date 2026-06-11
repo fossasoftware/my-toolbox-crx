@@ -56,6 +56,14 @@ export function createBoardCanvasCoreStack({
     getEraserSize: () => getBoardSettings().eraserSize,
     getPenCursor,
     getStage,
+    // The cursor elements live inside #boardViewport, which carries the
+    // translate(pan) scale(zoom) transform — so they must be positioned in
+    // WORLD coordinates, otherwise the viewport transform offsets them from
+    // the real pointer whenever the board is zoomed or panned.
+    getViewPan: (...args) => boardViewport.getViewPan(...args),
+    getBoardZoom: (...args) => boardViewport.getBoardZoom(...args),
+    getWorldPoint: (clientX, clientY) =>
+      boardViewport.getWorldPointFromClient(clientX, clientY),
     toolDraw,
     toolErase,
   });

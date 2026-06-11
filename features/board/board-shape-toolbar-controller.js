@@ -38,16 +38,18 @@ export function createBoardShapeToolbarController({
   closeShapeColorMenus,
 }) {
   function positionShapeToolbarAtBottom() {
-    const { boardToolbarDock, shapeControls, stage, zoomControls } = getRefs();
+    const { helpControls, shapeControls, stage, zoomControls } = getRefs();
     if (!shapeControls || !stage) return;
     const stageRect = stage.getBoundingClientRect();
     const controlsRect = shapeControls.getBoundingClientRect();
+    // The toolbar band moved to the top, but zoom (bottom-right) and help
+    // (bottom-left) still float over the stage bottom — avoid both.
     const blockerRects = [];
     if (zoomControls) {
       blockerRects.push(zoomControls.getBoundingClientRect());
     }
-    if (boardToolbarDock) {
-      blockerRects.push(boardToolbarDock.getBoundingClientRect());
+    if (helpControls) {
+      blockerRects.push(helpControls.getBoundingClientRect());
     }
     const position = getBottomCenteredOverlayPosition({
       containerRect: stageRect,

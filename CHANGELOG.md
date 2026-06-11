@@ -5,6 +5,23 @@ All notable changes to the "My ToolBox" Chrome extension will be documented in t
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (starting from this documented version).
 
+## [5.5.0] - 2026-06-11
+
+This minor release brings the Board into the same minimalist visual language as the Notepad.
+
+### Changed
+
+- Moved the Board toolbar from a floating dock into a top band, wrapped together with the canvas in a single bordered, rounded frame with a hairline divider.
+- Flattened the toolbar buttons and replaced inline button labels with hover/keyboard tooltips that appear centered above each icon, mirroring the Notepad.
+- Redesigned the tool popovers (pen, eraser, shapes, notes), contextual shape/link toolbars, and the note-type menu to match the new minimalist style.
+- Floated the help (?) control into the bottom-left corner and the zoom scale into the bottom-right corner of the canvas.
+- Refreshed the Board empty state to match the new design.
+
+### Fixed
+
+- Fixed the pen and eraser cursor drifting away from the drawn ink when the board was zoomed or panned; the on-canvas cursor now tracks the pointer exactly at any zoom or pan.
+- Fixed the tool popover open/close animation: it no longer slides sideways and no longer narrows while closing.
+
 ## [5.4.0] - 2026-06-05
 
 This minor release gives the Notepad a cleaner, more minimalist layout.

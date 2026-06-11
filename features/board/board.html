@@ -1,120 +1,137 @@
 <div id="boardTab" class="tab-pane">
-  <h2 data-i18n="boardTitle"></h2>
 
-  <div id="boardStage" class="board-stage">
-    <canvas id="boardCanvas"></canvas>
-    <div id="boardViewport" class="board-viewport" aria-hidden="false">
-      <svg id="boardLinks" class="board-links" aria-hidden="true">
-      </svg>
-      <div id="boardItems" class="board-items"></div>
-      <div id="boardItemSelections" class="board-item-selections" aria-hidden="true"></div>
-      <div id="boardShapeEditor" class="board-shape-editor" contenteditable="true" spellcheck="true" aria-hidden="true"></div>
-      <div id="boardLinkEditor" class="board-shape-editor board-link-editor" contenteditable="true" spellcheck="true" aria-hidden="true"></div>
-      <div id="boardPenCursor" class="board-pen-cursor" aria-hidden="true"></div>
-      <div id="boardEraserCursor" class="board-eraser-cursor" aria-hidden="true"></div>
-    </div>
-    <div id="boardEmptyState" class="board-empty">
-      <div class="board-empty-inner">
-        <div class="board-empty-icons" aria-hidden="true">
-          <span class="board-empty-icon"><img src="../img/icons/note.svg" alt="" /></span>
-          <span class="board-empty-icon"><img src="../img/icons/shapes.svg" alt="" /></span>
-          <span class="board-empty-icon"><img src="../img/icons/pencil.svg" alt="" /></span>
-        </div>
-        <p class="board-empty-text" data-i18n="boardEmptyState"></p>
-      </div>
-    </div>
-    <div id="boardItemMenu" class="board-item-menu" role="menu" aria-hidden="true">
-      <button class="board-item-menu-item" type="button" role="menuitem" data-action="rename" data-i18n="boardItemMenuRename"></button>
-      <div class="board-item-menu-separator" role="separator"></div>
-      <div class="board-item-menu-header" data-i18n="boardItemMenuColor"></div>
-      <button class="board-item-menu-item board-item-menu-color" type="button" role="menuitemradio" aria-checked="false" data-color-key="note">
-        <span class="board-item-menu-swatch" aria-hidden="true"></span>
-        <span class="board-item-menu-text" data-i18n="boardItemNoteTitle"></span>
-      </button>
-      <button class="board-item-menu-item board-item-menu-color" type="button" role="menuitemradio" aria-checked="false" data-color-key="task">
-        <span class="board-item-menu-swatch" aria-hidden="true"></span>
-        <span class="board-item-menu-text" data-i18n="boardItemTaskTitle"></span>
-      </button>
-      <button class="board-item-menu-item board-item-menu-color" type="button" role="menuitemradio" aria-checked="false" data-color-key="process">
-        <span class="board-item-menu-swatch" aria-hidden="true"></span>
-        <span class="board-item-menu-text" data-i18n="boardItemProcessTitle"></span>
-      </button>
-      <button class="board-item-menu-item board-item-menu-color" type="button" role="menuitemradio" aria-checked="false" data-color-key="decision">
-        <span class="board-item-menu-swatch" aria-hidden="true"></span>
-        <span class="board-item-menu-text" data-i18n="boardItemDecisionTitle"></span>
-      </button>
-      <button class="board-item-menu-item board-item-menu-color" type="button" role="menuitemradio" aria-checked="false" data-color-key="text">
-        <span class="board-item-menu-swatch" aria-hidden="true"></span>
-        <span class="board-item-menu-text" data-i18n="boardItemTextTitle"></span>
-      </button>
-    </div>
-    <div id="boardShapeControls" class="board-shape-controls" aria-hidden="true">
-      <div id="boardShapeCard" class="board-shape-card" aria-hidden="true">
-        <div id="boardShapePalette" class="board-shape-palette" aria-hidden="true">
-          <div id="boardShapeFillMenu" class="board-shape-color-menu" role="menu" aria-hidden="true"></div>
-          <div id="boardShapeStrokeMenu" class="board-shape-color-menu is-stroke" role="menu" aria-hidden="true"></div>
-          <div id="boardShapeStrokeWidthMenu" class="board-shape-color-menu board-shape-size-menu" role="menu" aria-hidden="true"></div>
-        </div>
-        <div id="boardShapeToolbar" class="board-shape-toolbar" aria-hidden="true">
-          <div class="board-shape-toolbar-group">
-            <div class="board-shape-color-picker">
-              <button id="boardShapeFillBtn" class="board-shape-color-button is-fill" type="button" aria-label="" aria-haspopup="true" aria-expanded="false">
-                <span class="board-shape-color-swatch" aria-hidden="true"></span>
-              </button>
-            </div>
-          </div>
-          <div class="board-shape-toolbar-group">
-            <div class="board-shape-color-picker">
-              <button id="boardShapeStrokeBtn" class="board-shape-color-button is-stroke" type="button" aria-label="" aria-haspopup="true" aria-expanded="false">
-                <span class="board-shape-color-swatch" aria-hidden="true"></span>
-              </button>
-            </div>
-          </div>
-          <div class="board-shape-toolbar-group board-shape-stroke-group">
-            <div class="board-shape-color-picker">
-              <button id="boardShapeStrokeWidthBtn" class="board-shape-color-button is-size" type="button" aria-label="" aria-haspopup="true" aria-expanded="false">
-                <span class="board-shape-size-swatch" aria-hidden="true"></span>
-              </button>
-            </div>
-          </div>
-          <button id="boardShapeLinkBtn" class="board-shape-text-button board-shape-link-button" type="button" aria-label="">
-            <img src="../img/icons/link.svg" alt="" aria-hidden="true" />
-          </button>
-          <button id="boardShapeTextBtn" class="board-shape-text-button" type="button" aria-label=""></button>
-          <button id="boardShapeDeleteBtn" class="board-shape-delete" type="button" aria-label="">
-            <img src="../img/icons/bin.svg" alt="" aria-hidden="true" />
-          </button>
-        </div>
-      </div>
-    </div>
-    <div id="boardItemControls" class="board-item-controls" aria-hidden="true"></div>
-    <div id="boardLinkControls" class="board-link-controls" aria-hidden="true">
-      <div id="boardLinkCard" class="board-shape-card board-link-card" aria-hidden="true">
-        <div id="boardLinkPalette" class="board-shape-palette board-link-palette" aria-hidden="true">
-          <div id="boardLinkColorMenu" class="board-shape-color-menu is-stroke" role="menu" aria-hidden="true"></div>
-          <div id="boardLinkStyleMenu" class="board-shape-color-menu board-link-style-menu" role="menu" aria-hidden="true"></div>
-        </div>
-        <div id="boardLinkToolbar" class="board-shape-toolbar board-link-toolbar" aria-hidden="true">
-          <div class="board-shape-toolbar-group">
-            <div class="board-shape-color-picker">
-              <button id="boardLinkColorBtn" class="board-shape-color-button is-stroke" type="button" aria-label="" aria-haspopup="true" aria-expanded="false">
-                <span class="board-shape-color-swatch" aria-hidden="true"></span>
-              </button>
-            </div>
-          </div>
-          <button id="boardLinkStyleBtn" class="board-link-style-button" type="button" aria-label="" aria-haspopup="true" aria-expanded="false">
-            <img src="../img/icons/circle-dashed.svg" alt="" aria-hidden="true" />
-          </button>
-          <button id="boardLinkTextBtn" class="board-shape-text-button board-link-text-button" type="button" aria-label="">T</button>
-          <button id="boardLinkDeleteBtn" class="board-shape-delete board-link-delete" type="button" aria-label="">
-            <img src="../img/icons/bin.svg" alt="" aria-hidden="true" />
-          </button>
-        </div>
-      </div>
-    </div>
+  <div class="board-header">
+    <h2 data-i18n="boardTitle"></h2>
+  </div>
+
+  <div class="board-frame">
     <div id="boardToolbarDock" class="board-toolbar-dock" aria-hidden="false">
+      <div class="board-toolbar" role="toolbar">
+        <div class="board-tool-group">
+          <label class="board-autosave" for="boardAutosaveToggle">
+            <input id="boardAutosaveToggle" type="checkbox" />
+            <span class="slider" aria-hidden="true"></span>
+            <span data-i18n="boardAutosaveLabel"></span>
+          </label>
+          <button id="boardSaveBtn" class="button button-secondary icon-button board-save-button" type="button">
+            <img src="../img/icons/save.svg" alt="" aria-hidden="true" />
+            <span class="btn-label" data-i18n="boardActionSave"></span>
+          </button>
+          <button id="boardUndoBtn" class="button button-secondary icon-button board-history-button" type="button">
+            <img src="../img/icons/undo.svg" alt="" aria-hidden="true" />
+            <span class="btn-label" data-i18n="boardActionUndo"></span>
+          </button>
+          <button id="boardRedoBtn" class="button button-secondary icon-button board-history-button" type="button">
+            <img src="../img/icons/redo.svg" alt="" aria-hidden="true" />
+            <span class="btn-label" data-i18n="boardActionRedo"></span>
+          </button>
+        </div>
+
+        <span class="board-tool-sep" aria-hidden="true"></span>
+
+        <div class="board-tool-group">
+          <button
+            class="button button-secondary icon-button board-tool-icon board-tool-button active"
+            type="button"
+            data-tool="select"
+            aria-pressed="true"
+          >
+            <img src="../img/icons/select.svg" alt="" aria-hidden="true" />
+            <span class="btn-label" data-i18n="boardToolSelect"></span>
+          </button>
+
+          <button
+            class="button button-secondary icon-button board-tool-icon board-tool-button"
+            type="button"
+            data-tool="hand"
+            aria-pressed="false"
+          >
+            <img src="../img/icons/hand.svg" alt="" aria-hidden="true" />
+            <span class="btn-label" data-i18n="boardToolHand"></span>
+          </button>
+
+          <button
+            class="button button-secondary icon-button board-tool-icon board-tool-button"
+            type="button"
+            data-tool="link"
+            aria-pressed="false"
+          >
+            <img src="../img/icons/link.svg" alt="" aria-hidden="true" />
+            <span class="btn-label" data-i18n="boardToolLink"></span>
+          </button>
+        </div>
+
+        <span class="board-tool-sep" aria-hidden="true"></span>
+
+        <div class="board-tool-group">
+          <div class="board-tool-with-popup">
+            <button
+              id="boardPenToggle"
+              class="button button-secondary icon-button board-tool-icon board-tool-button"
+              type="button"
+              data-tool="draw"
+              aria-pressed="false"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <img src="../img/icons/pencil.svg" alt="" aria-hidden="true" />
+              <span class="btn-label" data-i18n="boardToolDraw"></span>
+            </button>
+          </div>
+
+          <div class="board-tool-with-popup">
+            <button
+              id="boardEraserToggle"
+              class="button button-secondary icon-button board-tool-icon board-tool-button"
+              type="button"
+              data-tool="erase"
+              aria-pressed="false"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <img src="../img/icons/eraser.svg" alt="" aria-hidden="true" />
+              <span class="btn-label" data-i18n="boardToolErase"></span>
+            </button>
+          </div>
+
+          <div class="board-tool-with-popup">
+            <button
+              id="boardShapesToggle"
+              class="button button-secondary icon-button board-tool-icon"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <img src="../img/icons/shapes.svg" alt="" aria-hidden="true" />
+              <span class="btn-label" data-i18n="boardToolShapes"></span>
+            </button>
+          </div>
+
+          <div class="board-tool-with-popup">
+            <button
+              id="boardNotesToggle"
+              class="button button-secondary icon-button board-tool-icon"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <img src="../img/icons/note.svg" alt="" aria-hidden="true" />
+              <span class="btn-label" data-i18n="boardActionText"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="board-tool-group board-tool-group-clear">
+          <button id="boardClearBtn" class="button button-secondary icon-button board-tool-icon board-clear-button" type="button">
+            <img src="../img/icons/broom.svg" alt="" aria-hidden="true" />
+            <span class="btn-label" data-i18n="boardActionClear"></span>
+          </button>
+        </div>
+      </div>
+
       <div id="boardToolbarPanel" class="board-toolbar-panel" aria-hidden="true">
         <div id="boardPenPanel" class="board-tool-panel" aria-hidden="true">
+          <div class="board-tool-panel-title" data-i18n="boardPanelPen"></div>
           <div id="boardPenCard" class="board-pen-card">
             <div class="board-pen-layout">
               <div class="board-pen-controls-block">
@@ -136,6 +153,7 @@
           </div>
         </div>
         <div id="boardEraserPanel" class="board-tool-panel" aria-hidden="true">
+          <div class="board-tool-panel-title" data-i18n="boardPanelEraser"></div>
           <div id="boardEraserCard" class="board-eraser-card">
             <div class="board-pen-range-row">
               <span id="boardEraserSizeIcon" class="board-pen-range-icon is-eraser" aria-hidden="true"></span>
@@ -145,6 +163,7 @@
           </div>
         </div>
         <div id="boardShapesMenu" class="board-tool-panel" role="menu" aria-hidden="true">
+          <div class="board-tool-panel-title" data-i18n="boardPanelShapes"></div>
           <div class="board-shapes-panel">
             <div class="board-shape-grid">
               <button class="board-shape-grid-button" type="button" data-tool="line">
@@ -201,6 +220,7 @@
           </div>
         </div>
         <div id="boardNotesMenu" class="board-tool-panel" role="menu" aria-hidden="true">
+          <div class="board-tool-panel-title" data-i18n="boardPanelNotes"></div>
           <div class="board-notes-panel">
             <div class="board-note-grid">
               <button class="board-note-option" type="button" data-action="note" data-color-key="note"></button>
@@ -212,192 +232,186 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="board-toolbar" role="toolbar">
-        <div class="board-tool-group">
-          <label class="board-autosave" for="boardAutosaveToggle">
-            <input id="boardAutosaveToggle" type="checkbox" />
-            <span class="slider" aria-hidden="true"></span>
-            <span data-i18n="boardAutosaveLabel"></span>
-          </label>
-          <button id="boardSaveBtn" class="button button-secondary icon-button board-save-button" type="button">
-            <img src="../img/icons/save.svg" alt="" aria-hidden="true" />
-            <span class="btn-label" data-i18n="boardActionSave"></span>
-          </button>
-          <button id="boardUndoBtn" class="button button-secondary icon-button board-history-button" type="button">
-            <img src="../img/icons/undo.svg" alt="" aria-hidden="true" />
-            <span class="btn-label" data-i18n="boardActionUndo"></span>
-          </button>
-          <button id="boardRedoBtn" class="button button-secondary icon-button board-history-button" type="button">
-            <img src="../img/icons/redo.svg" alt="" aria-hidden="true" />
-            <span class="btn-label" data-i18n="boardActionRedo"></span>
-          </button>
-        </div>
-
-        <div class="board-tool-group board-tool-group-right">
-          <button
-            class="button button-secondary icon-button board-tool-icon board-tool-button active"
-            type="button"
-            data-tool="select"
-            aria-pressed="true"
-          >
-            <img src="../img/icons/select.svg" alt="" aria-hidden="true" />
-            <span class="btn-label" data-i18n="boardToolSelect"></span>
-          </button>
-
-          <button
-            class="button button-secondary icon-button board-tool-icon board-tool-button"
-            type="button"
-            data-tool="hand"
-            aria-pressed="false"
-          >
-            <img src="../img/icons/hand.svg" alt="" aria-hidden="true" />
-            <span class="btn-label" data-i18n="boardToolHand"></span>
-          </button>
-
-          <button
-            class="button button-secondary icon-button board-tool-icon board-tool-button"
-            type="button"
-            data-tool="link"
-            aria-pressed="false"
-          >
-            <img src="../img/icons/link.svg" alt="" aria-hidden="true" />
-            <span class="btn-label" data-i18n="boardToolLink"></span>
-          </button>
-
-          <span class="board-toolbar-separator" aria-hidden="true"></span>
-
-          <div class="board-tool-with-popup">
-            <button
-              id="boardPenToggle"
-              class="button button-secondary icon-button board-tool-icon board-tool-button"
-              type="button"
-              data-tool="draw"
-              aria-pressed="false"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              <img src="../img/icons/pencil.svg" alt="" aria-hidden="true" />
-              <span class="btn-label" data-i18n="boardToolDraw"></span>
-            </button>
+    <div id="boardStage" class="board-stage">
+      <canvas id="boardCanvas"></canvas>
+      <div id="boardViewport" class="board-viewport" aria-hidden="false">
+        <svg id="boardLinks" class="board-links" aria-hidden="true">
+        </svg>
+        <div id="boardItems" class="board-items"></div>
+        <div id="boardItemSelections" class="board-item-selections" aria-hidden="true"></div>
+        <div id="boardShapeEditor" class="board-shape-editor" contenteditable="true" spellcheck="true" aria-hidden="true"></div>
+        <div id="boardLinkEditor" class="board-shape-editor board-link-editor" contenteditable="true" spellcheck="true" aria-hidden="true"></div>
+        <div id="boardPenCursor" class="board-pen-cursor" aria-hidden="true"></div>
+        <div id="boardEraserCursor" class="board-eraser-cursor" aria-hidden="true"></div>
+      </div>
+      <div id="boardEmptyState" class="board-empty">
+        <div class="board-empty-inner">
+          <div class="board-empty-icons" aria-hidden="true">
+            <span class="board-empty-icon"><img src="../img/icons/note.svg" alt="" /></span>
+            <span class="board-empty-icon"><img src="../img/icons/shapes.svg" alt="" /></span>
+            <span class="board-empty-icon"><img src="../img/icons/pencil.svg" alt="" /></span>
           </div>
-
-          <div class="board-tool-with-popup">
-            <button
-              id="boardEraserToggle"
-              class="button button-secondary icon-button board-tool-icon board-tool-button"
-              type="button"
-              data-tool="erase"
-              aria-pressed="false"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              <img src="../img/icons/eraser.svg" alt="" aria-hidden="true" />
-              <span class="btn-label" data-i18n="boardToolErase"></span>
-            </button>
-          </div>
-
-          <div class="board-tool-with-popup">
-            <button
-              id="boardShapesToggle"
-              class="button button-secondary icon-button board-tool-icon"
-              type="button"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              <img src="../img/icons/shapes.svg" alt="" aria-hidden="true" />
-              <span class="btn-label" data-i18n="boardToolShapes"></span>
-            </button>
-          </div>
-
-          <div class="board-tool-with-popup">
-            <button
-              id="boardNotesToggle"
-              class="button button-secondary icon-button board-tool-icon"
-              type="button"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              <img src="../img/icons/note.svg" alt="" aria-hidden="true" />
-              <span class="btn-label" data-i18n="boardActionText"></span>
-            </button>
-          </div>
-
-          <span class="board-toolbar-separator" aria-hidden="true"></span>
-
-          <button id="boardClearBtn" class="button button-secondary icon-button board-tool-icon board-clear-button" type="button">
-            <img src="../img/icons/broom.svg" alt="" aria-hidden="true" />
-            <span class="btn-label" data-i18n="boardActionClear"></span>
-          </button>
+          <p class="board-empty-text" data-i18n="boardEmptyState"></p>
         </div>
       </div>
-    </div>
-    <div id="boardHelpControls" class="board-help-controls" aria-hidden="false">
-      <button
-        id="boardHelpBtn"
-        class="board-help-button"
-        type="button"
-        aria-haspopup="true"
-        aria-expanded="false"
-      >
-        <img
-          src="../img/icons/question.svg"
-          class="board-help-icon"
-          alt=""
-          aria-hidden="true"
-        />
-      </button>
-      <div id="boardHelpPanel" class="board-help-panel" aria-hidden="true">
-        <div class="board-help-content">
-          <h4 class="board-help-title" data-i18n="boardHelpTitle"></h4>
-          <div class="board-help-faq">
-            <section class="board-help-entry">
-              <h5 class="board-help-question" data-i18n="boardHelpQuestionWhat"></h5>
-              <p class="board-help-answer" data-i18n="boardHelpAnswerWhat"></p>
-            </section>
-            <section class="board-help-entry">
-              <h5 class="board-help-question" data-i18n="boardHelpQuestionActions"></h5>
-              <p class="board-help-answer" data-i18n="boardHelpAnswerActions"></p>
-            </section>
-            <section class="board-help-entry">
-              <h5 class="board-help-question" data-i18n="boardHelpQuestionStorage"></h5>
-              <p class="board-help-answer" data-i18n="boardHelpAnswerStorage"></p>
-            </section>
-            <section class="board-help-entry">
-              <h5 class="board-help-question" data-i18n="boardHelpQuestionCache"></h5>
-              <p class="board-help-answer" data-i18n="boardHelpAnswerCache"></p>
-            </section>
-            <section class="board-help-entry">
-              <h5 class="board-help-question" data-i18n="boardHelpQuestionReinstall"></h5>
-              <p class="board-help-answer" data-i18n="boardHelpAnswerReinstall"></p>
-            </section>
-            <section class="board-help-entry">
-              <h5 class="board-help-question" data-i18n="boardHelpQuestionSafe"></h5>
-              <p class="board-help-answer" data-i18n="boardHelpAnswerSafe"></p>
-            </section>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="boardZoomControls" class="board-zoom-controls" aria-hidden="false">
-      <div id="boardZoomPanel" class="board-zoom-panel" aria-hidden="true"></div>
-      <div class="board-zoom-toolbar">
-        <button id="boardZoomOutBtn" class="board-zoom-button" type="button" aria-label="Zoom out">
-          <img src="../img/icons/minus.svg" alt="" aria-hidden="true" />
+      <div id="boardItemMenu" class="board-item-menu" role="menu" aria-hidden="true">
+        <button class="board-item-menu-item" type="button" role="menuitem" data-action="rename" data-i18n="boardItemMenuRename"></button>
+        <div class="board-item-menu-separator" role="separator"></div>
+        <div class="board-item-menu-header" data-i18n="boardItemMenuColor"></div>
+        <button class="board-item-menu-item board-item-menu-color" type="button" role="menuitemradio" aria-checked="false" data-color-key="note">
+          <span class="board-item-menu-swatch" aria-hidden="true"></span>
+          <span class="board-item-menu-text" data-i18n="boardItemNoteTitle"></span>
         </button>
+        <button class="board-item-menu-item board-item-menu-color" type="button" role="menuitemradio" aria-checked="false" data-color-key="task">
+          <span class="board-item-menu-swatch" aria-hidden="true"></span>
+          <span class="board-item-menu-text" data-i18n="boardItemTaskTitle"></span>
+        </button>
+        <button class="board-item-menu-item board-item-menu-color" type="button" role="menuitemradio" aria-checked="false" data-color-key="process">
+          <span class="board-item-menu-swatch" aria-hidden="true"></span>
+          <span class="board-item-menu-text" data-i18n="boardItemProcessTitle"></span>
+        </button>
+        <button class="board-item-menu-item board-item-menu-color" type="button" role="menuitemradio" aria-checked="false" data-color-key="decision">
+          <span class="board-item-menu-swatch" aria-hidden="true"></span>
+          <span class="board-item-menu-text" data-i18n="boardItemDecisionTitle"></span>
+        </button>
+        <button class="board-item-menu-item board-item-menu-color" type="button" role="menuitemradio" aria-checked="false" data-color-key="text">
+          <span class="board-item-menu-swatch" aria-hidden="true"></span>
+          <span class="board-item-menu-text" data-i18n="boardItemTextTitle"></span>
+        </button>
+      </div>
+      <div id="boardShapeControls" class="board-shape-controls" aria-hidden="true">
+        <div id="boardShapeCard" class="board-shape-card" aria-hidden="true">
+          <div id="boardShapePalette" class="board-shape-palette" aria-hidden="true">
+            <div id="boardShapeFillMenu" class="board-shape-color-menu" role="menu" aria-hidden="true"></div>
+            <div id="boardShapeStrokeMenu" class="board-shape-color-menu is-stroke" role="menu" aria-hidden="true"></div>
+            <div id="boardShapeStrokeWidthMenu" class="board-shape-color-menu board-shape-size-menu" role="menu" aria-hidden="true"></div>
+          </div>
+          <div id="boardShapeToolbar" class="board-shape-toolbar" aria-hidden="true">
+            <div class="board-shape-toolbar-group">
+              <div class="board-shape-color-picker">
+                <button id="boardShapeFillBtn" class="board-shape-color-button is-fill" type="button" aria-label="" aria-haspopup="true" aria-expanded="false">
+                  <span class="board-shape-color-swatch" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+            <div class="board-shape-toolbar-group">
+              <div class="board-shape-color-picker">
+                <button id="boardShapeStrokeBtn" class="board-shape-color-button is-stroke" type="button" aria-label="" aria-haspopup="true" aria-expanded="false">
+                  <span class="board-shape-color-swatch" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+            <div class="board-shape-toolbar-group board-shape-stroke-group">
+              <div class="board-shape-color-picker">
+                <button id="boardShapeStrokeWidthBtn" class="board-shape-color-button is-size" type="button" aria-label="" aria-haspopup="true" aria-expanded="false">
+                  <span class="board-shape-size-swatch" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+            <button id="boardShapeLinkBtn" class="board-shape-text-button board-shape-link-button" type="button" aria-label="">
+              <img src="../img/icons/link.svg" alt="" aria-hidden="true" />
+            </button>
+            <button id="boardShapeTextBtn" class="board-shape-text-button" type="button" aria-label=""></button>
+            <button id="boardShapeDeleteBtn" class="board-shape-delete" type="button" aria-label="">
+              <img src="../img/icons/bin.svg" alt="" aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="boardItemControls" class="board-item-controls" aria-hidden="true"></div>
+      <div id="boardLinkControls" class="board-link-controls" aria-hidden="true">
+        <div id="boardLinkCard" class="board-shape-card board-link-card" aria-hidden="true">
+          <div id="boardLinkPalette" class="board-shape-palette board-link-palette" aria-hidden="true">
+            <div id="boardLinkColorMenu" class="board-shape-color-menu is-stroke" role="menu" aria-hidden="true"></div>
+            <div id="boardLinkStyleMenu" class="board-shape-color-menu board-link-style-menu" role="menu" aria-hidden="true"></div>
+          </div>
+          <div id="boardLinkToolbar" class="board-shape-toolbar board-link-toolbar" aria-hidden="true">
+            <div class="board-shape-toolbar-group">
+              <div class="board-shape-color-picker">
+                <button id="boardLinkColorBtn" class="board-shape-color-button is-stroke" type="button" aria-label="" aria-haspopup="true" aria-expanded="false">
+                  <span class="board-shape-color-swatch" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+            <button id="boardLinkStyleBtn" class="board-link-style-button" type="button" aria-label="" aria-haspopup="true" aria-expanded="false">
+              <img src="../img/icons/circle-dashed.svg" alt="" aria-hidden="true" />
+            </button>
+            <button id="boardLinkTextBtn" class="board-shape-text-button board-link-text-button" type="button" aria-label="">T</button>
+            <button id="boardLinkDeleteBtn" class="board-shape-delete board-link-delete" type="button" aria-label="">
+              <img src="../img/icons/bin.svg" alt="" aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="boardHelpControls" class="board-help-controls" aria-hidden="false">
         <button
-          id="boardZoomLabel"
-          class="board-zoom-label"
+          id="boardHelpBtn"
+          class="board-help-button"
           type="button"
-          aria-live="polite"
           aria-haspopup="true"
           aria-expanded="false"
         >
-          100%
+          <img
+            src="../img/icons/question.svg"
+            class="board-help-icon"
+            alt=""
+            aria-hidden="true"
+          />
         </button>
-        <button id="boardZoomInBtn" class="board-zoom-button" type="button" aria-label="Zoom in">
-          <img src="../img/icons/plus.svg" alt="" aria-hidden="true" />
-        </button>
+        <div id="boardHelpPanel" class="board-help-panel" aria-hidden="true">
+          <div class="board-help-content">
+            <h4 class="board-help-title" data-i18n="boardHelpTitle"></h4>
+            <div class="board-help-faq">
+              <section class="board-help-entry">
+                <h5 class="board-help-question" data-i18n="boardHelpQuestionWhat"></h5>
+                <p class="board-help-answer" data-i18n="boardHelpAnswerWhat"></p>
+              </section>
+              <section class="board-help-entry">
+                <h5 class="board-help-question" data-i18n="boardHelpQuestionActions"></h5>
+                <p class="board-help-answer" data-i18n="boardHelpAnswerActions"></p>
+              </section>
+              <section class="board-help-entry">
+                <h5 class="board-help-question" data-i18n="boardHelpQuestionStorage"></h5>
+                <p class="board-help-answer" data-i18n="boardHelpAnswerStorage"></p>
+              </section>
+              <section class="board-help-entry">
+                <h5 class="board-help-question" data-i18n="boardHelpQuestionCache"></h5>
+                <p class="board-help-answer" data-i18n="boardHelpAnswerCache"></p>
+              </section>
+              <section class="board-help-entry">
+                <h5 class="board-help-question" data-i18n="boardHelpQuestionReinstall"></h5>
+                <p class="board-help-answer" data-i18n="boardHelpAnswerReinstall"></p>
+              </section>
+              <section class="board-help-entry">
+                <h5 class="board-help-question" data-i18n="boardHelpQuestionSafe"></h5>
+                <p class="board-help-answer" data-i18n="boardHelpAnswerSafe"></p>
+              </section>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="boardZoomControls" class="board-zoom-controls" aria-hidden="false">
+        <div class="board-zoom-toolbar">
+          <button id="boardZoomOutBtn" class="board-zoom-button" type="button" aria-label="Zoom out">
+            <img src="../img/icons/minus.svg" alt="" aria-hidden="true" />
+          </button>
+          <button
+            id="boardZoomLabel"
+            class="board-zoom-label"
+            type="button"
+            aria-live="polite"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            100%
+          </button>
+          <button id="boardZoomInBtn" class="board-zoom-button" type="button" aria-label="Zoom in">
+            <img src="../img/icons/plus.svg" alt="" aria-hidden="true" />
+          </button>
+        </div>
+        <div id="boardZoomPanel" class="board-zoom-panel" aria-hidden="true"></div>
       </div>
     </div>
   </div>

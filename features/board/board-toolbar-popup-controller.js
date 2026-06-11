@@ -33,6 +33,41 @@ export function createBoardToolbarPopupController({
     return null;
   }
 
+  // Anchor the (shared) popover directly under whichever toggle opened it, so
+  // it appears under the cursor instead of floating in the canvas centre
+  // (where it would otherwise occlude the drawing area).
+  function positionToolbarPanelUnderToggle() {
+    const dock = getBoardToolbarDock();
+    const panel = getBoardToolbarPanel();
+    if (!dock || !panel) return;
+    const pairs = [
+      [getPenPanel(), getPenToggle()],
+      [getEraserPanel(), getEraserToggle()],
+      [getShapesMenu(), getShapesToggle()],
+      [getNotesMenu(), getNotesToggle()],
+    ];
+    let toggle = null;
+    for (let i = 0; i < pairs.length; i += 1) {
+      const [popupPanel, popupToggle] = pairs[i];
+      if (popupPanel && popupToggle && popupPanel.classList.contains("is-open")) {
+        toggle = popupToggle;
+        break;
+      }
+    }
+    if (!toggle) return;
+    const dockRect = dock.getBoundingClientRect();
+    const toggleRect = toggle.getBoundingClientRect();
+    const panelRect = panel.getBoundingClientRect();
+    let center = toggleRect.left + toggleRect.width / 2 - dockRect.left;
+    const half = panelRect.width / 2;
+    const minCenter = half + 4;
+    const maxCenter = dockRect.width - half - 4;
+    if (maxCenter > minCenter) {
+      center = Math.min(Math.max(center, minCenter), maxCenter);
+    }
+    panel.style.left = `${Math.round(center)}px`;
+  }
+
   function setToolbarPopupTransitionsDisabled(disabled) {
     getPanels().forEach((panel) => {
       if (!panel) return;
@@ -115,7 +150,9 @@ export function createBoardToolbarPopupController({
     if (boardToolbarPanel) {
       boardToolbarPanel.setAttribute("aria-hidden", isOpen ? "false" : "true");
     }
-    if (!isOpen) {
+    if (isOpen) {
+      positionToolbarPanelUnderToggle();
+    } else {
       resetToolbarSwitchAnimationState();
     }
   }
