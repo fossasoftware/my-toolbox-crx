@@ -1,0 +1,101 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate extension
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Check JavaScript syntax
+        run: |
+          fail=0
+          while IFS= read -r f; do
+            if ! node --check "$f"; then
+              echo "::error file=$f::JavaScript syntax error"
+              fail=1
+            fi
+          done < <(find . -path ./node_modules -prune -o -name '*.js' -print)
+          if [ "$fail" -ne 0 ]; then exit 1; fi
+          echo "All JavaScript files parsed successfully."
+
+      - name: Validate JSON (manifest + locales)
+        run: |
+          fail=0
+          while IFS= read -r f; do
+            if ! node -e "JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'))" "$f"; then
+              echo "::error file=$f::Invalid JSON"
+              fail=1
+            fi
+          done < <(find . -path ./node_modules -prune -o -name '*.json' -print)
+          if [ "$fail" -ne 0 ]; then exit 1; fi
+          echo "All JSON files are valid."
+
+      - name: Validate manifest.json schema
+        run: |
+          node -e '
+            const fs = require("fs");
+            const m = JSON.parse(fs.readFileSync("manifest.json", "utf8"));
+            const errors = [];
+            if (m.manifest_version !== 3) errors.push("manifest_version must be 3");
+            if (!/^\d+\.\d+\.\d+$/.test(m.version || "")) errors.push("version must be x.y.z, got: " + m.version);
+            for (const key of ["name", "default_locale", "icons"]) {
+              if (!(key in m)) errors.push("missing required key: " + key);
+            }
+            if (errors.length) { errors.forEach(e => console.error("::error::" + e)); process.exit(1); }
+            console.log("manifest.json looks valid (version " + m.version + ").");
+          '
+
+      - name: Check that locale message files share the same keys
+        run: |
+          node -e '
+            const fs = require("fs");
+            const path = require("path");
+            const root = "_locales";
+            const locales = fs.readdirSync(root).filter(d => fs.statSync(path.join(root, d)).isDirectory());
+            const keysByLocale = {};
+            for (const loc of locales) {
+              const file = path.join(root, loc, "messages.json");
+              keysByLocale[loc] = new Set(Object.keys(JSON.parse(fs.readFileSync(file, "utf8"))));
+            }
+            const all = new Set();
+            for (const loc of locales) for (const k of keysByLocale[loc]) all.add(k);
+            let fail = false;
+            for (const loc of locales) {
+              const missing = [...all].filter(k => !keysByLocale[loc].has(k));
+              if (missing.length) {
+                fail = true;
+                console.error("::error::" + loc + "/messages.json is missing keys: " + missing.join(", "));
+              }
+            }
+            if (fail) process.exit(1);
+            console.log("All " + locales.length + " locales define the same " + all.size + " message keys.");
+          '
+
+      - name: Check version consistency (manifest vs README)
+        run: |
+          node -e '
+            const fs = require("fs");
+            const version = JSON.parse(fs.readFileSync("manifest.json", "utf8")).version;
+            const readme = fs.readFileSync("README.md", "utf8");
+            const errors = [];
+            if (!readme.includes("release-" + version + "-")) errors.push("README release badge does not reference " + version);
+            if (!readme.includes("**Version:** " + version)) errors.push("README **Version:** line does not reference " + version);
+            if (errors.length) { errors.forEach(e => console.error("::error::" + e)); process.exit(1); }
+            console.log("manifest version " + version + " matches README.");
+          '
