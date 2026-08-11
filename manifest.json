@@ -3,7 +3,7 @@
   "name": "__MSG_appName__",
   "description": "__MSG_appDescription__",
   "default_locale": "en",
-  "version": "5.5.0",
+  "version": "5.5.1",
   "icons": {
     "128": "favicon/my-toolbox-128px.png",
     "48": "favicon/my-toolbox-48px.png",

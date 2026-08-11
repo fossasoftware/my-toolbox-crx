@@ -21,12 +21,133 @@ async function loadStatusColorizerLogic() {
   return context.MyToolboxStatusColorizerLogic;
 }
 
+async function loadStatusColorizerWorkerSource() {
+  return fs.readFile(
+    new URL(
+      "../features/status-colorizer/status-colorizer-worker.js",
+      import.meta.url
+    ),
+    "utf8"
+  );
+}
+
 test("normalizeStatusName trims and lowercases values", async () => {
   const logic = await loadStatusColorizerLogic();
 
   assert.equal(logic.normalizeStatusName(" Closed "), "closed");
   assert.equal(logic.normalizeStatusName(""), "");
   assert.equal(logic.normalizeStatusName(null), "");
+});
+
+test("expandStatusTextCandidates resolves updated Jira button labels", async () => {
+  const logic = await loadStatusColorizerLogic();
+
+  assert.deepEqual(
+    [...logic.expandStatusTextCandidates(
+      ["Awaiting reporter - Change status"]
+    )],
+    [
+      "Awaiting reporter - Change status",
+      "Awaiting reporter",
+    ]
+  );
+  assert.deepEqual(
+    [...logic.expandStatusTextCandidates("Status: Awaiting reporter")],
+    ["Status: Awaiting reporter", "Awaiting reporter"]
+  );
+});
+
+test("status surface strategy distinguishes wrappers from atomic lozenges", async () => {
+  const logic = await loadStatusColorizerLogic();
+
+  assert.equal(
+    logic.shouldUseNestedStatusBadge({
+      tagName: "div",
+      testId: "issue.fields.status.common.ui.status-lozenge.3",
+    }),
+    true
+  );
+  assert.equal(
+    logic.shouldUseNestedStatusBadge({
+      tagName: "button",
+      testId: "issue.fields.status.common.ui.status-lozenge.4",
+    }),
+    false
+  );
+  assert.equal(
+    logic.shouldUseNestedStatusBadge({
+      tagName: "span",
+      testId: "common-components-status-lozenge.status-lozenge",
+    }),
+    false
+  );
+  assert.equal(
+    logic.shouldUseNestedStatusBadge({ isIssueTableCell: true }),
+    true
+  );
+});
+
+test("updated Jira text and workflow selectors are stable attributes", async () => {
+  const logic = await loadStatusColorizerLogic();
+
+  assert.equal(
+    logic.STATUS_SURFACE_SELECTORS.ticketButtonText,
+    "[data-testid$='status-button--text'], [data-test-id$='status-button--text']"
+  );
+  assert.equal(
+    logic.STATUS_SURFACE_SELECTORS.workflowStatusNode,
+    "g[data-drag-type='status']"
+  );
+  assert.equal(
+    logic.isStatusBadgeTextTestId(
+      "issue.fields.status.common.ui.status-lozenge.4--text"
+    ),
+    true
+  );
+});
+
+test("status button border uses the painted base color", async () => {
+  const logic = await loadStatusColorizerLogic();
+
+  assert.equal(
+    logic.getStatusButtonBorderColor({
+      animationClass: "glow",
+      backgroundColor: "#006b7e",
+      primaryColor: "#111111",
+    }),
+    "#006b7e"
+  );
+  assert.equal(
+    logic.getStatusButtonBorderColor({
+      animationClass: "ribbon",
+      backgroundColor: "#0747a6",
+      primaryColor: "#0052cc",
+    }),
+    "#0052cc"
+  );
+  assert.equal(logic.getStatusButtonBorderColor(null), "");
+});
+
+test("status button keeps its base color beneath the pseudo surface", async () => {
+  const source = await loadStatusColorizerWorkerSource();
+  const surfaceRuleStart = source.indexOf(
+    ".${STATUS_BUTTON_SURFACE_CLASS} {"
+  );
+  const surfaceRuleEnd = source.indexOf(
+    ".${STATUS_BUTTON_SURFACE_CLASS}::before"
+  );
+  const surfaceRule = source.slice(surfaceRuleStart, surfaceRuleEnd);
+  const trackedBackgrounds = source.match(
+    /`var\(\$\{STATUS_VAR_BG\}, transparent\)`/g
+  ) || [];
+
+  assert.notEqual(surfaceRuleStart, -1);
+  assert.notEqual(surfaceRuleEnd, -1);
+  assert.match(
+    surfaceRule,
+    /background-color: var\(\$\{STATUS_VAR_BG\}, transparent\) !important;/
+  );
+  assert.equal(trackedBackgrounds.length, 2);
 });
 
 test("buildStatusLookup indexes primary names and aliases once", async () => {

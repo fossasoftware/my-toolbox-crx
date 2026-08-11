@@ -9,12 +9,39 @@ let workerStarted = false;
 const ruleWorkerRuntime = global.MyToolboxRuleWorkerRuntime;
 const statusColorizerLogic = global.MyToolboxStatusColorizerLogic || {};
 const {
+  STATUS_SURFACE_SELECTORS = {},
   buildStatusLookup = () => new Map(),
+  expandStatusTextCandidates = (values) => {
+    const source = Array.isArray(values) ? values : [values];
+    return source
+      .map((value) =>
+        typeof value === "string" ? value.replace(/\s+/g, " ").trim() : ""
+      )
+      .filter(Boolean);
+  },
   findStatusSettingFromLookup = () => null,
+  getStatusButtonBorderColor = (statusSetting) =>
+    statusSetting?.animationClass === "ribbon"
+      ? statusSetting?.primaryColor || statusSetting?.backgroundColor || ""
+      : statusSetting?.backgroundColor || statusSetting?.primaryColor || "",
+  isStatusBadgeTextTestId = (testId) =>
+    typeof testId === "string" &&
+    /status-lozenge(?:\.[^.]+)?--text$/.test(testId),
   migrateStatusSettings = (settings) => ({
     changed: false,
     settings: Array.isArray(settings) ? settings : [],
   }),
+  normalizeStatusTextCandidate = (text) =>
+    typeof text === "string" ? text.replace(/\s+/g, " ").trim() : "",
+  shouldUseNestedStatusBadge = ({
+    tagName = "",
+    testId = "",
+    isIssueTableCell = false,
+  } = {}) =>
+    isIssueTableCell ||
+    (String(tagName).toUpperCase() === "DIV" &&
+      testId.startsWith("issue.fields.status.common.ui.status-lozenge.") &&
+      !testId.includes("--")),
 } = statusColorizerLogic;
 const STATUS_TOUCH_ATTR = "data-my-toolbox-status-touched";
 const STATUS_PROPS_ATTR = "data-my-toolbox-status-props";
@@ -67,8 +94,12 @@ const CLASSIC_STATUS_BADGE_SELECTOR =
   "td.status > span.jira-issue-status-lozenge, table.issue-table td.status span.jira-issue-status-lozenge";
 const ISSUE_STATUS_BUTTON_SELECTOR =
   "button[data-testid='issue-field-status.ui.status-view.status-button.status-button']";
+const ISSUE_STATUS_BUTTON_TEXT_SELECTOR =
+  STATUS_SURFACE_SELECTORS.ticketButtonText ||
+  "[data-testid$='status-button--text'], [data-test-id$='status-button--text']";
 const WORKFLOW_STATUS_NODE_SELECTOR =
-  "svg[data-testid='accessible-workflow-diagram.svg-root'] g[data-drag-type='status']";
+  STATUS_SURFACE_SELECTORS.workflowStatusNode ||
+  "g[data-drag-type='status']";
 const HOME_LIST_ITEM_SELECTOR = "li[data-testid^='home-list-item-']";
 const STATUS_BADGE_CONTAINER_SELECTORS = [
   ATLASSIAN_STATUS_BADGE_SELECTOR,
@@ -433,7 +464,7 @@ function ensureStatusColorizerStyle() {
     .${STATUS_BUTTON_SURFACE_CLASS} {
       position: relative !important;
       overflow: hidden !important;
-      background-color: transparent !important;
+      background-color: var(${STATUS_VAR_BG}, transparent) !important;
       background-image: none !important;
     }
 
@@ -772,12 +803,20 @@ function clearViewportRefreshTimer() {
   viewportRefreshTimer = 0;
 }
 
-function getTicketButtonStatusText(ticketButton) {
-  return (
-    ticketButton
-      ?.querySelector("span.css-178ag6o")
-      ?.textContent || ""
+function getTicketButtonStatusTexts(ticketButton) {
+  if (!ticketButton) {
+    return [];
+  }
+
+  const textTarget = ticketButton.querySelector?.(
+    ISSUE_STATUS_BUTTON_TEXT_SELECTOR
   );
+  return expandStatusTextCandidates([
+    textTarget?.textContent,
+    ticketButton.textContent,
+    ticketButton.getAttribute?.("aria-label"),
+    ticketButton.getAttribute?.("title"),
+  ]);
 }
 
 function getStatusBadgeTestId(element) {
@@ -789,7 +828,7 @@ function getStatusBadgeTestId(element) {
 }
 
 function isStatusBadgeTextElement(element) {
-  return /status-lozenge--text$/.test(getStatusBadgeTestId(element));
+  return isStatusBadgeTextTestId(getStatusBadgeTestId(element));
 }
 
 function getStatusBadgeContainer(element) {
@@ -804,14 +843,18 @@ function getStatusBadgeContainer(element) {
 }
 
 function getNestedVisualBadge(element) {
-  if (
-    !element?.matches?.(
-      `${ATLASSIAN_STATUS_BADGE_SELECTOR}, ${JQL_PICKER_STATUS_BADGE_SELECTOR}, ${GENERIC_STATUS_BADGE_CONTAINER_SELECTOR}`
-    )
-  ) {
-    if (!element?.matches?.(ISSUE_TABLE_STATUS_CELL_SELECTOR)) {
-      return null;
-    }
+  if (!element?.matches) {
+    return null;
+  }
+
+  const testId = getStatusBadgeTestId(element);
+  const isIssueTableCell = element.matches(ISSUE_TABLE_STATUS_CELL_SELECTOR);
+  if (!shouldUseNestedStatusBadge({
+    tagName: element.tagName,
+    testId,
+    isIssueTableCell,
+  })) {
+    return null;
   }
 
   return (
@@ -878,21 +921,8 @@ function collectStatusTextElements(container) {
   return [...container.querySelectorAll(STATUS_BADGE_TEXT_SELECTOR)];
 }
 
-function normalizeStatusTextCandidate(text) {
-  return typeof text === "string" ? text.replace(/\s+/g, " ").trim() : "";
-}
-
 function addStatusTextCandidate(candidates, text) {
-  const value = normalizeStatusTextCandidate(text);
-  if (!value) {
-    return;
-  }
-
-  candidates.add(value);
-  const labelValue = value.match(/^(?:status|статус)\s*[:：-]\s*(.+)$/i)?.[1];
-  if (labelValue) {
-    candidates.add(normalizeStatusTextCandidate(labelValue));
-  }
+  expandStatusTextCandidates(text).forEach((value) => candidates.add(value));
 }
 
 function getStatusBadgeTextCandidates(element) {
@@ -1168,7 +1198,12 @@ function clearTicketButtonRibbonStyles(ticketButton) {
 function setTicketButtonBackground(ticketButton, animationClass = "") {
   getTicketButtonStyleTargets(ticketButton).forEach((target) => {
     clearTrackedRibbonStyles(target);
-    setTrackedStyle(target, "background-color", "transparent", "important");
+    setTrackedStyle(
+      target,
+      "background-color",
+      `var(${STATUS_VAR_BG}, transparent)`,
+      "important"
+    );
     setTrackedStyle(target, "background-image", "none", "important");
     setTrackedClassState(target, STATUS_BASE_CLASS, true);
     setTrackedClassState(target, STATUS_BUTTON_SURFACE_CLASS, true);
@@ -1185,7 +1220,12 @@ function setTicketButtonRibbonStyles(ticketButton) {
       clearTrackedRibbonStyles(target);
     }
     setTrackedRibbonPhase(target);
-    setTrackedStyle(target, "background-color", "transparent", "important");
+    setTrackedStyle(
+      target,
+      "background-color",
+      `var(${STATUS_VAR_BG}, transparent)`,
+      "important"
+    );
     setTrackedStyle(target, "background-image", "none", "important");
     setTrackedClassState(target, STATUS_BASE_CLASS, false);
     setTrackedClassState(target, STATUS_BUTTON_SURFACE_CLASS, true);
@@ -1204,6 +1244,13 @@ function applyStatusSettingToTicketButton(ticketButton, statusSetting) {
   ensureStatusColorizerStyle();
   getTicketButtonStyleTargets(ticketButton).forEach((target) => {
     setTrackedStatusPalette(target, statusSetting);
+    const borderColor = getStatusButtonBorderColor(statusSetting);
+    setTrackedStyle(
+      target,
+      "border-color",
+      borderColor,
+      borderColor ? "important" : ""
+    );
   });
   const animationClass = statusSetting.animationClass || "";
   if (!animationClass || !isRibbonAnimation(animationClass)) {
@@ -1238,7 +1285,7 @@ function getStatusSurfaces() {
     },
     {
       collectTargets: collectTicketButtonTargets,
-      getStatusText: getTicketButtonStatusText,
+      getStatusTexts: getTicketButtonStatusTexts,
       applyStatusSetting: applyStatusSettingToTicketButton,
     },
     {

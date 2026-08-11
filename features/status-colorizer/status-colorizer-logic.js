@@ -7,6 +7,71 @@
     return typeof statusName === "string" ? statusName.trim().toLowerCase() : "";
   }
 
+  function normalizeStatusTextCandidate(text) {
+    return typeof text === "string" ? text.replace(/\s+/g, " ").trim() : "";
+  }
+
+  function expandStatusTextCandidates(values) {
+    const source = Array.isArray(values) ? values : [values];
+    const candidates = new Set();
+
+    source.forEach((text) => {
+      const value = normalizeStatusTextCandidate(text);
+      if (!value) {
+        return;
+      }
+
+      candidates.add(value);
+      const labelValue = value.match(
+        /^(?:status|статус)\s*[:：-]\s*(.+)$/i
+      )?.[1];
+      if (labelValue) {
+        candidates.add(normalizeStatusTextCandidate(labelValue));
+      }
+
+      const changeStatusValue = value.match(
+        /^(.+?)\s*[-–—]\s*(?:change|update)\s+(?:the\s+)?status$/i
+      )?.[1];
+      if (changeStatusValue) {
+        candidates.add(normalizeStatusTextCandidate(changeStatusValue));
+      }
+    });
+
+    return [...candidates];
+  }
+
+  function isStatusBadgeTextTestId(testId) {
+    return typeof testId === "string" &&
+      /status-lozenge(?:\.[^.]+)?--text$/.test(testId);
+  }
+
+  function shouldUseNestedStatusBadge({
+    tagName = "",
+    testId = "",
+    isIssueTableCell = false,
+  } = {}) {
+    if (isIssueTableCell) {
+      return true;
+    }
+
+    if (String(tagName).toUpperCase() !== "DIV") {
+      return false;
+    }
+
+    return (
+      (testId.startsWith("issue.fields.status.common.ui.status-lozenge.") &&
+        !testId.includes("--")) ||
+      testId ===
+        "jql-builder-basic-picker.ui.format-option-label.lozenge-option-label.lozenge"
+    );
+  }
+
+  const STATUS_SURFACE_SELECTORS = Object.freeze({
+    ticketButtonText:
+      "[data-testid$='status-button--text'], [data-test-id$='status-button--text']",
+    workflowStatusNode: "g[data-drag-type='status']",
+  });
+
   function getStatusAliases(setting) {
     return Array.isArray(setting?.aliases)
       ? setting.aliases
@@ -92,6 +157,18 @@
       primaryColor,
       secondaryColor,
     };
+  }
+
+  function getStatusButtonBorderColor(statusSetting) {
+    if (!statusSetting || typeof statusSetting !== "object") {
+      return "";
+    }
+
+    if (statusSetting.animationClass === "ribbon") {
+      return statusSetting.primaryColor || statusSetting.backgroundColor || "";
+    }
+
+    return statusSetting.backgroundColor || statusSetting.primaryColor || "";
   }
 
   function buildStatusLookup(settings) {
@@ -198,14 +275,20 @@
   }
 
   global.MyToolboxStatusColorizerLogic = {
+    STATUS_SURFACE_SELECTORS,
     buildStatusLookup,
+    expandStatusTextCandidates,
     findStatusSettingFromLookup,
     getStatusAliases,
+    getStatusButtonBorderColor,
     getStatusRibbonBackground,
     lightenHexColor,
     migrateStatusSettings,
     normalizeStatusAnimationClass,
     normalizeStatusName,
     normalizeStatusSetting,
+    normalizeStatusTextCandidate,
+    isStatusBadgeTextTestId,
+    shouldUseNestedStatusBadge,
   };
 })(globalThis);

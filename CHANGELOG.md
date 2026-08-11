@@ -5,6 +5,23 @@ All notable changes to the "My ToolBox" Chrome extension will be documented in t
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (starting from this documented version).
 
+## [5.5.1] - 2026-08-11
+
+This patch release restores Status Colorizer rendering after recent Atlassian Jira status markup changes.
+
+### Changed
+
+- Updated Status Colorizer targeting to use stable Jira status attributes across virtual issue tables, transition options, workflow summaries, issue activity, ticket controls, and workflow diagram nodes.
+- Extended regression coverage for Jira status text discovery, wrapper-versus-lozenge targeting, workflow selectors, and status button surface rendering.
+
+### Fixed
+
+- Fixed status colors not applying to the updated ticket status button after Jira removed its previous generated text class.
+- Fixed workflow diagram statuses not coloring when the diagram no longer exposes the previous SVG test ID.
+- Fixed workflow summary and activity lozenges painting only their inner content span instead of the complete status surface.
+- Fixed transparent status button borders and white corner gaps by keeping the tracked button border and underlying rounded surface aligned with the configured status color.
+- Preserved Jira's original inline status styles when Status Colorizer is disabled, a status no longer matches a rule, or a painted element is cleaned up.
+
 ## [5.5.0] - 2026-06-11
 
 This minor release brings the Board into the same minimalist visual language as the Notepad.
