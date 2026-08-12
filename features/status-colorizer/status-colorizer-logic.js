@@ -67,8 +67,21 @@
   }
 
   const STATUS_SURFACE_SELECTORS = Object.freeze({
+    boardCardStatus:
+      "[data-testid='platform-board-kit.ui.card.jira-card-contents.status']",
+    recentActivityStatusText:
+      "[data-testid='state-metadata-element--text']",
+    smartCardStatus:
+      "span[data-smart-element='State'][data-smart-element-lozenge='true'][data-testid='state-metadata-element']",
+    smartCardStatusButton:
+      "button[data-testid='state-metadata-element'][aria-haspopup='true']",
+    stateTransitionMenuItem:
+      "button[data-testid^='state-metadata-element-item-'][role='menuitem']",
+    stateTransitionMenuItemBadge: "[data-item-title='true'] > span",
     ticketButtonText:
       "[data-testid$='status-button--text'], [data-test-id$='status-button--text']",
+    transitionStatusBadge:
+      "[data-testid='issue-field-status.ui.status-view.transition'] [data-testid^='issue.fields.status.common.ui.status-lozenge.']",
     workflowStatusNode: "g[data-drag-type='status']",
   });
 
@@ -159,7 +172,7 @@
     };
   }
 
-  function getStatusButtonBorderColor(statusSetting) {
+  function getStatusSurfaceBorderColor(statusSetting) {
     if (!statusSetting || typeof statusSetting !== "object") {
       return "";
     }
@@ -280,7 +293,7 @@
     expandStatusTextCandidates,
     findStatusSettingFromLookup,
     getStatusAliases,
-    getStatusButtonBorderColor,
+    getStatusSurfaceBorderColor,
     getStatusRibbonBackground,
     lightenHexColor,
     migrateStatusSettings,

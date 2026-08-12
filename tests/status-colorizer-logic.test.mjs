@@ -91,8 +91,36 @@ test("updated Jira text and workflow selectors are stable attributes", async () 
   const logic = await loadStatusColorizerLogic();
 
   assert.equal(
+    logic.STATUS_SURFACE_SELECTORS.boardCardStatus,
+    "[data-testid='platform-board-kit.ui.card.jira-card-contents.status']"
+  );
+  assert.equal(
+    logic.STATUS_SURFACE_SELECTORS.recentActivityStatusText,
+    "[data-testid='state-metadata-element--text']"
+  );
+  assert.equal(
+    logic.STATUS_SURFACE_SELECTORS.smartCardStatus,
+    "span[data-smart-element='State'][data-smart-element-lozenge='true'][data-testid='state-metadata-element']"
+  );
+  assert.equal(
+    logic.STATUS_SURFACE_SELECTORS.smartCardStatusButton,
+    "button[data-testid='state-metadata-element'][aria-haspopup='true']"
+  );
+  assert.equal(
+    logic.STATUS_SURFACE_SELECTORS.stateTransitionMenuItem,
+    "button[data-testid^='state-metadata-element-item-'][role='menuitem']"
+  );
+  assert.equal(
+    logic.STATUS_SURFACE_SELECTORS.stateTransitionMenuItemBadge,
+    "[data-item-title='true'] > span"
+  );
+  assert.equal(
     logic.STATUS_SURFACE_SELECTORS.ticketButtonText,
     "[data-testid$='status-button--text'], [data-test-id$='status-button--text']"
+  );
+  assert.equal(
+    logic.STATUS_SURFACE_SELECTORS.transitionStatusBadge,
+    "[data-testid='issue-field-status.ui.status-view.transition'] [data-testid^='issue.fields.status.common.ui.status-lozenge.']"
   );
   assert.equal(
     logic.STATUS_SURFACE_SELECTORS.workflowStatusNode,
@@ -106,11 +134,133 @@ test("updated Jira text and workflow selectors are stable attributes", async () 
   );
 });
 
-test("status button border uses the painted base color", async () => {
+test("board status keeps button paint and aligns only the nested border", async () => {
+  const source = await loadStatusColorizerWorkerSource();
+  const resolverStart = source.indexOf(
+    "function resolveStatusBadgePaintTarget("
+  );
+  const resolverEnd = source.indexOf(
+    "function collectStatusTextElements("
+  );
+  const resolver = source.slice(resolverStart, resolverEnd);
+  const buttonTargetIndex = resolver.indexOf(
+    "findStatusButtonTarget(element, statusSetting)"
+  );
+  const applyStart = source.indexOf(
+    "function applyStatusSettingToBadgeSource("
+  );
+  const applyEnd = source.indexOf(
+    "function applyStatusSettingToHomeListStatus("
+  );
+  const applyFunction = source.slice(applyStart, applyEnd);
+
+  assert.notEqual(buttonTargetIndex, -1);
+  assert.doesNotMatch(resolver, /getBoardCardNestedVisualBadge/);
+  assert.match(
+    source,
+    /const statusWrapper = boardStatus\.querySelector\(\s*ATLASSIAN_STATUS_BADGE_SELECTOR\s*\);/
+  );
+  assert.match(
+    source,
+    /return getNestedVisualBadge\(statusWrapper\) \|\| statusWrapper;/
+  );
+  assert.match(
+    applyFunction,
+    /const boardNestedVisual = getBoardCardNestedVisualBadge\(sourceBadge\);/
+  );
+  assert.match(
+    applyFunction,
+    /setTrackedStyle\(\s*boardNestedVisual,\s*"border-color",\s*borderColor,\s*borderColor \? "important" : ""\s*\);/
+  );
+  assert.doesNotMatch(
+    applyFunction,
+    /applyStatusSettingToBadge\(boardNestedVisual/
+  );
+});
+
+test("recent activity and transition statuses use isolated stable paths", async () => {
+  const source = await loadStatusColorizerWorkerSource();
+  const recentCollectorStart = source.indexOf(
+    "function collectRecentActivityStatusTargets("
+  );
+
+  assert.notEqual(recentCollectorStart, -1);
+  assert.match(
+    source,
+    /querySelectorAll\(RECENT_ACTIVITY_STATUS_TEXT_SELECTOR\)/
+  );
+  assert.match(
+    source,
+    /STATUS_BADGE_CONTAINER_SELECTORS = \[[\s\S]*TRANSITION_STATUS_BADGE_SELECTOR,/
+  );
+  assert.match(
+    source,
+    /while \(current\?\.parentElement\?\.matches\?\.\("span"\)\)/
+  );
+  assert.match(
+    source,
+    /if \(element\.matches\?\.\(RECENT_ACTIVITY_STATUS_TEXT_SELECTOR\)\) \{[\s\S]*return resolveSameTextStatusSpan\(element\) \|\| element;/
+  );
+  assert.doesNotMatch(source, /a\[href\*=['"]\/browse\//);
+});
+
+test("smart-card statuses resolve buttons before the recent span fallback", async () => {
+  const source = await loadStatusColorizerWorkerSource();
+  const resolverStart = source.indexOf(
+    "function resolveStatusBadgePaintTarget("
+  );
+  const resolverEnd = source.indexOf(
+    "function collectStatusTextElements("
+  );
+  const resolver = source.slice(resolverStart, resolverEnd);
+  const smartButtonIndex = resolver.indexOf(
+    "SMART_CARD_STATUS_BUTTON_SELECTOR"
+  );
+  const sameSpanIndex = resolver.indexOf(
+    "resolveSameTextStatusSpan(element)"
+  );
+
+  assert.notEqual(smartButtonIndex, -1);
+  assert.notEqual(sameSpanIndex, -1);
+  assert.ok(smartButtonIndex < sameSpanIndex);
+  assert.match(
+    resolver,
+    /if \(smartCardButton\?\.closest\?\.\(SMART_CARD_STATUS_SELECTOR\)\) \{\s*return smartCardButton;/
+  );
+});
+
+test("state transition popup paints only canonical badges", async () => {
+  const source = await loadStatusColorizerWorkerSource();
+  const collectorStart = source.indexOf(
+    "function collectStateTransitionMenuBadges("
+  );
+  const collectorEnd = source.indexOf(
+    "function getHomeListStatusRegion("
+  );
+  const collector = source.slice(collectorStart, collectorEnd);
+
+  assert.notEqual(collectorStart, -1);
+  assert.notEqual(collectorEnd, -1);
+  assert.match(
+    collector,
+    /querySelectorAll\(STATE_TRANSITION_MENU_ITEM_SELECTOR\)/
+  );
+  assert.match(
+    collector,
+    /menuItem\.querySelector\(\s*STATE_TRANSITION_MENU_ITEM_BADGE_SELECTOR\s*\)/
+  );
+  assert.match(
+    source,
+    /collectTargets: collectStateTransitionMenuBadges,\s*getStatusText: \(statusBadge\) => statusBadge\.textContent,\s*applyStatusSetting: applyStatusSettingToBadge,/
+  );
+  assert.doesNotMatch(collector, /targets\.add\(menuItem\)/);
+});
+
+test("status surface border uses the painted base color", async () => {
   const logic = await loadStatusColorizerLogic();
 
   assert.equal(
-    logic.getStatusButtonBorderColor({
+    logic.getStatusSurfaceBorderColor({
       animationClass: "glow",
       backgroundColor: "#006b7e",
       primaryColor: "#111111",
@@ -118,14 +268,36 @@ test("status button border uses the painted base color", async () => {
     "#006b7e"
   );
   assert.equal(
-    logic.getStatusButtonBorderColor({
+    logic.getStatusSurfaceBorderColor({
       animationClass: "ribbon",
       backgroundColor: "#0747a6",
       primaryColor: "#0052cc",
     }),
     "#0052cc"
   );
-  assert.equal(logic.getStatusButtonBorderColor(null), "");
+  assert.equal(logic.getStatusSurfaceBorderColor(null), "");
+});
+
+test("non-button badges apply a tracked base-color border", async () => {
+  const source = await loadStatusColorizerWorkerSource();
+  const badgeFunctionStart = source.indexOf(
+    "function applyStatusSettingToBadge("
+  );
+  const badgeFunctionEnd = source.indexOf(
+    "function applyStatusSettingToBadgeSource("
+  );
+  const badgeFunction = source.slice(badgeFunctionStart, badgeFunctionEnd);
+
+  assert.notEqual(badgeFunctionStart, -1);
+  assert.notEqual(badgeFunctionEnd, -1);
+  assert.match(
+    badgeFunction,
+    /const borderColor = getStatusSurfaceBorderColor\(statusSetting\);/
+  );
+  assert.match(
+    badgeFunction,
+    /setTrackedStyle\(\s*outerBadge,\s*"border-color",\s*borderColor,\s*borderColor \? "important" : ""\s*\);/
+  );
 });
 
 test("status button keeps its base color beneath the pseudo surface", async () => {

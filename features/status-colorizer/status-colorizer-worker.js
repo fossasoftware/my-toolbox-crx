@@ -20,7 +20,7 @@ const {
       .filter(Boolean);
   },
   findStatusSettingFromLookup = () => null,
-  getStatusButtonBorderColor = (statusSetting) =>
+  getStatusSurfaceBorderColor = (statusSetting) =>
     statusSetting?.animationClass === "ribbon"
       ? statusSetting?.primaryColor || statusSetting?.backgroundColor || ""
       : statusSetting?.backgroundColor || statusSetting?.primaryColor || "",
@@ -84,6 +84,27 @@ const INLINE_CARD_STATUS_BADGE_TEXT_SELECTOR =
   "[data-testid='inline-card-resolved-view-lozenge--text']";
 const JQL_PICKER_STATUS_BADGE_SELECTOR =
   "[data-testid='jql-builder-basic-picker.ui.format-option-label.lozenge-option-label.lozenge']";
+const BOARD_CARD_STATUS_SELECTOR =
+  STATUS_SURFACE_SELECTORS.boardCardStatus ||
+  "[data-testid='platform-board-kit.ui.card.jira-card-contents.status']";
+const RECENT_ACTIVITY_STATUS_TEXT_SELECTOR =
+  STATUS_SURFACE_SELECTORS.recentActivityStatusText ||
+  "[data-testid='state-metadata-element--text']";
+const SMART_CARD_STATUS_SELECTOR =
+  STATUS_SURFACE_SELECTORS.smartCardStatus ||
+  "span[data-smart-element='State'][data-smart-element-lozenge='true'][data-testid='state-metadata-element']";
+const SMART_CARD_STATUS_BUTTON_SELECTOR =
+  STATUS_SURFACE_SELECTORS.smartCardStatusButton ||
+  "button[data-testid='state-metadata-element'][aria-haspopup='true']";
+const STATE_TRANSITION_MENU_ITEM_SELECTOR =
+  STATUS_SURFACE_SELECTORS.stateTransitionMenuItem ||
+  "button[data-testid^='state-metadata-element-item-'][role='menuitem']";
+const STATE_TRANSITION_MENU_ITEM_BADGE_SELECTOR =
+  STATUS_SURFACE_SELECTORS.stateTransitionMenuItemBadge ||
+  "[data-item-title='true'] > span";
+const TRANSITION_STATUS_BADGE_SELECTOR =
+  STATUS_SURFACE_SELECTORS.transitionStatusBadge ||
+  "[data-testid='issue-field-status.ui.status-view.transition'] [data-testid^='issue.fields.status.common.ui.status-lozenge.']";
 const GENERIC_STATUS_BADGE_CONTAINER_SELECTOR =
   "[data-testid*='status-lozenge']:not([data-testid$='--text']), [data-test-id*='status-lozenge']:not([data-test-id$='--text'])";
 const GENERIC_STATUS_BADGE_TEXT_SELECTOR =
@@ -106,6 +127,8 @@ const STATUS_BADGE_CONTAINER_SELECTORS = [
   HISTORY_STATUS_BADGE_SELECTOR,
   INLINE_CARD_STATUS_BADGE_SELECTOR,
   JQL_PICKER_STATUS_BADGE_SELECTOR,
+  BOARD_CARD_STATUS_SELECTOR,
+  TRANSITION_STATUS_BADGE_SELECTOR,
   GENERIC_STATUS_BADGE_CONTAINER_SELECTOR,
   ISSUE_TABLE_STATUS_CELL_SELECTOR,
   CLASSIC_STATUS_BADGE_SELECTOR,
@@ -897,9 +920,35 @@ function findStatusButtonTarget(element, statusSetting) {
   );
 }
 
+function getBoardCardNestedVisualBadge(element) {
+  const boardStatus = element?.closest?.(BOARD_CARD_STATUS_SELECTOR);
+  if (!boardStatus) {
+    return null;
+  }
+
+  const statusWrapper = boardStatus.querySelector(
+    ATLASSIAN_STATUS_BADGE_SELECTOR
+  );
+  if (!statusWrapper) {
+    return null;
+  }
+
+  return getNestedVisualBadge(statusWrapper) || statusWrapper;
+}
+
 function resolveStatusBadgePaintTarget(element, statusSetting = null) {
   if (!element) {
     return null;
+  }
+
+  if (element.matches?.(RECENT_ACTIVITY_STATUS_TEXT_SELECTOR)) {
+    const smartCardButton = element.closest?.(
+      SMART_CARD_STATUS_BUTTON_SELECTOR
+    );
+    if (smartCardButton?.closest?.(SMART_CARD_STATUS_SELECTOR)) {
+      return smartCardButton;
+    }
+    return resolveSameTextStatusSpan(element) || element;
   }
 
   const statusButton = findStatusButtonTarget(element, statusSetting);
@@ -951,6 +1000,47 @@ function findStatusSettingFromCandidates(statusTexts) {
   }
 
   return null;
+}
+
+function resolveSameTextStatusSpan(textElement) {
+  const statusText = normalizeStatusTextCandidate(textElement?.textContent);
+  if (!statusText) {
+    return null;
+  }
+
+  let target = textElement;
+  let current = textElement;
+  while (current?.parentElement?.matches?.("span")) {
+    const parent = current.parentElement;
+    if (normalizeStatusTextCandidate(parent.textContent) !== statusText) {
+      break;
+    }
+    target = parent;
+    current = parent;
+  }
+
+  return target;
+}
+
+function collectRecentActivityStatusTargets() {
+  return [
+    ...document.querySelectorAll(RECENT_ACTIVITY_STATUS_TEXT_SELECTOR),
+  ].filter((textElement) => findStatusSetting(textElement.textContent));
+}
+
+function collectStateTransitionMenuBadges() {
+  const targets = new Set();
+  document
+    .querySelectorAll(STATE_TRANSITION_MENU_ITEM_SELECTOR)
+    .forEach((menuItem) => {
+      const badge = menuItem.querySelector(
+        STATE_TRANSITION_MENU_ITEM_BADGE_SELECTOR
+      );
+      if (badge && findStatusSetting(badge.textContent)) {
+        targets.add(badge);
+      }
+    });
+  return [...targets];
 }
 
 function getHomeListStatusRegion(item) {
@@ -1030,6 +1120,13 @@ function applyStatusSettingToBadge(outerBadge, statusSetting) {
   const animationClass = statusSetting.animationClass || "";
   const usesRibbon = isRibbonAnimation(animationClass);
   setTrackedStatusPalette(outerBadge, statusSetting);
+  const borderColor = getStatusSurfaceBorderColor(statusSetting);
+  setTrackedStyle(
+    outerBadge,
+    "border-color",
+    borderColor,
+    borderColor ? "important" : ""
+  );
   setTrackedClassState(outerBadge, STATUS_BASE_CLASS, true);
   setTrackedClassState(outerBadge, STATUS_RIBBON_CLASS, usesRibbon);
   setTrackedStatusAnimation(outerBadge, animationClass);
@@ -1067,6 +1164,17 @@ function applyStatusSettingToBadgeSource(sourceBadge, statusSetting) {
     applyStatusSettingToTicketButton(paintTarget, statusSetting);
   } else {
     applyStatusSettingToBadge(paintTarget, statusSetting);
+  }
+
+  const boardNestedVisual = getBoardCardNestedVisualBadge(sourceBadge);
+  if (boardNestedVisual) {
+    const borderColor = getStatusSurfaceBorderColor(statusSetting);
+    setTrackedStyle(
+      boardNestedVisual,
+      "border-color",
+      borderColor,
+      borderColor ? "important" : ""
+    );
   }
 
   collectStatusTextElements(getStatusBadgeContainer(sourceBadge)).forEach(
@@ -1244,7 +1352,7 @@ function applyStatusSettingToTicketButton(ticketButton, statusSetting) {
   ensureStatusColorizerStyle();
   getTicketButtonStyleTargets(ticketButton).forEach((target) => {
     setTrackedStatusPalette(target, statusSetting);
-    const borderColor = getStatusButtonBorderColor(statusSetting);
+    const borderColor = getStatusSurfaceBorderColor(statusSetting);
     setTrackedStyle(
       target,
       "border-color",
@@ -1282,6 +1390,16 @@ function getStatusSurfaces() {
       collectTargets: collectBadgeTargets,
       getStatusTexts: getStatusBadgeTextCandidates,
       applyStatusSetting: applyStatusSettingToBadgeSource,
+    },
+    {
+      collectTargets: collectRecentActivityStatusTargets,
+      getStatusTexts: getStatusBadgeTextCandidates,
+      applyStatusSetting: applyStatusSettingToBadgeSource,
+    },
+    {
+      collectTargets: collectStateTransitionMenuBadges,
+      getStatusText: (statusBadge) => statusBadge.textContent,
+      applyStatusSetting: applyStatusSettingToBadge,
     },
     {
       collectTargets: collectTicketButtonTargets,

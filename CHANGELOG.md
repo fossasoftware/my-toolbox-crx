@@ -11,7 +11,7 @@ This patch release restores Status Colorizer rendering after recent Atlassian Ji
 
 ### Changed
 
-- Updated Status Colorizer targeting to use stable Jira status attributes across virtual issue tables, transition options, workflow summaries, issue activity, ticket controls, and workflow diagram nodes.
+- Updated Status Colorizer targeting to use stable Jira status attributes across virtual issue tables, transition options and popups, workflow summaries, recent activity issue links, smart-card details, issue activity, Board cards, ticket controls, and workflow diagram nodes.
 - Extended regression coverage for Jira status text discovery, wrapper-versus-lozenge targeting, workflow selectors, and status button surface rendering.
 
 ### Fixed
@@ -19,6 +19,9 @@ This patch release restores Status Colorizer rendering after recent Atlassian Ji
 - Fixed status colors not applying to the updated ticket status button after Jira removed its previous generated text class.
 - Fixed workflow diagram statuses not coloring when the diagram no longer exposes the previous SVG test ID.
 - Fixed workflow summary and activity lozenges painting only their inner content span instead of the complete status surface.
+- Fixed recent activity issue-link statuses and Board card status lozenges not consistently receiving configured colors after Jira remounted their status content.
+- Fixed expanded smart-card statuses and their transition popup badges rendering without the configured rounded status surface.
+- Fixed Board card status coloring so the outer button surface and nested lozenge border remain aligned with the configured status color.
 - Fixed transparent status button borders and white corner gaps by keeping the tracked button border and underlying rounded surface aligned with the configured status color.
 - Preserved Jira's original inline status styles when Status Colorizer is disabled, a status no longer matches a rule, or a painted element is cleaned up.
 
