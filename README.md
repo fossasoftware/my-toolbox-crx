@@ -77,6 +77,8 @@ Run the local validation pass before packaging or manual smoke tests:
 
 It validates `manifest.json`, runs `node --check` for extension scripts, executes the lightweight `node:test` suite for pure modules, performs a lightweight `board.js` import smoke test with a stubbed DOM environment, and fails on trailing whitespace or malformed patch output.
 
+The validation and packaging scripts use `node` from `PATH` when available and fall back to common local or bundled Codex/ChatGPT runtime locations. Set `MY_TOOLBOX_NODE=/absolute/path/to/node` to use a specific Node.js executable.
+
 ## Packaging for Chrome Web Store
 
 Create a ready-to-upload archive with:

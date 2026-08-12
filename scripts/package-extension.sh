@@ -7,6 +7,8 @@ DIST_DIR="$ROOT_DIR/dist"
 STAGE_DIR="$(mktemp -d)"
 trap 'rm -rf "$STAGE_DIR"' EXIT
 
+source "$ROOT_DIR/scripts/node-runtime.sh"
+MY_TOOLBOX_NODE_BIN="$(resolve_my_toolbox_node)"
 cd "$ROOT_DIR"
 
 if ! command -v zip >/dev/null 2>&1; then
@@ -15,10 +17,10 @@ if ! command -v zip >/dev/null 2>&1; then
 fi
 
 echo "==> Running validation before packaging"
-"$ROOT_DIR/scripts/validate-extension.sh"
+MY_TOOLBOX_NODE="$MY_TOOLBOX_NODE_BIN" "$ROOT_DIR/scripts/validate-extension.sh"
 
 VERSION="$(
-  node -e "process.stdout.write(JSON.parse(require('fs').readFileSync('manifest.json', 'utf8')).version)"
+  "$MY_TOOLBOX_NODE_BIN" -e "process.stdout.write(JSON.parse(require('fs').readFileSync('manifest.json', 'utf8')).version)"
 )"
 ARCHIVE_NAME="my-toolbox-crx-${VERSION}.zip"
 ARCHIVE_PATH="$DIST_DIR/$ARCHIVE_NAME"
